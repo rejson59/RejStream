@@ -1,31 +1,43 @@
 # RejStream
 
-Responsywny, polskojęzyczny katalog niezależnej animacji. Vite + JavaScript + Lucide.
+Responsywna platforma odkrywania niezależnej animacji. Polski interfejs, Vite + JavaScript + Lucide.
 
 ## Uruchomienie
+
+Wymagany Node.js 22+.
 
 ```sh
 npm ci
 npm run dev
+npm test
+npm run build
 ```
 
-`npm run build` tworzy statyczną stronę w `dist/`. `npm run preview` udostępnia kompilację.
+`npm run preview` udostępnia kompilację. `dist/` nie trafia do Git.
 
-## Funkcje i ograniczenia
+## Biblioteka
 
-- Cztery odcinki pierwszego sezonu Helluva Boss osadzone z oficjalnych źródeł YouTube.
-- Osobny polski, nieoficjalny fandub pierwszego odcinka (źródło: https://www.youtube.com/watch?v=4DjfKP5w8Ps).
-- Wyszukiwanie, filtry, lokalnie zapisana lista ulubionych.
-- Napisy PL/EN jako preferencje YouTube — dostępność zależy od materiału. Inne ścieżki dźwiękowe, jeśli autor je udostępnił, można wybrać w samym YouTube.
-- Brak kont, backendu i pobierania filmów. Supabase nie jest wymagany.
-- Osadzenia mogą być blokowane przez autora, region lub ograniczenia wiekowe. Odtwarzacz zawiera odnośnik do materiału na YouTube.
-- Zewnętrzne zasoby: miniatury YouTube oraz opcjonalne Google Fonts (z lokalnymi fontami awaryjnymi).
-- Ocena IMDb w interfejsie jest statyczna, nie aktualizuje się automatycznie.
+- Helluva Boss: pełne sezony 1 (8 odcinków) i 2 (12 odcinków), wybór sezonu, dwa piloty i trzy wybrane shorts.
+- Sezon 3: pięć wpisów z odnośnikiem do Prime Video, nie darmowe osadzenia. Katalog nie jest automatycznie aktualizowany.
+- Dwa znalezione polskie fanduby: pilot 2019 oraz pierwszy odcinek S1. Brak fikcyjnych ścieżek językowych dla pozostałych odcinków.
+- Piloty The Amazing Digital Circus oraz Murder Drones, nie całe seriale.
+- Big Buck Bunny: cały film na CC BY 3.0 we własnym playerze, ze wskazaniem autora i warunków licencji.
+- Łączone filtry, wyszukiwanie w wybranym sezonie i lokalna lista Helluva Boss.
+
+## Własny player
+
+`native-player.js` używa elementu HTML5 video i własnych kontrolek: play/pause, ±10 sekund, seek, głośność, mute, prędkość i fullscreen. Obsługuje lokalne VTT/SRT (do 5 MB na plik), wybór wielu ścieżek napisów, lokalne wideo bez wysyłania na serwer i zapisywanie pozycji Big Buck Bunny w localStorage. Obsługa błędów źródła/kodeka; sprzątanie listenerów i blob URL po zamknięciu.
+
+Język lokalnego dubbingu zależy od wybranego pliku; nie ma automatycznego pobierania ani dekodowania wszystkich ścieżek MKV. YouTube pozostaje wyłącznie w legalnych osadzeniach produkcji, dla których nie mamy licencji na rehosting. Polskie i angielskie napisy są tam preferencją odtwarzacza, nie gwarancją ich istnienia.
+
+## Testy i ograniczenia
+
+`npm test`: testy danych, konwersji napisów i interfejsu (Vitest + jsdom). Nie są to testy dekodowania filmu ani odtwarzania w rzeczywistej przeglądarce. Pobranie Chromium w środowisku roboczym jest blokowane przez ograniczenia sieci. Zewnętrzny mirror i YouTube wymagają testu z przeglądarki użytkownika; źródła mogą mieć blokady regionalne/wiekowe. Player zawiera komunikaty błędów i odnośniki źródłowe.
+
+Bez backendu, kont, Supabase ani uploadu filmów. Pliki zewnętrzne nie są kopiowane do Git. Zasoby zewnętrzne: miniatury YouTube, Google Fonts (z fontami awaryjnymi), mirror filmu CC BY.
 
 ## Publikacja
 
-Workflow `.github/workflows/pages.yml` buduje i publikuje stronę po scaleniu do `main` (obsługuje również gałąź roboczą `arena/72c23322-rejstream`, jeśli reguły środowiska na to pozwalają). W repozytorium GitHub Pages musi mieć ustawione źródło **GitHub Actions**. Ścieżki zasobów są względne, dzięki czemu aplikacja działa pod `/RejStream/`.
+Workflow `.github/workflows/pages.yml` testuje PR, a po scaleniu do `main` testuje, buduje i wdraża na GitHub Pages. Źródło Pages: **GitHub Actions**. Ścieżki względne pozwalają działać pod `/RejStream/`.
 
-## Prawa
-
-RejStream nie pobiera ani nie przechowuje cudzych filmów. Helluva Boss i materiały graficzne należą do odpowiednich właścicieli praw. Obecność fandubu w serwisie YouTube nie potwierdza uzyskania przez jego autora licencji. Katalog nie jest powiązany z twórcami serialu ani YouTube.
+Szczegóły źródeł, języków i praw: [SOURCES.md](SOURCES.md).
