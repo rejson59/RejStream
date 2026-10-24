@@ -43,7 +43,7 @@ Własny player HTML5 pozostaje w sekcji „Mój player” / „Własny odtwarzac
 
 ## Walidacja
 
-- `npm test`: 54 testy danych i interfejsu (Vitest/jsdom).
+- `npm test`: 63 testy danych i interfejsu (Vitest/jsdom).
 - `npm run build`: statyczne zasoby w `dist/` (ignorowane przez Git).
 - Test przeglądarkowy Chromium/Playwright w sandboxie: 24 kombinacje tras i szerokości, sortowanie, siatka, ulubione po reloadzie, kolejka, następny odcinek, ręczne obejrzane, import SRT, błąd lokalnego wideo i sprzątanie po opuszczeniu playera. Brak błędów JS.
 - Po uzupełnieniu audio: 40 kombinacji tras/szerokości; wybór polskiego materiału i alternatywnego fandubu, zapamiętywanie preferencji, następny odcinek, lektor, luki, ograniczenie wieku, filtrowanie i sortowanie. Brak błędów JS i poziomego overflow.
@@ -76,3 +76,15 @@ Odcinki YouTube mają lokalny pomiar przez oficjalne IFrame API: zapis pozycji c
 Własny player zapisuje również postęp lokalnych plików; po powrocie trzeba ponownie wskazać ten sam plik. Filmy ani historia nie trafiają do naszego serwera. Czyszczenie danych witryny usuwa historię. Pomiar to przybliżony czas faktycznego odtwarzania, nie ilość unikalnych minut treści. Nie zliczamy skoków, pauzy ani buforowania. Blokada API/pamięci, uśpienie karty i nagłe zamknięcie mogą ograniczyć dokładność. Zewnętrzne odtwarzanie w Prime Video/YouTube poza RejStream nie jest mierzone.
 
 Walidacja zapisu postępu: 54 testy Vitest (w tym symulowane API YouTube i ponowne wskazanie lokalnego pliku), build, 20 kontroli tras/szerokości. Przeglądarkowa symulacja API potwierdziła zapis, podsumowanie i wznowienie pozycji 121,375 s po reloadzie. Rzeczywistej transmisji/API YouTube nie potwierdzono z powodu ograniczeń sieci sandboxa.
+
+## Napisy przez API i stabilniejsze przełączanie
+
+Oprócz `hl=pl` / `cc_lang_pref=pl` / `cc_load_policy=1` odtwarzacz próbuje ustawić polską ścieżkę napisów po `onReady`, po późnym `onApiChange` i przy pierwszych zdarzeniach odtwarzania. Próby są ograniczone, bez pętli przeładowywania. Wybór języka przez opcję `captions.track` nie jest gwarantowany przez publiczny kontrakt YouTube: jeśli embed nie obsługuje tej opcji lub nie ma PL, UI podaje preferencję i instrukcję ustawień zamiast deklarować sukces. Potwierdzenie PL pokazujemy wyłącznie po odczycie pasującego języka z odtwarzacza. Nie wymuszamy nieistniejącego dubbingu ani tłumaczenia.
+
+Zmiana napisów nie niszczy iframe ani nie wraca do punktu startowego; działa na bieżącej instancji API. Ten sam materiał nie jest ponownie tworzony bez potrzeby. Wznawianie używa `start`, a korekta API następuje najwyżej raz, po cue/play i tylko przy odchyleniu ponad 1,5 s, nie podczas `onReady`. Zapobiega to zbędnemu, podwójnemu seekowaniu przy inicjalizacji dekodera. Pozostaje zapis pozycji z ułamkiem sekundy, ale faktyczny start zależy od dekodera YouTube. Zwiastuny podpinają API dopiero blisko widocznego obszaru.
+
+Stan połączenia/buforowania jest widoczny pod odtwarzaczem. Po długim oczekiwaniu lub błędzie dostępne jest ręczne „Wczytaj ponownie” oraz link do źródła; bez automatycznej pętli restartów i bez zasłaniania kontrolek YouTube. Nie możemy zagwarantować usunięcia problemów kodeka, sieci lub serwisu źródłowego.
+
+Przy odcinkach i playerze tekst „Widziano / Wznów” zastąpiono paskiem zapisanej pozycji i czasem `m:ss`. Pasek wskazuje pozycję/długość, nie skumulowany czas oglądania; ten nadal jest w podsumowaniu historii.
+
+Walidacja ostatniej poprawki: 63 testy jednostkowe/integracyjne, 24 kontrole tras i szerokości w Chromium. Symulacja YouTube potwierdziła zmianę napisów na tej samej instancji iframe, ręczne odzyskiwanie po błędzie z zachowaniem pozycji, brak zbędnego seekowania i pasek z `3:44`. Rzeczywistej transmisji/dekodowania i skuteczności wyboru PL w produkcyjnym YouTube nie dało się sprawdzić w sandboxie.
