@@ -59,8 +59,10 @@ Więcej o źródłach i prawach: [SOURCES.md](SOURCES.md).
 
 Polskie napisy są teraz domyślnie włączane (jeśli źródło je udostępnia), a znalezione polskie materiały wybierane w pierwszej kolejności. Starsza preferencja oryginału nie blokuje nowych ustawień PL; późniejsze ręczne zmiany nadal są respektowane. `hl=pl` ustawia język interfejsu YouTube, nie ścieżkę audio. Dla oficjalnych wielościeżkowych odcinków automatyczny wybór dubbingu nadal zależy od YouTube.
 
-Każdy serial ma przycisk **Zwiastun PL** na stronie szczegółów i w hero strony głównej. Zwiastuny otwierają osobne polskie uploady: dwa od twórców oficjalnego dubbingu GLITCH i fanowski zwiastun sezonu 2 Helluva Boss. Podpisani autorzy, źródło, domyślne polskie napisy, powrót do odcinków; bez autoplay i bez dopisywania do historii odcinków.
+Każdy serial ma osadzony odtwarzacz zwiastuna bezpośrednio pod opisem na stronie szczegółów oraz w wyróżnieniu strony głównej — bez przycisku przenoszącego na inną stronę. Zwiastuny korzystają z osobnych polskich uploadów: dwa od twórców oficjalnego dubbingu GLITCH i fanowski zwiastun sezonu 2 Helluva Boss. Podpisani autorzy, źródło, domyślne polskie napisy, powrót do odcinków; bez autoplay i bez dopisywania do historii odcinków.
 
 Własny wektorowy znak R/play jest w `public/rejstream-mark.svg`, na pasku bocznym, w mobilnym nagłówku, stopce i faviconie. Skaluje się bez utraty ostrości.
 
 Walidacja tej aktualizacji: 40 testów Vitest, build produkcyjny, 35 kontroli tras/szerokości (360, 390, 600, 768, 1440 px), bez poziomego overflow i błędów JS. Zewnętrzne odtwarzanie YouTube nie było testowane.
+
+Zwiastuny w opisie: responsywne proporcje 16:9, podpisani autorzy, link awaryjny do YouTube, domyślne napisy PL, ładowanie lazy i brak autoplay. Dotychczasowe adresy `#trailer/...` nadal działają.

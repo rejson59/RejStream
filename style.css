@@ -3496,3 +3496,77 @@ footer button svg {
   height: 30px;
   flex-shrink: 0;
 }
+
+/* Trailers live alongside the story, rather than behind a navigation button. */
+.inline-trailer {
+  width: 100%;
+  max-width: 600px;
+  margin: 22px 0;
+  border: 1px solid #ffffff20;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #121017;
+  box-shadow: 0 16px 45px #0003;
+}
+.inline-trailer-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  color: #d9c8eb;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+}
+.inline-trailer-heading > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.inline-trailer-heading svg {
+  width: 15px;
+  height: 15px;
+}
+.inline-trailer-heading small {
+  color: #a89aaf;
+  letter-spacing: 0;
+}
+.inline-trailer-frame {
+  aspect-ratio: 16/9;
+  background: #050407;
+}
+.inline-trailer-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.inline-trailer figcaption {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 12px 15px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #b6a7c0;
+}
+.inline-trailer figcaption a {
+  color: #e3d4ed;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .inline-trailer {
+    margin: 20px 0;
+    border-radius: 9px;
+  }
+  .inline-trailer-heading {
+    padding: 10px 12px;
+    font-size: 9px;
+  }
+  .inline-trailer figcaption {
+    padding: 10px 12px;
+    font-size: 10px;
+  }
+}
