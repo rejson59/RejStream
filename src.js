@@ -127,6 +127,11 @@ function navButtons(mobile = false) {
     { key: "home", icon: "house", label: mobile ? "Start" : "Strona główna" },
     { key: "library", icon: "clapperboard", label: "Seriale" },
     { key: "saved", icon: "bookmark", label: "Moja lista" },
+    {
+      key: "history",
+      icon: "clock",
+      label: mobile ? "Historia" : "Historia oglądania",
+    },
     ...(mobile ? [{ key: "local", icon: "film", label: "Mój player" }] : []),
   ]
     .map(
@@ -170,28 +175,39 @@ function seriesCard(show) {
 function hero(show) {
   return `<section class="spotlight" style="--accent:${show.color}"><img class="spotlight-art" src="${thumb(show.hero, "maxresdefault")}" alt="" fetchpriority="high"><div class="spotlight-shade"></div><div class="spotlight-copy"><div class="eyebrow">${icon("sparkles")} REJSTREAM SELECT <span>•</span> NIEZALEŻNA ANIMACJA</div><span class="feature-label"><span class="live-dot"></span> ${show.key === "circus" ? "Wszystkie 9 odcinków. Jedna niezwykła historia." : show.label}</span><h1>${show.key === "circus" ? "THE AMAZING<br><span>DIGITAL CIRCUS</span>" : show.key === "helluva" ? "HELLUVA<br><span>BOSS</span>" : "MURDER<br><span>DRONES</span>"}</h1><div class="meta"><span class="age">${show.age}</span><span>${show.year}</span><span>${show.genre}</span></div><p>${show.description}</p>${inlineTrailer(show)}<div class="hero-actions"><button class="button primary" data-go="watch/${show.key}/${show.episodes[0].season}/${show.episodes[0].number}">${icon("play")} Oglądaj od początku</button><a class="button secondary" href="#series/${show.key}">Poznaj serial ${icon("arrow-right")}</a></div><div class="hero-source">${icon("languages")} Języki i napisy w źródłowym odtwarzaczu</div></div><div class="spotlight-switcher" aria-label="Wyróżniony serial">${series.map((s, i) => `<button data-feature="${s.key}" class="${s.key === show.key ? "selected" : ""}" aria-label="Wyróżnij ${s.title}" aria-pressed="${s.key === show.key}"><span>0${i + 1}</span><b>${s.short}</b><i></i></button>`).join("")}</div></section>`;
 }
-function progressSummary() {
-  const entries = Object.values(records());
-  const seconds = entries.reduce((sum, r) => sum + r.seconds, 0);
-  const groups = new Map();
-  for (const r of entries)
-    if (r.seconds > 0) {
-      const k = r.episode || r.label;
-      const old = groups.get(k);
-      groups.set(k, {
-        label: r.label,
-        seconds: (old?.seconds || 0) + r.seconds,
-      });
-    }
-  return `<section class="section local-progress"><span class="eyebrow">TYLKO NA TYM URZĄDZENIU</span><h2>Twój czas z historiami</h2><p><b>${Math.floor(seconds / 60)} min ${Math.floor(seconds % 60)} s</b> oglądania · ${groups.size} materiałów. Zliczamy odtwarzanie, nie samo otwarcie strony. Bez konta i bez wysyłania historii na serwer.</p>${
-    groups.size
-      ? `<ul>${[...groups.values()]
-          .slice(0, 10)
-          .map(
-            (r) => `<li>${esc(r.label)} <b>${formatTime(r.seconds)}</b></li>`,
-          )
+function historyPage() {
+  const seen = new Set();
+  const entries = Object.values(records())
+    .filter((r) => r.seconds > 0 || r.position > 0 || r.completed)
+    .sort((a, b) => b.updated - a.updated)
+    .filter((r) => {
+      const key = r.episode || r.label;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  return `<section class="section history-section"><div class="page-heading"><span class="eyebrow">OSTATNIO OGLĄDANE</span><h1>Historia oglądania<span>.</span></h1><p>Twoje materiały i zapisane pozycje, od najnowszych. Historia zostaje tylko na tym urządzeniu.</p></div>${
+    entries.length
+      ? `<ul class="history-list">${entries
+          .map((r) => {
+            const show = series.find((s) =>
+              s.episodes.some((e) => episodeKey(s.key, e) === r.episode),
+            );
+            const ep = show?.episodes.find(
+              (e) => episodeKey(show.key, e) === r.episode,
+            );
+            const href = ep
+              ? `watch/${show.key}/${ep.season}/${ep.number}`
+              : "local";
+            return `<li class="history-item"><div><h2>${esc(r.label || "Lokalny materiał")}</h2><small>${esc(new Date(r.updated).toLocaleString("pl-PL"))} · ${r.completed ? "Obejrzane" : "Zapisana pozycja"}</small>${progressMarkup(r)}</div><a class="button secondary" href="#${href}">${icon(ep ? "play" : "film")}${ep ? "Wróć do odcinka" : "Wybierz plik ponownie"}</a></li>`;
+          })
           .join("")}</ul>`
-      : ""
+      : empty(
+          "Jeszcze nic tu nie ma",
+          "Historia pojawi się, gdy zaczniesz odtwarzać odcinek lub własny plik.",
+          "Przeglądaj seriale",
+          "library",
+        )
   }</section>`;
 }
 function progressMarkup(entry) {
@@ -207,7 +223,7 @@ function home() {
     .find(({ r, s }) =>
       s?.episodes.some((e) => episodeKey(s.key, e) === r.key),
     );
-  return `${hero(getSeries(featured))}${progressSummary()}<section class="section"><div class="section-heading"><div><span class="eyebrow">WYBIERZ SWÓJ ŚWIAT</span><h2>Nieprzeciętne historie<span>.</span></h2><p>Trzy różne światy. Jeden dobry wieczór.</p></div><a class="text-link" href="#library">Wszystkie seriale ${icon("arrow-right")}</a></div><div class="series-grid">${series.map(seriesCard).join("")}</div>${last ? recentCard(last) : ""}<div class="editorial"><span class="editorial-icon">${icon("heart")}</span><div><span class="eyebrow">OD TWÓRCÓW. DLA CIEBIE.</span><h3>Duże historie nie potrzebują wielkiego studia.</h3><p>Odkrywaj niezależną animację. Oglądaj z oficjalnych źródeł i wspieraj ludzi, którzy ją tworzą.</p></div><button class="text-link" data-info="sources">Poznaj twórców ${icon("arrow-up-right")}</button></div></section>`;
+  return `${hero(getSeries(featured))}<section class="section"><div class="section-heading"><div><span class="eyebrow">WYBIERZ SWÓJ ŚWIAT</span><h2>Nieprzeciętne historie<span>.</span></h2><p>Trzy różne światy. Jeden dobry wieczór.</p></div><a class="text-link" href="#library">Wszystkie seriale ${icon("arrow-right")}</a></div><div class="series-grid">${series.map(seriesCard).join("")}</div>${last ? recentCard(last) : ""}<div class="editorial"><span class="editorial-icon">${icon("heart")}</span><div><span class="eyebrow">OD TWÓRCÓW. DLA CIEBIE.</span><h3>Duże historie nie potrzebują wielkiego studia.</h3><p>Odkrywaj niezależną animację. Oglądaj z oficjalnych źródeł i wspieraj ludzi, którzy ją tworzą.</p></div><button class="text-link" data-info="sources">Poznaj twórców ${icon("arrow-up-right")}</button></div></section>`;
 }
 function recentCard({ r, s }) {
   const e = s.episodes.find((e) => episodeKey(s.key, e) === r.key);
@@ -393,7 +409,7 @@ function loadEmbed(force = false) {
     : `<span>${e.isTrailer ? "Ten zwiastun jest osobnym materiałem z polskim dubbingiem. Napisy PL są zamawiane, jeżeli autor je udostępnił." : e.polishTrack ? "Polski dubbing wybierz ręcznie w ustawieniach źródłowego odtwarzacza (⚙)." : "Oryginalny materiał. Dostępne języki sprawdzisz w ustawieniach źródła."}</span>`;
 }
 function localPage() {
-  return `<section class="section local-section"><div class="page-heading"><span class="eyebrow">TYLKO TY I TWOJA HISTORIA</span><h1>Twój prywatny seans<span>.</span></h1><p>Otwórz legalnie posiadany plik z urządzenia. Niczego nie wysyłamy na serwer.</p></div>${progressSummary()}<div id="native-mount"></div><div class="local-tips"><span>${icon("film")} Pliki obsługiwane przez przeglądarkę</span><span>${icon("captions")} Własne napisy SRT i VTT</span><span>${icon("shield-check")} Bez uploadu i bez konta</span></div></section>`;
+  return `<section class="section local-section"><div class="page-heading"><span class="eyebrow">TYLKO TY I TWOJA HISTORIA</span><h1>Twój prywatny seans<span>.</span></h1><p>Otwórz legalnie posiadany plik z urządzenia. Niczego nie wysyłamy na serwer.</p></div><div id="native-mount"></div><div class="local-tips"><span>${icon("film")} Pliki obsługiwane przez przeglądarkę</span><span>${icon("captions")} Własne napisy SRT i VTT</span><span>${icon("shield-check")} Bez uploadu i bez konta</span></div></section>`;
 }
 function empty(title, description, action, path) {
   return `<div class="empty-state">${icon("search")}<h3>${title}</h3><p>${description}</p><button class="button secondary" data-go="${path}">${action} ${icon("arrow-right")}</button></div>`;
@@ -452,14 +468,15 @@ function render() {
       html = `<section class="section">${empty("Nie znaleźliśmy tego odcinka.", "Wróć do listy i wybierz inny.", "Zobacz odcinki", "series/" + show.key)}</section>`;
   } else if (page === "library" || page === "saved")
     html = library(page === "saved");
+  else if (page === "history") html = historyPage();
   else if (page === "local") html = localPage();
   else if (page === "home") html = home();
   else
     html = `<section class="section">${empty("Ta strona nie istnieje.", "Wróć do odkrywania historii.", "Strona główna", "home")}</section>`;
   content.innerHTML = html;
-  document.title = `${show ? show.title : page === "saved" ? "Moja lista" : page === "local" ? "Twój player" : "Odkrywaj historie"} · RejStream`;
+  document.title = `${show ? show.title : page === "history" ? "Historia oglądania" : page === "saved" ? "Moja lista" : page === "local" ? "Twój player" : "Odkrywaj historie"} · RejStream`;
   const crumb = document.querySelector("#breadcrumbs");
-  crumb.innerHTML = `<a href="#home">Odkrywaj</a><span>/</span><b>${show ? show.title : page === "library" ? "Seriale" : page === "saved" ? "Moja lista" : page === "local" ? "Własny player" : "Strona główna"}</b>`;
+  crumb.innerHTML = `<a href="#home">Odkrywaj</a><span>/</span><b>${show ? show.title : page === "library" ? "Seriale" : page === "history" ? "Historia oglądania" : page === "saved" ? "Moja lista" : page === "local" ? "Własny player" : "Strona główna"}</b>`;
   document.querySelectorAll("[data-nav]").forEach((n) => {
     const active =
       n.dataset.nav ===

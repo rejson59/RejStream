@@ -88,3 +88,5 @@ Stan połączenia/buforowania jest widoczny pod odtwarzaczem. Po długim oczekiw
 Przy odcinkach i playerze tekst „Widziano / Wznów” zastąpiono paskiem zapisanej pozycji i czasem `m:ss`. Pasek wskazuje pozycję/długość, nie skumulowany czas oglądania; ten nadal jest w podsumowaniu historii.
 
 Walidacja ostatniej poprawki: 63 testy jednostkowe/integracyjne, 24 kontrole tras i szerokości w Chromium. Symulacja YouTube potwierdziła zmianę napisów na tej samej instancji iframe, ręczne odzyskiwanie po błędzie z zachowaniem pozycji, brak zbędnego seekowania i pasek z `3:44`. Rzeczywistej transmisji/dekodowania i skuteczności wyboru PL w produkcyjnym YouTube nie dało się sprawdzić w sandboxie.
+
+Historia oglądania jest dostępna w osobnej zakładce `#history` (również w menu mobilnym), zamiast dawnego bloku „Twój czas z historiami”. Lista pokazuje ostatnią zapisaną pozycję każdego materiału, od najnowszych, i link do odcinka lub ponownego wyboru lokalnego pliku. Samo otwarcie strony bez odtwarzania nie dodaje wpisu. Dane nadal pozostają lokalne. Aktualny zestaw: 64 testy.

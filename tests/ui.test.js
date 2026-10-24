@@ -332,12 +332,21 @@ it("starts an upload at its own saved second and reports per-episode progress", 
     "1:23",
   );
   await navigate("home");
-  expect(document.querySelector(".local-progress").textContent).toContain(
-    "1 min 2 s",
-  );
-  expect(document.querySelector(".local-progress").textContent).toContain(
+  expect(document.querySelector(".local-progress")).toBeNull();
+  expect(document.body.textContent).not.toContain("Twój czas z historiami");
+  await navigate("history");
+  expect(document.querySelector(".history-item").textContent).toContain(
     "Circus — Pilot",
   );
+  expect(document.querySelector(".history-item progress").value).toBe(83.75);
+  expect(document.querySelector(".history-item a").hash).toBe(
+    "#watch/circus/1/1",
+  );
+  expect(
+    document
+      .querySelector('.bottom-nav [data-nav="history"]')
+      .getAttribute("aria-current"),
+  ).toBe("page");
 });
 
 it("renders a position bar and timestamp instead of cumulative watched text", async () => {
@@ -381,4 +390,16 @@ it("applies subtitle choices through the API without replacing the iframe or its
   await navigate("local");
   expect(player.destroy).toHaveBeenCalledOnce();
   delete window.YT;
+});
+
+it("shows an honest empty history and no statistics in the local player", async () => {
+  const saved = localStorage.getItem("rej-playback-v1");
+  localStorage.removeItem("rej-playback-v1");
+  await navigate("history");
+  expect(document.querySelector("#content").textContent).toContain(
+    "Jeszcze nic tu nie ma",
+  );
+  await navigate("local");
+  expect(document.querySelector(".local-progress")).toBeNull();
+  if (saved) localStorage.setItem("rej-playback-v1", saved);
 });
