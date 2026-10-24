@@ -43,7 +43,7 @@ Własny player HTML5 pozostaje w sekcji „Mój player” / „Własny odtwarzac
 
 ## Walidacja
 
-- `npm test`: 40 testów danych i interfejsu (Vitest/jsdom).
+- `npm test`: 54 testy danych i interfejsu (Vitest/jsdom).
 - `npm run build`: statyczne zasoby w `dist/` (ignorowane przez Git).
 - Test przeglądarkowy Chromium/Playwright w sandboxie: 24 kombinacje tras i szerokości, sortowanie, siatka, ulubione po reloadzie, kolejka, następny odcinek, ręczne obejrzane, import SRT, błąd lokalnego wideo i sprzątanie po opuszczeniu playera. Brak błędów JS.
 - Po uzupełnieniu audio: 40 kombinacji tras/szerokości; wybór polskiego materiału i alternatywnego fandubu, zapamiętywanie preferencji, następny odcinek, lektor, luki, ograniczenie wieku, filtrowanie i sortowanie. Brak błędów JS i poziomego overflow.
@@ -66,3 +66,13 @@ Własny wektorowy znak R/play jest w `public/rejstream-mark.svg`, na pasku boczn
 Walidacja tej aktualizacji: 40 testów Vitest, build produkcyjny, 35 kontroli tras/szerokości (360, 390, 600, 768, 1440 px), bez poziomego overflow i błędów JS. Zewnętrzne odtwarzanie YouTube nie było testowane.
 
 Zwiastuny w opisie: responsywne proporcje 16:9, podpisani autorzy, link awaryjny do YouTube, domyślne napisy PL, ładowanie lazy i brak autoplay. Dotychczasowe adresy `#trailer/...` nadal działają.
+
+## Sezonowe zwiastuny i automatyczny postęp
+
+Zakładki sezonów wybierają pasujący zwiastun; bez zweryfikowanego polskiego materiału odtwarzacz jest ukryty (także piloty/shorts). Helluva Boss ma oddzielne polskie fanduby zwiastunów S2 i S3 część 1; S1 nie podmienia się już na S2.
+
+Odcinki YouTube mają lokalny pomiar przez oficjalne IFrame API: zapis pozycji co sekundę oraz przy pauzie/wyjściu, automatyczne wznawianie zapisanej pozycji, czas oglądania przy odcinku i na karcie oraz podsumowanie z podziałem na materiały na stronie głównej. Poszczególne wersje wideo mają osobny zapis, bo mogą mieć inny montaż. Napisy/audio, ręczne oznaczenia i ulubione nadal działają. Zwiastuny nie są wliczane do czasu odcinków.
+
+Własny player zapisuje również postęp lokalnych plików; po powrocie trzeba ponownie wskazać ten sam plik. Filmy ani historia nie trafiają do naszego serwera. Czyszczenie danych witryny usuwa historię. Pomiar to przybliżony czas faktycznego odtwarzania, nie ilość unikalnych minut treści. Nie zliczamy skoków, pauzy ani buforowania. Blokada API/pamięci, uśpienie karty i nagłe zamknięcie mogą ograniczyć dokładność. Zewnętrzne odtwarzanie w Prime Video/YouTube poza RejStream nie jest mierzone.
+
+Walidacja zapisu postępu: 54 testy Vitest (w tym symulowane API YouTube i ponowne wskazanie lokalnego pliku), build, 20 kontroli tras/szerokości. Przeglądarkowa symulacja API potwierdziła zapis, podsumowanie i wznowienie pozycji 121,375 s po reloadzie. Rzeczywistej transmisji/API YouTube nie potwierdzono z powodu ograniczeń sieci sandboxa.

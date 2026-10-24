@@ -3570,3 +3570,49 @@ footer button svg {
     font-size: 10px;
   }
 }
+
+.watch-progress {
+  color: #d2c3e4;
+  border-left: 3px solid #a28cff;
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.8;
+  background: #a28cff0c;
+}
+.local-progress {
+  border: 1px solid #ffffff16;
+  border-radius: 12px;
+  margin: 24px 34px;
+  padding: 22px;
+}
+.local-progress p,
+.local-progress li {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.local-progress ul {
+  padding: 0;
+  list-style: none;
+}
+.local-progress li {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  border-top: 1px solid #ffffff0d;
+  padding: 7px 0;
+  overflow-wrap: anywhere;
+}
+.local-progress b {
+  color: #e7d9f2;
+}
+@media (max-width: 480px) {
+  .watch-progress {
+    margin: 12px 20px;
+    font-size: 11px;
+  }
+  .local-progress {
+    margin: 20px;
+    padding: 16px;
+  }
+}
