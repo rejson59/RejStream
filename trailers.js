@@ -25,6 +25,27 @@ export const trailers = {
     duration: "1:13",
   },
 };
+// No cross-season fallback: an unverified/missing trailer is intentionally hidden.
+export const seasonTrailers = {
+  circus: { 1: trailers.circus },
+  drones: { 1: trailers.drones },
+  helluva: {
+    2: trailers.helluva,
+    3: {
+      id: "qhE0XE__ZD0",
+      title: "Zwiastun sezonu 3, część 1 · polski fandub",
+      creator: "VOX record",
+      channel: "https://www.youtube.com/@VOXrecord",
+      kind: "fandub",
+      duration: "2:11",
+    },
+  },
+};
+export function seasonTrailer(show, season) {
+  return season === undefined
+    ? trailers[show]
+    : seasonTrailers[show]?.[String(season)];
+}
 export function embedURL(id, subtitles = "pl") {
   const params = new URLSearchParams({ rel: "0", hl: "pl" });
   if (subtitles) {

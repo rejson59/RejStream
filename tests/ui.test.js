@@ -231,6 +231,7 @@ it("embeds the Polish trailer immediately below each series description, not a n
     ["drones", "TvayzJG0BS8"],
   ]) {
     await navigate(`series/${show}`);
+    if (show === "helluva") document.querySelector('[data-season="2"]').click();
     const figure = document.querySelector(
       ".series-description + .inline-trailer",
     );
@@ -293,4 +294,49 @@ it("uses the original vector brand mark in navigation and footer", () => {
   expect(
     document.querySelector(".mobile-brand").getAttribute("aria-label"),
   ).toContain("RejStream");
+});
+
+it("changes the inline trailer with the selected season and hides absent trailers", async () => {
+  await navigate("series/helluva");
+  document.querySelector('[data-season="2"]').click();
+  expect(document.querySelector(".inline-trailer iframe").src).toContain(
+    "DUD6S1XBVUI",
+  );
+  document.querySelector('[data-season="3"]').click();
+  expect(document.querySelector(".inline-trailer iframe").src).toContain(
+    "qhE0XE__ZD0",
+  );
+  for (const season of ["1", "shorts", "special"]) {
+    document.querySelector(`[data-season="${season}"]`).click();
+    expect(document.querySelector(".inline-trailer")).toBeNull();
+  }
+});
+it("starts an upload at its own saved second and reports per-episode progress", async () => {
+  localStorage.setItem(
+    "rej-playback-v1",
+    JSON.stringify({
+      "youtube:circus:1:1:HwAPLk_sQ3w": {
+        episode: "circus:1:1",
+        label: "Circus — Pilot",
+        position: 83.75,
+        seconds: 62,
+        duration: 1500,
+        updated: Date.now(),
+      },
+    }),
+  );
+  await navigate("watch/circus/1/1");
+  const url = new URL(document.querySelector("#episode-player").src);
+  expect(url.searchParams.get("start")).toBe("83");
+  expect(url.searchParams.get("enablejsapi")).toBe("1");
+  expect(document.querySelector("#watch-progress").textContent).toContain(
+    "1:23",
+  );
+  await navigate("home");
+  expect(document.querySelector(".local-progress").textContent).toContain(
+    "1 min 2 s",
+  );
+  expect(document.querySelector(".local-progress").textContent).toContain(
+    "Circus — Pilot",
+  );
 });
