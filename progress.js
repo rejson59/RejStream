@@ -140,20 +140,89 @@ export function loadYouTubeAPI() {
   });
   return apiPromise;
 }
+// Caption-track requests are best effort: YouTube does not guarantee a public
+// language-selection API on every embed. Never report success without a readback.
+export function captionPreference(
+  getPlayer,
+  report = () => {},
+  initial = "pl",
+) {
+  let language = initial,
+    attempts = 0;
+  function apply() {
+    const player = getPlayer();
+    if (!player || !language) {
+      report("Ustawienia napisów w odtwarzaczu YouTube.");
+      return;
+    }
+    try {
+      const actual = player.getOption?.("captions", "track");
+      if (actual?.languageCode?.split("-")[0] === language) {
+        report(
+          `Napisy ${language.toUpperCase()} · potwierdzone przez odtwarzacz.`,
+        );
+        return;
+      }
+      if (attempts >= 4) return;
+      attempts++;
+      player.loadModule?.("captions");
+      player.setOption?.("captions", "track", { languageCode: language });
+      const selected = player.getOption?.("captions", "track");
+      report(
+        selected?.languageCode?.split("-")[0] === language
+          ? `Napisy ${language.toUpperCase()} · potwierdzone przez odtwarzacz.`
+          : `Wybrano preferencję ${language.toUpperCase()}. Jeśli YouTube nadal pokazuje inny język, wybierz ⚙ → Napisy → Polski (lub tłumaczenie automatyczne). Brak gwarancji dostępności.`,
+      );
+    } catch {
+      report(
+        "YouTube nie udostępnił sterowania napisami. Wybierz ⚙ → Napisy → Polski.",
+      );
+    }
+  }
+  return {
+    apply,
+    set(value) {
+      language = value;
+      attempts = 0;
+      apply();
+    },
+  };
+}
 export function trackYouTube(
   frame,
   key,
   metadata,
-  { api = loadYouTubeAPI, onChange, onUnavailable = () => {} } = {},
+  {
+    api = loadYouTubeAPI,
+    onChange,
+    onUnavailable = () => {},
+    subtitles = "pl",
+    onCaptions = () => {},
+    onStatus = () => {},
+  } = {},
 ) {
   let disposed = false,
     player,
     timer,
-    playing = false;
-  const tracker = createProgress(key, metadata, { onChange });
+    watchdog,
+    playing = false,
+    failed = false,
+    resumed = false;
+  const captions = captionPreference(() => player, onCaptions, subtitles);
+  const tracker = key ? createProgress(key, metadata, { onChange }) : null;
+  const saved = key ? position(key) : 0;
+  const slow = () => {
+    clearTimeout(watchdog);
+    watchdog = setTimeout(() => {
+      if (!disposed) onStatus("slow");
+    }, 12000);
+  };
+  onStatus("loading");
+  slow();
   const sample = (ended) => {
+    if (failed) return;
     try {
-      if (player?.getCurrentTime)
+      if (tracker && player?.getCurrentTime)
         tracker.sample({
           time: player.getCurrentTime(),
           duration: player.getDuration(),
@@ -162,9 +231,21 @@ export function trackYouTube(
           ended: !!ended,
         });
     } catch {
-      /* A removed or blocked iframe may not respond. */
+      /* Removed/blocked iframe. */
     }
   };
+  function resumeOnce() {
+    if (resumed || !saved || !player?.getDuration?.()) return;
+    resumed = true;
+    // start= already positions the embed. A second seek during onReady can
+    // interrupt decoding and produce a black frame. Only correct real drift,
+    // once the video is cued/playing, never on every state transition.
+    if (
+      saved < player.getDuration() &&
+      Math.abs(player.getCurrentTime() - saved) > 1.5
+    )
+      player.seekTo(saved, true);
+  }
   const pagehide = () => sample(false);
   window.addEventListener("pagehide", pagehide);
   api()
@@ -175,31 +256,60 @@ export function trackYouTube(
           onReady(event) {
             if (disposed) return;
             player = event.target;
-            const saved = position(key),
-              duration = player.getDuration();
-            if (saved > 0 && (!duration || saved < duration))
-              player.seekTo(saved, true);
-            timer = setInterval(() => sample(false), 1000);
+            clearTimeout(watchdog);
+            onStatus("ready");
+            captions.apply();
+            if (tracker) timer = setInterval(() => sample(false), 1000);
+          },
+          onApiChange() {
+            if (!disposed) captions.apply();
           },
           onStateChange(event) {
             if (disposed) return;
             playing = event.data === 1;
+            if ([1, 5].includes(event.data)) resumeOnce();
+            if (playing) captions.apply();
+            if (event.data === 3) {
+              onStatus("buffering");
+              slow();
+            } else {
+              clearTimeout(watchdog);
+              onStatus(playing ? "playing" : "ready");
+            }
             sample(event.data === 0);
           },
           onError() {
-            if (!disposed) onUnavailable();
+            if (!disposed) {
+              failed = true;
+              playing = false;
+              clearInterval(timer);
+              clearTimeout(watchdog);
+              onStatus("error");
+              onUnavailable();
+            }
           },
         },
       });
     })
     .catch(() => {
-      if (!disposed) onUnavailable();
+      if (!disposed) {
+        clearTimeout(watchdog);
+        onStatus("error");
+        onUnavailable();
+      }
     });
-  return () => {
+  const stop = () => {
     sample(false);
     disposed = true;
     clearInterval(timer);
+    clearTimeout(watchdog);
     window.removeEventListener("pagehide", pagehide);
-    player?.destroy?.();
+    try {
+      player?.destroy?.();
+    } catch {
+      /* Already removed. */
+    }
   };
+  stop.setSubtitles = (value) => captions.set(value);
+  return stop;
 }

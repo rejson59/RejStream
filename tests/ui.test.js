@@ -211,11 +211,8 @@ it("defaults captions to Polish even on official multi-audio uploads", async () 
   expect(url.searchParams.get("cc_lang_pref")).toBe("pl");
   document.querySelector("#subs").value = "";
   document.querySelector("#subs").dispatchEvent(new Event("change"));
-  expect(
-    new URL(document.querySelector("iframe").src).searchParams.has(
-      "cc_load_policy",
-    ),
-  ).toBe(false);
+  expect(document.querySelector("iframe").src).toBe(url.href);
+  expect(document.querySelector("#subs").value).toBe("");
 });
 it("resets legacy English preference once for the new Polish-first defaults", async () => {
   localStorage.setItem("rej-prefer-polish", "false");
@@ -280,9 +277,11 @@ it("opens all three Polish-dubbed trailer uploads without polluting viewing hist
     );
   }
   expect(localStorage.getItem("rej-recent")).toBe(recent);
+  const frame = document.querySelector("iframe");
   document.querySelector("#subs").value = "en";
   document.querySelector("#subs").dispatchEvent(new Event("change"));
-  expect(document.querySelector("iframe").src).toContain("cc_lang_pref=en");
+  expect(document.querySelector("iframe")).toBe(frame);
+  expect(document.querySelector("#subs").value).toBe("en");
   await navigate("series/drones");
   expect(document.querySelector(".trailer-section")).toBeNull();
   expect(document.querySelectorAll(".inline-trailer iframe")).toHaveLength(1);
@@ -339,4 +338,47 @@ it("starts an upload at its own saved second and reports per-episode progress", 
   expect(document.querySelector(".local-progress").textContent).toContain(
     "Circus — Pilot",
   );
+});
+
+it("renders a position bar and timestamp instead of cumulative watched text", async () => {
+  await navigate("series/circus");
+  const card = document.querySelector('[data-episode="circus:1:1"]');
+  expect(card.querySelector(".position-progress progress").value).toBe(83.75);
+  expect(card.querySelector(".position-time").textContent).toBe("1:23");
+  expect(card.textContent).not.toContain("Widziano");
+  await navigate("watch/circus/1/1");
+  expect(document.querySelector("#watch-progress progress").max).toBe(1500);
+});
+it("applies subtitle choices through the API without replacing the iframe or its playback time", async () => {
+  let events,
+    track = { languageCode: "en" };
+  const player = {
+    getDuration: () => 1500,
+    getCurrentTime: () => 83,
+    getPlaybackRate: () => 1,
+    getOption: () => track,
+    loadModule: vi.fn(),
+    setOption: vi.fn((m, o, v) => {
+      track = v;
+    }),
+    destroy: vi.fn(),
+  };
+  window.YT = {
+    Player: function (frame, options) {
+      events = options.events;
+      return player;
+    },
+  };
+  await navigate("watch/circus/1/2");
+  events.onReady({ target: player });
+  expect(track.languageCode).toBe("pl");
+  const frame = document.querySelector("#episode-player");
+  document.querySelector("#subs").value = "en";
+  document.querySelector("#subs").dispatchEvent(new Event("change"));
+  expect(track.languageCode).toBe("en");
+  expect(document.querySelector("#episode-player")).toBe(frame);
+  expect(player.destroy).not.toHaveBeenCalled();
+  await navigate("local");
+  expect(player.destroy).toHaveBeenCalledOnce();
+  delete window.YT;
 });

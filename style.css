@@ -3616,3 +3616,71 @@ footer button svg {
     padding: 16px;
   }
 }
+
+.position-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 430px;
+}
+.position-progress progress {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  flex: 1;
+  min-width: 40px;
+  height: 5px;
+  background: #ffffff16;
+  accent-color: #ad8cff;
+}
+.position-progress progress::-webkit-progress-bar {
+  background: #ffffff16;
+  border-radius: 8px;
+}
+.position-progress progress::-webkit-progress-value {
+  background: linear-gradient(90deg, #ff4a63, #ad8cff);
+  border-radius: 8px;
+}
+.position-progress progress::-moz-progress-bar {
+  background: #ad8cff;
+  border-radius: 8px;
+}
+.position-time {
+  color: #d9c9e8;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.episode-foot:has(.position-progress) {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+}
+.player-health {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #b4a5c2;
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 12px 0;
+}
+.player-health button[hidden] {
+  display: none;
+}
+.caption-status {
+  font-size: 12px;
+  color: #b4a5c2;
+  line-height: 1.8;
+}
+@media (max-width: 480px) {
+  .player-health,
+  .caption-status {
+    margin: 8px 20px;
+    font-size: 11px;
+  }
+}

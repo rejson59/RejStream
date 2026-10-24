@@ -47,7 +47,14 @@ export function seasonTrailer(show, season) {
     : seasonTrailers[show]?.[String(season)];
 }
 export function embedURL(id, subtitles = "pl") {
-  const params = new URLSearchParams({ rel: "0", hl: "pl" });
+  const params = new URLSearchParams({
+    rel: "0",
+    hl: "pl",
+    enablejsapi: "1",
+    playsinline: "1",
+  });
+  if (typeof location !== "undefined" && /^https?:$/.test(location.protocol))
+    params.set("origin", location.origin);
   if (subtitles) {
     params.set("cc_load_policy", "1");
     params.set("cc_lang_pref", subtitles);
