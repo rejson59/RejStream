@@ -43,7 +43,7 @@ Własny player HTML5 pozostaje w sekcji „Mój player” / „Własny odtwarzac
 
 ## Walidacja
 
-- `npm test`: 35 testów danych i interfejsu (Vitest/jsdom).
+- `npm test`: 40 testów danych i interfejsu (Vitest/jsdom).
 - `npm run build`: statyczne zasoby w `dist/` (ignorowane przez Git).
 - Test przeglądarkowy Chromium/Playwright w sandboxie: 24 kombinacje tras i szerokości, sortowanie, siatka, ulubione po reloadzie, kolejka, następny odcinek, ręczne obejrzane, import SRT, błąd lokalnego wideo i sprzątanie po opuszczeniu playera. Brak błędów JS.
 - Po uzupełnieniu audio: 40 kombinacji tras/szerokości; wybór polskiego materiału i alternatywnego fandubu, zapamiętywanie preferencji, następny odcinek, lektor, luki, ograniczenie wieku, filtrowanie i sortowanie. Brak błędów JS i poziomego overflow.
@@ -54,3 +54,13 @@ Własny player HTML5 pozostaje w sekcji „Mój player” / „Własny odtwarzac
 Workflow `.github/workflows/pages.yml`: testy i build w PR, a po scaleniu do `main` również publikacja GitHub Pages. Źródło Pages: **GitHub Actions**. Bez backendu, Supabase i rehostingu filmów.
 
 Więcej o źródłach i prawach: [SOURCES.md](SOURCES.md).
+
+## Polski od startu, logo i zwiastuny
+
+Polskie napisy są teraz domyślnie włączane (jeśli źródło je udostępnia), a znalezione polskie materiały wybierane w pierwszej kolejności. Starsza preferencja oryginału nie blokuje nowych ustawień PL; późniejsze ręczne zmiany nadal są respektowane. `hl=pl` ustawia język interfejsu YouTube, nie ścieżkę audio. Dla oficjalnych wielościeżkowych odcinków automatyczny wybór dubbingu nadal zależy od YouTube.
+
+Każdy serial ma przycisk **Zwiastun PL** na stronie szczegółów i w hero strony głównej. Zwiastuny otwierają osobne polskie uploady: dwa od twórców oficjalnego dubbingu GLITCH i fanowski zwiastun sezonu 2 Helluva Boss. Podpisani autorzy, źródło, domyślne polskie napisy, powrót do odcinków; bez autoplay i bez dopisywania do historii odcinków.
+
+Własny wektorowy znak R/play jest w `public/rejstream-mark.svg`, na pasku bocznym, w mobilnym nagłówku, stopce i faviconie. Skaluje się bez utraty ostrości.
+
+Walidacja tej aktualizacji: 40 testów Vitest, build produkcyjny, 35 kontroli tras/szerokości (360, 390, 600, 768, 1440 px), bez poziomego overflow i błędów JS. Zewnętrzne odtwarzanie YouTube nie było testowane.
