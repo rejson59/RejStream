@@ -1,7 +1,7 @@
 name: Deploy RejStream to GitHub Pages
 on:
   push:
-    branches: [arena/72c23322-rejstream]
+    branches: [main, arena/72c23322-rejstream]
   workflow_dispatch:
 permissions:
   contents: read

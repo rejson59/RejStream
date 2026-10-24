@@ -24,7 +24,7 @@ npm run dev
 
 ## Publikacja
 
-Workflow `.github/workflows/pages.yml` buduje i publikuje stronę z gałęzi `arena/72c23322-rejstream`. W repozytorium GitHub Pages musi mieć ustawione źródło **GitHub Actions**. Ścieżki zasobów są względne, dzięki czemu aplikacja działa pod `/RejStream/`.
+Workflow `.github/workflows/pages.yml` buduje i publikuje stronę po scaleniu do `main` (obsługuje również gałąź roboczą `arena/72c23322-rejstream`, jeśli reguły środowiska na to pozwalają). W repozytorium GitHub Pages musi mieć ustawione źródło **GitHub Actions**. Ścieżki zasobów są względne, dzięki czemu aplikacja działa pod `/RejStream/`.
 
 ## Prawa
 
