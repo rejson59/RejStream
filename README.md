@@ -1,10 +1,6 @@
 # RejStream
 
-Responsywna platforma odkrywania niezależnej animacji. Polski interfejs, Vite + JavaScript + Lucide.
-
-## Uruchomienie
-
-Wymagany Node.js 22+.
+Polskojęzyczny katalog niezależnej animacji z osobnymi stronami seriali, sezonów oraz ekranem oglądania. Vite + JavaScript + Lucide. Node.js 22.12+.
 
 ```sh
 npm ci
@@ -13,31 +9,40 @@ npm test
 npm run build
 ```
 
-`npm run preview` udostępnia kompilację. `dist/` nie trafia do Git.
+`npm run preview` udostępnia kompilację. Vite nasłuchuje na 0.0.0.0 i obsługuje host podglądu Arena. `base: './'` pozwala publikować pod `/RejStream/`. Routing przez hash działa na GitHub Pages bez reguł serwera.
 
 ## Biblioteka
 
-- Helluva Boss: pełne sezony 1 (8 odcinków) i 2 (12 odcinków), wybór sezonu, dwa piloty i trzy wybrane shorts.
-- Sezon 3: pięć wpisów z odnośnikiem do Prime Video, nie darmowe osadzenia. Katalog nie jest automatycznie aktualizowany.
-- Dwa znalezione polskie fanduby: pilot 2019 oraz pierwszy odcinek S1. Brak fikcyjnych ścieżek językowych dla pozostałych odcinków.
-- Piloty The Amazing Digital Circus oraz Murder Drones, nie całe seriale.
-- Big Buck Bunny: cały film na CC BY 3.0 we własnym playerze, ze wskazaniem autora i warunków licencji.
-- Łączone filtry, wyszukiwanie w wybranym sezonie i lokalna lista Helluva Boss.
+- **The Amazing Digital Circus** — 1 sezon, wszystkie 9 odcinków z oficjalnej playlisty GLITCH, pilot jako odcinek 1. Tytuły, numeracja i linki sprawdzone 25.10.2026.
+- **Helluva Boss** — pełne sezony 1 (8 odcinków) i 2 (12 odcinków), osobno dwa piloty i trzy wybrane shorts. Sezon 3: pięć wpisów z linkiem do Prime Video, nie darmowe osadzenia ani pełny sezon.
+- **Murder Drones** — wybrany pilot, z wyraźnym oznaczeniem niepełnej kolekcji.
+- Usunięto Big Buck Bunny z aktywnego katalogu.
 
-## Własny player
+## UX i funkcje
 
-`native-player.js` używa elementu HTML5 video i własnych kontrolek: play/pause, ±10 sekund, seek, głośność, mute, prędkość i fullscreen. Obsługuje lokalne VTT/SRT (do 5 MB na plik), wybór wielu ścieżek napisów, lokalne wideo bez wysyłania na serwer i zapisywanie pozycji Big Buck Bunny w localStorage. Obsługa błędów źródła/kodeka; sprzątanie listenerów i blob URL po zamknięciu.
+- Start → seriale → szczegóły serialu → sezony → ekran oglądania z kolejką odcinków, poprzednim/następnym odcinkiem i linkiem do źródła.
+- Wyszukiwanie seriali w katalogu i odcinków na stronie wybranego serialu. Zmiana kontekstu czyści frazę, więc nazwa serialu nie filtruje przypadkowo jego odcinków.
+- Sortowanie seriali: polecane, A–Z, Z–A; odcinki od pierwszego lub ostatniego. Widok listy i siatki.
+- Moja lista dla każdego serialu; migracja poprzedniej listy Helluva Boss. Ręczne oznaczenie obejrzanych (bez przeładowywania odtwarzacza), ostatnio otwarty odcinek. Dane w localStorage, bez konta.
+- Telefon: dolna nawigacja, zwijana wyszukiwarka, przewijane zakładki sezonów, kolejka pod playerem. Testowano szerokości 360, 390, 768 i 1440 px bez poziomego overflow.
+- Fonty DM Sans i Barlow Condensed przechowywane lokalnie przez Fontsource, bez żądań do Google Fonts. Obrazki źródłowe mają gradientowy fallback na wypadek blokady sieci.
+- Dostępność: skip link, etykiety ikon, aria-current / aria-pressed, fokus w panelach informacyjnych, Escape, skrót `/`, reduced-motion.
 
-Język lokalnego dubbingu zależy od wybranego pliku; nie ma automatycznego pobierania ani dekodowania wszystkich ścieżek MKV. YouTube pozostaje wyłącznie w legalnych osadzeniach produkcji, dla których nie mamy licencji na rehosting. Polskie i angielskie napisy są tam preferencją odtwarzacza, nie gwarancją ich istnienia.
+## Audio i napisy
 
-## Testy i ograniczenia
+Oficjalne produkcje korzystają z osadzeń YouTube. Ścieżki audio wybiera się w ustawieniach źródłowego playera. Nie udajemy, że API osadzenia udostępnia pełną listę języków: nie pobieramy jej i nie gwarantujemy tych samych ścieżek w każdym odcinku/regionie. Preferencje napisów PL/EN nie gwarantują ich obecności. Znalezione polskie fanduby HB (pilot 2019 i S1E1) mają osobne, wyraźnie nieoficjalne źródła.
 
-`npm test`: testy danych, konwersji napisów i interfejsu (Vitest + jsdom). Nie są to testy dekodowania filmu ani odtwarzania w rzeczywistej przeglądarce. Pobranie Chromium w środowisku roboczym jest blokowane przez ograniczenia sieci. Zewnętrzny mirror i YouTube wymagają testu z przeglądarki użytkownika; źródła mogą mieć blokady regionalne/wiekowe. Player zawiera komunikaty błędów i odnośniki źródłowe.
+Własny player HTML5 pozostaje w sekcji „Mój player” / „Własny odtwarzacz”: lokalne pliki wideo, SRT/VTT, wiele plików napisów, ±10 s, seek, tempo, głośność i fullscreen. Żaden lokalny plik nie jest wysyłany na serwer. Obsługa kodeków zależy od przeglądarki; oddzielny dubbing wymaga pliku wideo z tą wersją audio.
 
-Bez backendu, kont, Supabase ani uploadu filmów. Pliki zewnętrzne nie są kopiowane do Git. Zasoby zewnętrzne: miniatury YouTube, Google Fonts (z fontami awaryjnymi), mirror filmu CC BY.
+## Walidacja
 
-## Publikacja
+- `npm test`: 22 testy danych i interfejsu (Vitest/jsdom).
+- `npm run build`: statyczne zasoby w `dist/` (ignorowane przez Git).
+- Test przeglądarkowy Chromium/Playwright w sandboxie: 24 kombinacje tras i szerokości, sortowanie, siatka, ulubione po reloadzie, kolejka, następny odcinek, ręczne obejrzane, import SRT, błąd lokalnego wideo i sprzątanie po opuszczeniu playera. Brak błędów JS.
+- Test przeglądarkowy dotyczy naszej aplikacji. Zewnętrzne transmisje YouTube i obrazki mają blokadę sieci w sandboxie; nie potwierdza to dekodowania ani dostępności reklam/audio/napisów w regionie użytkownika. Miniatury przy blokadzie mają zaprojektowane zastępstwo.
 
-Workflow `.github/workflows/pages.yml` testuje PR, a po scaleniu do `main` testuje, buduje i wdraża na GitHub Pages. Źródło Pages: **GitHub Actions**. Ścieżki względne pozwalają działać pod `/RejStream/`.
+## Wdrożenie
 
-Szczegóły źródeł, języków i praw: [SOURCES.md](SOURCES.md).
+Workflow `.github/workflows/pages.yml`: testy i build w PR, a po scaleniu do `main` również publikacja GitHub Pages. Źródło Pages: **GitHub Actions**. Bez backendu, Supabase i rehostingu filmów.
+
+Więcej o źródłach i prawach: [SOURCES.md](SOURCES.md).
