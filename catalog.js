@@ -1,3 +1,4 @@
+import { addPolishAudio, polishKind } from "./polish-audio.js";
 // Sources and verification notes: SOURCES.md. Null IDs deliberately mean external-only.
 const episode = (season, number, title, id, minutes, desc, pl) => ({
   season,
@@ -352,7 +353,7 @@ export const series = [
       { key: "1", label: "Sezon 1", note: "9 odcinków · od pilota do finału" },
     ],
     languageNote:
-      "Wersje językowe, w tym polską, wybierzesz w ustawieniach YouTube → Ścieżka dźwiękowa. Napisy: Ustawienia → Napisy. Dostępność może różnić się między odcinkami i regionami.",
+      "Wszystkie 9 odcinków ma oficjalny polski dubbing GLITCH. Wybierz Ustawienia → Ścieżka dźwiękowa → Polski w odtwarzaczu. RejStream nie może automatycznie przełączać ścieżek YouTube. Jeżeli opcji nie widać w osadzeniu, otwórz materiał w YouTube. Napisy włączysz osobno; dostępność zależy od źródła i regionu.",
     channel: "https://www.youtube.com/@GLITCH",
     complete: true,
   },
@@ -388,7 +389,7 @@ export const series = [
       },
     ],
     languageNote:
-      "Znalezione polskie fanduby: pilot 2019 i S1E1. To wersje nieoficjalne, nie dubbing całego serialu. Pozostałe ścieżki i napisy zależą od źródła.",
+      "Pełne fanduby: sezon 1, dziewięć odcinków sezonu 2, pilot 2019 i trzy shorts z katalogu. S2E2 ma polskiego lektora, nie dubbing. Nie znaleziono pełnego, dostępnego fandubu S2E6, S2E12 ani Mission: Zero. Sezon 3: języki sprawdź w Prime Video. Fanduby są nieoficjalne; autorzy i odnośniki widoczni przy odcinku.",
     channel: "https://www.youtube.com/@SpindleHorse",
   },
   {
@@ -425,10 +426,12 @@ export const series = [
       },
     ],
     languageNote:
-      "Ścieżki audio i napisy udostępnia autor w ustawieniach odtwarzacza. Nie potwierdzamy polskiego dubbingu dla tego wpisu.",
+      "Pilot ma oficjalny polski dubbing na kanale GLITCH, z udziałem BruDolina Studios. W odtwarzaczu wybierz Ustawienia → Ścieżka dźwiękowa → Polski. RejStream nie może automatycznie przełączać ścieżek YouTube. Jeżeli opcji nie widać w osadzeniu, otwórz materiał w YouTube.",
     channel: "https://www.youtube.com/@GLITCH",
   },
 ];
+addPolishAudio(series);
+
 export function getSeries(key) {
   return series.find((s) => s.key === key);
 }
@@ -450,7 +453,8 @@ export function libraryEpisodes(
     (e) =>
       String(e.season) === String(season) &&
       e.title.toLocaleLowerCase("pl").includes(query.toLocaleLowerCase("pl")) &&
-      (language !== "fandub" || !!e.pl) &&
+      (language !== "fandub" || polishKind(e) === "fandub") &&
+      (language !== "polish" || polishKind(e) !== "missing") &&
       (!watchedOnly || watched.includes(episodeKey(show.key, e))),
   );
   return result.sort((a, b) =>

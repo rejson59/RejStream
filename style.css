@@ -3356,3 +3356,64 @@ footer button svg {
     top: 30%;
   }
 }
+
+/* Explicit Polish-audio coverage and creator attribution. */
+.polish-notice {
+  margin: 18px 0 12px;
+  padding: 16px 18px;
+  border: 1px solid #496245;
+  border-radius: 12px;
+  background: #18231d;
+  color: #d1e9d7;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.polish-notice p {
+  margin: 7px 0 0;
+}
+.polish-notice.missing,
+.polish-notice.lektor {
+  background: #282219;
+  border-color: #695334;
+  color: #ead9b5;
+}
+.polish-notice a,
+.audio-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.audio-credit {
+  margin: 12px 0 18px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.audio-credit small {
+  display: block;
+  margin-top: 8px;
+}
+.pl-label.pl-missing {
+  background: #292725;
+  color: #bbb5aa;
+}
+.playback-options label {
+  min-width: 0;
+}
+.playback-options select {
+  width: 100%;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+@media (max-width: 480px) {
+  .polish-notice {
+    margin: 18px 20px 12px;
+    padding: 14px;
+    font-size: 12px;
+  }
+  .audio-credit {
+    margin: 12px 20px 18px;
+    font-size: 11px;
+  }
+}

@@ -122,3 +122,82 @@ it("handles unknown routes and unknown episodes gracefully", async () => {
   await navigate("unknown");
   expect(document.querySelector(".empty-state")).not.toBeNull();
 });
+
+it("defaults to credited Polish material and remembers an explicit original preference", async () => {
+  localStorage.removeItem("rej-prefer-polish");
+  await navigate("watch/helluva/1/2");
+  expect(document.querySelector("#audio").value).toBe("pl");
+  expect(document.querySelector("iframe").src).toContain("jamGQ6oBo4w");
+  expect(document.querySelector("#audio-credit a").href).toContain(
+    "@BruDolinaStudios",
+  );
+  const audio = document.querySelector("#audio");
+  audio.value = "original";
+  audio.dispatchEvent(new Event("change"));
+  expect(document.querySelector("#playback-source").textContent).toContain(
+    "SpindleHorse",
+  );
+  await navigate("watch/helluva/1/3");
+  expect(document.querySelector("#audio").value).toBe("original");
+  document.querySelector("#audio").value = "pl";
+  document.querySelector("#audio").dispatchEvent(new Event("change"));
+  await navigate("watch/helluva/1/4");
+  expect(document.querySelector("#audio").value).toBe("pl");
+  expect(document.querySelector("iframe").src).toContain("F-MT37XoLyM");
+});
+it("lets the viewer choose an alternate credited Polish fandub", async () => {
+  await navigate("watch/helluva/1/1");
+  const audio = document.querySelector("#audio");
+  audio.value = "pl:QxXceYy-tbw";
+  audio.dispatchEvent(new Event("change"));
+  expect(document.querySelector("iframe").src).toContain("QxXceYy-tbw");
+  expect(document.querySelector("#playback-source").textContent).toContain(
+    "BruDolina",
+  );
+  expect(document.querySelector("#youtube-link").href).toContain("QxXceYy-tbw");
+});
+it("labels lektor separately and gives genuine gaps no Polish source option", async () => {
+  await navigate("watch/helluva/2/2");
+  expect(document.querySelector(".polish-notice.lektor")).not.toBeNull();
+  expect(
+    document.querySelector('#audio option[value="pl"]').textContent,
+  ).toContain("lektor (nie dubbing)");
+  expect(document.querySelector("#playback-source").textContent).toContain(
+    "Keisuken",
+  );
+  expect(document.querySelector("iframe").src).toContain("9YvbfmfQTSY");
+  await navigate("watch/helluva/2/12");
+  expect(document.querySelector(".polish-notice.missing")).not.toBeNull();
+  expect(document.querySelector('#audio option[value="pl"]')).toBeNull();
+  expect(document.querySelector(".polish-notice a").href).toContain(
+    "primevideo.com",
+  );
+});
+it("shows age-restricted Polish audio as an external link with original fallback", async () => {
+  await navigate("watch/helluva/2/1");
+  expect(document.querySelector("iframe")).toBeNull();
+  expect(document.querySelector(".external-player a").href).toContain(
+    "SL6o757ljFM",
+  );
+  expect(document.querySelector(".external-player").textContent).toContain(
+    "ograniczenie wieku",
+  );
+  document.querySelector("#audio").value = "original";
+  document.querySelector("#audio").dispatchEvent(new Event("change"));
+  expect(document.querySelector("iframe")).not.toBeNull();
+});
+it("explains official Polish audio without claiming to control YouTube tracks", async () => {
+  await navigate("watch/drones/1/1");
+  expect(
+    document.querySelector(".polish-notice.official").textContent,
+  ).toContain("nie przełącza tej ścieżki automatycznie");
+  expect(document.querySelectorAll("#audio option")).toHaveLength(1);
+  expect(document.querySelector("iframe").src).toContain("mImFz8mkaHo");
+  await navigate("series/circus");
+  expect(document.querySelectorAll(".pl-label")).toHaveLength(9);
+  const filter = document.querySelector("#audio-filter");
+  filter.value = "polish";
+  filter.dispatchEvent(new Event("change"));
+  expect(document.querySelectorAll("[data-episode]")).toHaveLength(9);
+  expect(document.querySelector("#audio-filter").value).toBe("polish");
+});
