@@ -1,46 +1,461 @@
-import {createIcons, Play, House, Clapperboard, Film, Bookmark, CircleHelp, ChevronsUpDown, Search, Bell, Flame, Star, Plus, Check, Info, AudioLines, Captions, Languages, ShieldCheck, ArrowUpRight, Orbit, X, ArrowRight} from 'lucide';
-const icons={Play,House,Clapperboard,Film,Bookmark,CircleHelp,ChevronsUpDown,Search,Bell,Flame,Star,Plus,Check,Info,AudioLines,Captions,Languages,ShieldCheck,ArrowUpRight,Orbit,X,ArrowRight};
-import './style.css';
-import {helluvaEpisodes, extras, selectEpisodes, escapeHTML} from './catalog.js';
-import {mountNativePlayer} from './native-player.js';
-const icon=(name,cls='')=>`<i data-lucide="${name}" class="${cls}"></i>`;
-const eps=helluvaEpisodes;
-let season='1',activeFilter='all',disposePlayer=null;
-let saved=localStorage.getItem('rej-saved')==='true', tab='home',query='',current=0,lang='en';
-const app=document.querySelector('#app');
-app.innerHTML=`<aside class="sidebar"><a class="brand" href="#" aria-label="RejStream — start"><span class="brand-icon">${icon('play')}</span>rej<span>stream</span><b>•</b></a><div class="nav-label">ODKRYWAJ</div><nav><button data-nav="home" class="active">${icon('house')}<span>Strona główna</span></button><button data-nav="series">${icon('clapperboard')}<span>Seriale</span><small>3</small></button><button data-nav="movies">${icon('film')}<span>Filmy</span></button><button data-nav="saved">${icon('bookmark')}<span>Moja lista</span><small id="list-count">${saved?1:0}</small></button></nav><div class="sidebar-bottom"><div class="small-promo"><span class="live-dot"></span> Małe studio. Wielkie historie.<p>Odkryj świat niezależnej animacji.</p></div><button id="local-player">${icon('film')}Otwórz własny plik</button><button id="help">${icon('circle-help')}Pomoc i informacje</button><div class="profile"><div class="avatar">R</div><div>Twój profil<small>Miło Cię widzieć!</small></div>${icon('chevrons-up-down')}</div></div></aside><main><header><div class="breadcrumb">Odkrywaj <span>/</span> <b id="crumb">Strona główna</b></div><div class="header-right"><label class="search">${icon('search')}<input id="search" placeholder="Szukaj czegoś dobrego..." aria-label="Szukaj serialu"><kbd>/</kbd></label><button class="notification" id="notifications" aria-label="Powiadomienia">${icon('bell')}<em></em></button><div class="avatar mini">R</div></div></header><div id="home"><section class="hero"><div class="hero-art"></div><div class="hero-shade"></div><div class="hero-content"><div class="eyebrow"><span></span> NIEZALEŻNE. NIEGRZECZNE. NIE DO PRZEGAPIENIA.</div><div class="exclusive">${icon('flame')} W centrum uwagi</div><h1>HELLUVA<span>BOSS<span class="horn">✦</span></span></h1><div class="metadata"><span class="rating">${icon('star')} 8.2 <small>IMDb</small></span><span>2019</span><span class="age">18+</span><span>Animacja</span><span class="dot">•</span><span>Czarna komedia</span></div><p>Piekielnie dobra robota. Dosłownie.<br>Dołącz do Blitzø i jego ekipy zabójców z piekła —<br class="desktop"> tu każde zlecenie kończy się niezłym chaosem.</p><div class="hero-actions"><button class="primary" id="watch">${icon('play')} Oglądaj teraz</button><button class="secondary" id="save">${icon(saved?'check':'plus')} ${saved?'Na mojej liście':'Moja lista'}</button><button class="circle-btn" id="info" aria-label="Informacje o serialu">${icon('info')}</button></div><div class="languages">${icon('audio-lines')} Oryginalne audio <span></span> ${icon('captions')} Napisy w odtwarzaczu <span></span><b>PL</b> Polski fandub</div></div><div class="hero-bottom"><div><span class="red-line"></span> TWOJA NASTĘPNA OBSESJA</div><span>01 <i>/ 01</i></span></div><div class="hero-watermark">REJSTREAM SELECT</div></section><section class="catalog"><div class="section-heading"><div><div class="section-kicker">DOBRZE TRAFIŁEŚ</div><h2>Wieczór zaczyna się tutaj<span>.</span></h2><p>Mało przewijania. Dużo dobrego oglądania.</p></div><div class="catalog-status"><span class="live-dot"></span> Prosto od twórców</div></div><div class="filter-bar"><div class="filters"><button class="selected" data-filter="all">Wszystko <span>4</span></button><button data-filter="animation">Animacja</button><button data-filter="comedy">Czarna komedia</button><button data-filter="pl">${icon('languages')} Po polsku</button></div><span class="source-note">${icon('shield-check')} Sprawdź źródła i dostępne języki</span></div><div class="episodes-heading"><h3>Helluva Boss <span id="episode-count"></span></h3><span>Oficjalne odcinki na YouTube ${icon('arrow-up-right')}</span></div><div class="season-toolbar"><label>Sezon <select id="season"><option value="1">Sezon 1 · 8 odcinków</option><option value="2">Sezon 2 · 12 odcinków</option><option value="3">Sezon 3 · wpisy Prime Video</option><option value="special">Piloty i odcinki specjalne</option><option value="shorts">Shorts · wybrane</option><option value="all">Wszystkie wpisy</option></select></label><span id="season-note"></span></div><div class="availability-note">${icon('languages')} PL oznacza tylko znaleziony fandub — nie oficjalny dubbing. Pozostałe języki i napisy zależą od źródła.</div><div class="episode-grid" id="episode-grid"></div><section id="more-section"><div class="episodes-heading"><h3>Poza piekłem <span>Odkryj więcej</span></h3><span>Piloty i otwarte kino</span></div><div class="episode-grid more-grid" id="more-grid"></div></section><section class="local-banner"><div><span class="section-kicker">TWÓJ PLIK. TWÓJ SEANS.</span><h3>RejStream Player</h3><p>Otwórz legalnie posiadany film, dodaj napisy i oglądaj bez wysyłania pliku na serwer.</p></div><button class="secondary" id="open-local">${icon('play')} Otwórz plik</button></section><div class="empty hidden" id="empty">${icon('search')}<h3>Jeszcze nic tutaj nie ma</h3><p id="empty-text">Spróbuj innego tytułu.</p><button class="secondary" id="reset">Wróć do odkrywania</button></div><div class="discovery-banner"><div class="banner-symbol">${icon('orbit')}</div><div><h3>Dobre historie nie potrzebują wielkiego studia.</h3><p>Budujemy miejsce dla niezależnych twórców. To dopiero początek.</p></div><span>WIĘCEJ HISTORII WKRÓTCE ${icon('arrow-up-right')}</span></div></section></div><footer><a class="footer-brand" href="#">rej<span>stream</span>•</a><p>Stworzone z miłości do dobrych historii.</p><button id="sources">Źródła i prawa autorskie ${icon('arrow-up-right')}</button><span>© ${new Date().getFullYear()} RejStream</span></footer></main><div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Odtwarzacz i informacje"></div><div id="toast" role="status"></div>`;
-const refresh=()=>createIcons({icons});
-function renderCards(){
- const list=tab==='movies'?[]:selectEpisodes({season,query,filter:activeFilter,savedOnly:tab==='saved',saved});
- document.querySelector('#episode-grid').innerHTML=list.map(e=>`<button class="episode-card" data-ep="${eps.indexOf(e)}"><div class="thumb ${e.id?'':'external-thumb'}">${e.id?`<img src="https://i.ytimg.com/vi/${e.id}/hqdefault.jpg" alt="Helluva Boss — ${escapeHTML(e.title)}" loading="lazy">`:'<span class="external-art">HB<span>PRIME VIDEO</span></span>'}<span class="ep-tag">${typeof e.season==='number'?'S'+e.season:'SPECIAL'} : E${e.number}</span><span class="card-play">${icon(e.id?'play':'arrow-up-right')}</span><span class="duration">${e.time}</span>${e.pl?'<span class="dub-tag">PL FANDUB</span>':''}</div><div class="card-meta"><span>${e.id?'YOUTUBE · ORYGINAŁ EN':'TYLKO ZEWNĘTRZNY SERWIS'}</span>${icon('arrow-up-right')}</div><h4>${escapeHTML(e.title)}</h4><p>${escapeHTML(e.desc)}</p></button>`).join('');
- const more=extras.filter(e=>tab!=='saved'&&(tab!=='movies'||e.type==='movie')&&(tab!=='series'||e.type==='series')&&e.title.toLowerCase().includes(query)&&activeFilter!=='comedy'&&(activeFilter!=='pl'||e.key==='circus'));
- document.querySelector('#more-grid').innerHTML=more.map(e=>`<button class="episode-card" data-extra="${e.key}"><div class="thumb ${e.id?'':'bunny-thumb'}">${e.id?`<img src="https://i.ytimg.com/vi/${e.id}/hqdefault.jpg" alt="${escapeHTML(e.title)}" loading="lazy">`:'<span class="bunny-art">BIG BUCK<br><b>BUNNY</b><small>BLENDER OPEN MOVIE</small></span>'}<span class="ep-tag">${e.type==='movie'?'WŁASNY PLAYER':'PILOT'}</span><span class="card-play">${icon('play')}</span></div><div class="card-meta"><span>${e.tag}</span>${icon('arrow-up-right')}</div><h4>${e.title}</h4><p>${e.desc}</p></button>`).join('');
- const empty=!list.length&&!more.length;
- document.querySelector('#empty').classList.toggle('hidden',!empty);
- document.querySelector('#empty-text').textContent=tab==='saved'&&!saved?'Dodaj Helluva Boss do swojej listy.':'Brak wyników dla tego sezonu i filtrów. Zmień sezon, język lub wyszukiwaną frazę.';
- document.querySelector('.episodes-heading').classList.toggle('hidden',!list.length);
- document.querySelector('.season-toolbar').classList.toggle('hidden',tab==='movies');
- document.querySelector('.availability-note').classList.toggle('hidden',tab==='movies');
- document.querySelector('#more-section').classList.toggle('hidden',!more.length);
- document.querySelector('#episode-count').textContent=`${list.length} wpisów`;
- document.querySelector('#season-note').textContent=season==='3'?'Wpisy katalogowe, nie darmowe odcinki. Sprawdź dostępność w Prime Video.':season==='shorts'?'Wybrane krótkie odcinki — ta lista nie jest kompletna.':season==='all'?'Sezony 1–2 kompletne; pozostałe sekcje są wyborem.':'Dostępność osadzenia i języków zależy od autora.';
- refresh();document.querySelectorAll('[data-ep]').forEach(b=>b.onclick=()=>openPlayer(+b.dataset.ep));document.querySelectorAll('[data-extra]').forEach(b=>b.onclick=()=>openExtra(b.dataset.extra));
+import {
+  createIcons,
+  Play,
+  House,
+  Clapperboard,
+  Bookmark,
+  Search,
+  ArrowRight,
+  ArrowLeft,
+  ArrowUpRight,
+  Plus,
+  Check,
+  X,
+  ChevronRight,
+  ChevronDown,
+  CircleHelp,
+  Languages,
+  Captions,
+  Film,
+  List,
+  LayoutGrid,
+  CheckCircle2,
+  Heart,
+  Sparkles,
+  Clock,
+  ShieldCheck,
+  SlidersHorizontal,
+  Info,
+} from "lucide";
+import {
+  series,
+  getSeries,
+  libraryEpisodes,
+  episodeKey,
+  escapeHTML as esc,
+} from "./catalog.js";
+import { mountNativePlayer } from "./native-player.js";
+import "@fontsource/dm-sans/latin-400.css";
+import "@fontsource/dm-sans/latin-ext-400.css";
+import "@fontsource/dm-sans/latin-500.css";
+import "@fontsource/dm-sans/latin-ext-500.css";
+import "@fontsource/dm-sans/latin-600.css";
+import "@fontsource/dm-sans/latin-ext-600.css";
+import "@fontsource/dm-sans/latin-700.css";
+import "@fontsource/dm-sans/latin-ext-700.css";
+import "@fontsource/barlow-condensed/latin-800.css";
+import "@fontsource/barlow-condensed/latin-ext-800.css";
+import "./style.css";
+const icons = {
+  Play,
+  House,
+  Clapperboard,
+  Bookmark,
+  Search,
+  ArrowRight,
+  ArrowLeft,
+  ArrowUpRight,
+  Plus,
+  Check,
+  X,
+  ChevronRight,
+  ChevronDown,
+  CircleHelp,
+  Languages,
+  Captions,
+  Film,
+  List,
+  LayoutGrid,
+  CheckCircle2,
+  Heart,
+  Sparkles,
+  Clock,
+  ShieldCheck,
+  SlidersHorizontal,
+  Info,
+};
+const icon = (name) => `<i data-lucide="${name}" aria-hidden="true"></i>`;
+const read = (key, fallback) => {
+  try {
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
+  }
+};
+const store = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+};
+let favorites = read("rej-favorites", []),
+  watched = read("rej-watched", []),
+  recent = read("rej-recent", []);
+if (!Array.isArray(favorites)) favorites = [];
+if (!Array.isArray(watched)) watched = [];
+if (!Array.isArray(recent)) recent = [];
+if (read("rej-saved", false) === true && !favorites.includes("helluva")) {
+  favorites.push("helluva");
+  store("rej-favorites", favorites);
+  try {
+    localStorage.removeItem("rej-saved");
+  } catch {}
 }
-const modal=document.querySelector('#modal');let lastFocus;
-function showModal(content){disposePlayer?.();disposePlayer=null;if(modal.classList.contains('hidden'))lastFocus=document.activeElement;modal.innerHTML=`<div class="modal-box"><button class="close circle-btn" aria-label="Zamknij">${icon('x')}</button>${content}</div>`;modal.classList.remove('hidden');document.body.style.overflow='hidden';modal.querySelector('.close').onclick=closeModal;refresh();modal.querySelector('.close').focus();}
-function closeModal(){disposePlayer?.();disposePlayer=null;modal.classList.add('hidden');modal.innerHTML='';document.body.style.overflow='';lastFocus?.focus();}
-function openPlayer(i){if(!eps[i].id){showModal(`<div class="info-content"><span class="section-kicker">ZEWNĘTRZNY SERWIS</span><h2>${escapeHTML(eps[i].title)}</h2><p>Ten wpis nie zawiera darmowego filmu ani kopii na RejStream. Dostępność odcinka, abonament i języki sprawdzisz u dystrybutora.</p><a class="primary" href="${eps[i].external}" target="_blank" rel="noopener">Sprawdź w Prime Video ↗</a></div>`);return;}current=i;lang='en';showModal(`<div class="player-heading"><span class="section-kicker">REJSTREAM PLAYER • 18+</span><h2>Helluva Boss <span>· ${escapeHTML(eps[i].title)}</span></h2></div><div class="video-wrap" id="video-wrap"></div><div class="player-controls"><label>Wersja audio <select id="audio"><option value="en">English · oryginał</option><option value="pl" ${eps[i].pl?'':'disabled'}>Polski · fandub${eps[i].pl?'':' (niedostępny)'}</option></select></label><label>Napisy <select id="subs"><option value="">Ustawienia YouTube</option><option value="pl">Polskie — jeśli dostępne</option><option value="en">English — jeśli dostępne</option></select></label><button class="secondary" id="next" ${!eps[i+1]||eps[i+1].season!==eps[i].season?'disabled':''}>Następny odcinek ${icon('arrow-right')}</button></div><p class="player-note">Odtwarzanie z YouTube. Dostępność audio, napisów i osadzania zależy od autora oraz regionu. Polski fandub jest nieoficjalnym tłumaczeniem fanowskim, nie oficjalnym dubbingiem.</p><a id="youtube-link" class="source-link" target="_blank" rel="noopener">Nie działa? Otwórz materiał bezpośrednio w YouTube ↗</a>`);loadVideo();document.querySelector('#audio').onchange=e=>{lang=e.target.value;loadVideo()};document.querySelector('#subs').onchange=loadVideo;document.querySelector('#next').onclick=()=>openPlayer(i+1);}
-function loadVideo(){const id=lang==='pl'?eps[current].pl:eps[current].id;const sub=document.querySelector('#subs').value;document.querySelector('#video-wrap').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0${sub?'&cc_load_policy=1&cc_lang_pref='+sub:''}" title="Helluva Boss — ${eps[current].title}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;document.querySelector('#youtube-link').href=`https://www.youtube.com/watch?v=${id}`;}
-function openLocal(){showModal(`<div class="player-heading"><span class="section-kicker">REJSTREAM PLAYER · LOKALNIE</span><h2>Twój prywatny seans</h2></div><div id="native-mount"></div>`);disposePlayer=mountNativePlayer(document.querySelector('#native-mount'),{title:'Lokalny plik',local:true});}
-function openExtra(key){const item=extras.find(e=>e.key===key);if(!item)return;
- if(item.src){showModal(`<div class="player-heading"><span class="section-kicker">OTWARTE KINO · WŁASNY PLAYER</span><h2>${item.title}</h2></div><div id="native-mount"></div><a class="source-link" href="${item.source}" target="_blank" rel="noopener">Oficjalna strona i pliki do pobrania ↗</a>`);disposePlayer=mountNativePlayer(document.querySelector('#native-mount'),{...item,key:item.key});}
- else showModal(`<div class="player-heading"><span class="section-kicker">GLITCH · WYBRANY PILOT</span><h2>${item.title}</h2></div><div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${item.id}?rel=0" title="${item.title}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><p class="player-note">${item.polish} Wybierz koło zębate → Ścieżka dźwiękowa / Napisy. RejStream nie zmienia ani nie kopiuje ścieżek YouTube.</p><a class="source-link" href="https://www.youtube.com/watch?v=${item.id}" target="_blank" rel="noopener">Otwórz na oficjalnym kanale YouTube ↗</a>`);
+let searchNavigation = false;
+let search = "",
+  sort = "recommended",
+  featured = "circus",
+  view = read("rej-view", "list"),
+  dispose = null,
+  activeShow = null,
+  activeEpisode = null;
+const seasonState = {},
+  filterState = {};
+let dialogFocus = null;
+const app = document.querySelector("#app");
+app.innerHTML = `<a class="skip-link" href="#content">Przejdź do treści</a><aside class="sidebar"><a href="#home" class="brand" aria-label="RejStream — strona główna"><span class="brand-mark">${icon("play")}</span>rej<span>stream</span><b>•</b></a><div class="nav-label">TWOJE MIEJSCE NA DOBRE HISTORIE</div><nav aria-label="Menu główne">${navButtons()}</nav><div class="sidebar-bottom"><div class="studio-note">${icon("sparkles")} Poza głównym nurtem.<p>Niezależni twórcy.<br>Nieprzeciętne historie.</p></div><button class="quiet" data-go="local">${icon("film")} Własny odtwarzacz</button><button class="quiet" id="help">${icon("circle-help")} Jak to działa?</button><div class="profile"><span class="avatar">R</span><div>Twój mały seans<small>Bez konta. Po swojemu.</small></div></div></div></aside><div class="page"><header class="topbar"><div id="breadcrumbs"></div><label class="search-box">${icon("search")}<input id="search" type="search" placeholder="Znajdź swoją następną obsesję…" aria-label="Szukaj seriali i odcinków"><kbd>/</kbd></label><button class="mobile-search" aria-label="Otwórz wyszukiwanie">${icon("search")}</button><span class="avatar header-avatar">R</span></header><main id="content" tabindex="-1"></main><footer><a class="brand small" href="#home">rej<span>stream</span><b>•</b></a><p>Mało przewijania. Dużo dobrych historii.</p><button id="sources">Źródła i twórcy ${icon("arrow-up-right")}</button><span>© ${new Date().getFullYear()} RejStream</span></footer></div><nav class="bottom-nav" aria-label="Menu mobilne">${navButtons(true)}</nav><div class="dialog-backdrop" id="dialog" hidden></div><div id="toast" role="status"></div>`;
+function navButtons(mobile = false) {
+  return [
+    { key: "home", icon: "house", label: mobile ? "Start" : "Strona główna" },
+    { key: "library", icon: "clapperboard", label: "Seriale" },
+    { key: "saved", icon: "bookmark", label: "Moja lista" },
+    ...(mobile ? [{ key: "local", icon: "film", label: "Mój player" }] : []),
+  ]
+    .map(
+      (n) =>
+        `<a href="#${n.key}" data-nav="${n.key}">${icon(n.icon)}<span>${n.label}</span>${!mobile && n.key === "saved" ? '<small id="favorite-count"></small>' : ""}</a>`,
+    )
+    .join("");
 }
-document.querySelector('#open-local').onclick=openLocal;document.querySelector('#local-player').onclick=openLocal;
-function info(){showModal(`<div class="info-content"><span class="section-kicker">POZNAJ SERIAL</span><h2>Witaj w piekle.<br>Rozgość się.</h2><p>Helluva Boss to animowana czarna komedia dla dorosłych autorstwa Vivienne Medrano. Ekipa I.M.P. przyjmuje zlecenia, które nie powinny trafić do żadnego kalendarza.</p><div class="info-facts"><span>Twórczyni <b>Vivienne „Vivziepop” Medrano</b></span><span>Kategoria wiekowa <b>18+ · przemoc, wulgaryzmy</b></span><span>Odtwarzanie <b>Oficjalny kanał YouTube</b></span></div><p>Napisy i dodatkowe języki są udostępniane przez autora w ustawieniach YouTube. Znalezione polskie fanduby są oznaczone osobno. Nie gwarantujemy polskiej wersji każdego odcinka. Sezony 1–2 są kompletne; sezon 3 oraz shorts to wybrane wpisy z oznaczeniem źródła.</p><button class="primary" id="info-play">${icon('play')} Oglądaj pierwszy odcinek</button></div>`);document.querySelector('#info-play').onclick=()=>openPlayer(0);}
-function toast(t){const el=document.querySelector('#toast');el.textContent=t;el.classList.add('visible');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.remove('visible'),3200);}
-document.querySelector('#watch').onclick=()=>openPlayer(0);document.querySelector('#info').onclick=info;document.querySelector('#save').onclick=()=>{saved=!saved;localStorage.setItem('rej-saved',saved);document.querySelector('#save').innerHTML=`${icon(saved?'check':'plus')} ${saved?'Na mojej liście':'Moja lista'}`;document.querySelector('#list-count').textContent=+saved;renderCards();toast(saved?'Helluva Boss jest na Twojej liście.':'Usunięto z Twojej listy.');};
-document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{tab=b.dataset.nav;document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('active',n===b));document.querySelector('#crumb').textContent=b.querySelector('span').textContent;document.querySelector('.hero').classList.toggle('hidden',tab==='movies'||tab==='saved');renderCards();});
-document.querySelector('#search').oninput=e=>{query=e.target.value.toLowerCase().trim();renderCards()};document.querySelector('#reset').onclick=()=>{query='';activeFilter='all';season='1';document.querySelector('#season').value='1';document.querySelector('[data-filter="all"]').click();document.querySelector('#search').value='';document.querySelector('[data-nav="home"]').click()};document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{activeFilter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(n=>n.classList.toggle('selected',n===b));renderCards();});
-document.querySelector('#season').onchange=e=>{season=e.target.value;renderCards()};
-document.querySelector('#notifications').onclick=()=>toast('Jesteś na bieżąco. Nowe historie już wkrótce!');document.querySelector('#help').onclick=()=>showModal(`<div class="info-content"><span class="section-kicker">JAK TO DZIAŁA</span><h2>Twoje małe centrum rozrywki.</h2><p>Wybierz odcinek i oglądaj w osadzonym odtwarzaczu YouTube. Język i napisy zmienisz w panelu odtwarzacza. Dostępność napisów zależy od źródła.</p><p>Moja lista jest zapisywana lokalnie w tej przeglądarce. RejStream nie wymaga konta. Własny player obsługuje otwarty film Big Buck Bunny i pliki lokalne, także z napisami VTT/SRT. Pliki lokalne nie są wysyłane na serwer.</p></div>`);document.querySelector('#sources').onclick=()=>showModal(`<div class="info-content"><span class="section-kicker">TRANSPARENTNIE, ZAWSZE</span><h2>Historie należą do twórców.</h2><p>RejStream to niezależny katalog, niezwiązany z Vivziepop ani YouTube. Nie pobieramy i nie przechowujemy odcinków. Filmy oraz miniatury są wyświetlane z YouTube, z zachowaniem kontroli właściciela nad odtwarzaniem.</p><p>Big Buck Bunny: © 2008 Blender Foundation / www.bigbuckbunny.org, CC BY 3.0. Film bez zmian, ze wszystkimi napisami końcowymi; strumień z mirrora Video Commander. <a class="source-link" href="https://peach.blender.org/about/" target="_blank" rel="noopener">Warunki licencji ↗</a><br>Helluva Boss © odpowiedni właściciele praw. Produkcje GLITCH należą do ich właścicieli; osadzamy tylko wybrane piloty. Polski fandub odcinka 1: nieoficjalna, fanowska wersja; jej obecność na YouTube nie jest potwierdzeniem licencji.</p><a class="source-link" href="https://www.youtube.com/@SpindleHorse" target="_blank" rel="noopener">Odwiedź oficjalny kanał twórców ↗</a><p>Ostateczna dostępność osadzeń może zmieniać się w zależności od regionu i decyzji autorów.</p></div>`);modal.onclick=e=>{if(e.target===modal)closeModal()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='/'&&!['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)){e.preventDefault();document.querySelector('#search').focus()}if(e.key==='Tab'&&!modal.classList.contains('hidden')){const items=[...modal.querySelectorAll('button:not(:disabled),select,a[href],iframe,input')];const first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});renderCards();
+const content = document.querySelector("#content");
+const thumb = (id, size = "hqdefault") =>
+  `https://i.ytimg.com/vi/${id}/${size}.jpg`;
+const isSaved = (key) => favorites.includes(key);
+const route = () => location.hash.slice(1).split("/").filter(Boolean);
+function go(path) {
+  if (location.hash === `#${path}`) render();
+  else location.hash = path;
+}
+function showToast(text) {
+  const el = document.querySelector("#toast");
+  el.textContent = text;
+  el.classList.add("visible");
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => el.classList.remove("visible"), 2600);
+}
+function favorite(key) {
+  favorites = isSaved(key)
+    ? favorites.filter((x) => x !== key)
+    : [...favorites, key];
+  store("rej-favorites", favorites);
+  showToast(
+    isSaved(key) ? "Dodano do Twojej listy." : "Usunięto z Twojej listy.",
+  );
+  render();
+}
+function saveButton(show, small = false) {
+  return `<button class="${small ? "save-card" : "button secondary"} ${isSaved(show.key) ? "is-saved" : ""}" data-save="${show.key}" aria-label="${isSaved(show.key) ? "Usuń z listy" : "Dodaj do listy"}: ${show.title}" aria-pressed="${isSaved(show.key)}">${icon(isSaved(show.key) ? "check" : "plus")}${small ? "" : isSaved(show.key) ? "Na mojej liście" : "Moja lista"}</button>`;
+}
+function seriesCard(show) {
+  return `<article class="series-card" style="--accent:${show.color}"><a href="#series/${show.key}" class="series-image" aria-label="Zobacz ${show.title}"><img src="${thumb(show.art)}" alt="${show.title}" loading="lazy"><span class="image-gradient"></span><span class="image-badge">${show.key === "circus" ? "9 ODCINKÓW" : show.key === "helluva" ? "2 PEŁNE SEZONY" : "WYBRANY PILOT"}</span><span class="hover-play">${icon("arrow-right")}</span></a>${saveButton(show, true)}<div class="card-line"><span>${show.creator.split(" · ")[0]}</span><span>${show.age}</span></div><a href="#series/${show.key}"><h3>${show.title}</h3></a><p>${show.genre} <span>•</span> ${show.year}</p></article>`;
+}
+function hero(show) {
+  return `<section class="spotlight" style="--accent:${show.color}"><img class="spotlight-art" src="${thumb(show.hero, "maxresdefault")}" alt="" fetchpriority="high"><div class="spotlight-shade"></div><div class="spotlight-copy"><div class="eyebrow">${icon("sparkles")} REJSTREAM SELECT <span>•</span> NIEZALEŻNA ANIMACJA</div><span class="feature-label"><span class="live-dot"></span> ${show.key === "circus" ? "Wszystkie 9 odcinków. Jedna niezwykła historia." : show.label}</span><h1>${show.key === "circus" ? "THE AMAZING<br><span>DIGITAL CIRCUS</span>" : show.key === "helluva" ? "HELLUVA<br><span>BOSS</span>" : "MURDER<br><span>DRONES</span>"}</h1><div class="meta"><span class="age">${show.age}</span><span>${show.year}</span><span>${show.genre}</span></div><p>${show.description}</p><div class="hero-actions"><button class="button primary" data-go="watch/${show.key}/${show.episodes[0].season}/${show.episodes[0].number}">${icon("play")} Oglądaj od początku</button><a class="button secondary" href="#series/${show.key}">Poznaj serial ${icon("arrow-right")}</a></div><div class="hero-source">${icon("languages")} Języki i napisy w źródłowym odtwarzaczu</div></div><div class="spotlight-switcher" aria-label="Wyróżniony serial">${series.map((s, i) => `<button data-feature="${s.key}" class="${s.key === show.key ? "selected" : ""}" aria-label="Wyróżnij ${s.title}" aria-pressed="${s.key === show.key}"><span>0${i + 1}</span><b>${s.short}</b><i></i></button>`).join("")}</div></section>`;
+}
+function home() {
+  const last = recent
+    .map((r) => ({ r, s: getSeries(r.show) }))
+    .find(({ r, s }) =>
+      s?.episodes.some((e) => episodeKey(s.key, e) === r.key),
+    );
+  return `${hero(getSeries(featured))}<section class="section"><div class="section-heading"><div><span class="eyebrow">WYBIERZ SWÓJ ŚWIAT</span><h2>Nieprzeciętne historie<span>.</span></h2><p>Trzy różne światy. Jeden dobry wieczór.</p></div><a class="text-link" href="#library">Wszystkie seriale ${icon("arrow-right")}</a></div><div class="series-grid">${series.map(seriesCard).join("")}</div>${last ? recentCard(last) : ""}<div class="editorial"><span class="editorial-icon">${icon("heart")}</span><div><span class="eyebrow">OD TWÓRCÓW. DLA CIEBIE.</span><h3>Duże historie nie potrzebują wielkiego studia.</h3><p>Odkrywaj niezależną animację. Oglądaj z oficjalnych źródeł i wspieraj ludzi, którzy ją tworzą.</p></div><button class="text-link" data-info="sources">Poznaj twórców ${icon("arrow-up-right")}</button></div></section>`;
+}
+function recentCard({ r, s }) {
+  const e = s.episodes.find((e) => episodeKey(s.key, e) === r.key);
+  return `<section class="recent-section"><div class="section-heading compact"><h2>Wróć do swojej historii</h2><span>Ostatnio otwarty odcinek</span></div><a class="recent-card" href="#watch/${s.key}/${e.season}/${e.number}"><img src="${thumb(e.id || s.art)}" alt=""><span class="recent-copy"><small>${s.title} · ${episodeLabel(e)}</small><b>${esc(e.title)}</b><span>Wróć do odcinka ${icon("arrow-right")}</span></span><span class="recent-play">${icon("play")}</span></a></section>`;
+}
+function library(saved = false) {
+  let shows = series.filter(
+    (s) =>
+      (!saved || isSaved(s.key)) &&
+      `${s.title} ${s.subtitle} ${s.genre}`
+        .toLocaleLowerCase("pl")
+        .includes(search.toLocaleLowerCase("pl")),
+  );
+  if (sort === "az") shows.sort((a, b) => a.title.localeCompare(b.title));
+  if (sort === "za") shows.sort((a, b) => b.title.localeCompare(a.title));
+  return `<section class="section library-section"><div class="page-heading"><span class="eyebrow">${saved ? "TWÓJ WYBÓR, TWOJE TEMPO" : "MNIEJ SZUKANIA. WIĘCEJ OGLĄDANIA."}</span><h1>${saved ? "Moja lista" : "Odkrywaj seriale"}<span>.</span></h1><p>${saved ? "Historie, do których chcesz wrócić. Zapisane w tej przeglądarce." : "Niezależna animacja, starannie poukładana."}</p></div><div class="library-toolbar"><span>${shows.length} ${shows.length === 1 ? "serial" : "seriale"} w kolekcji</span><label>Sortuj <select id="catalog-sort"><option value="recommended" ${sort === "recommended" ? "selected" : ""}>Polecane</option><option value="az" ${sort === "az" ? "selected" : ""}>Tytuł A–Z</option><option value="za" ${sort === "za" ? "selected" : ""}>Tytuł Z–A</option></select></label></div>${shows.length ? `<div class="series-grid">${shows.map(seriesCard).join("")}</div>` : empty(saved ? "Twoja lista czeka na pierwszą historię." : "Nie znaleźliśmy takiego serialu.", saved ? "Dodaj serial przyciskiem + na jego karcie." : "Zmień wyszukiwaną frazę.", "Odkrywaj seriale", "library")}</section>`;
+}
+function episodeLabel(e) {
+  return typeof e.season === "number"
+    ? `S${e.season} · E${String(e.number).padStart(2, "0")}`
+    : `${e.season === "special" ? "Piloty" : "Shorts"} · ${e.number}`;
+}
+function seriesPage(show) {
+  const selected = seasonState[show.key] || "1";
+  const filter = filterState[show.key] || { sort: "asc", language: "all" };
+  const list = libraryEpisodes(show, {
+    season: selected,
+    query: search,
+    ...filter,
+    watched,
+  });
+  const season =
+    show.seasons.find((s) => s.key === selected) || show.seasons[0];
+  return `<section class="series-hero" style="--accent:${show.color}"><img src="${thumb(show.hero, "maxresdefault")}" alt="" class="series-hero-art"><div class="series-hero-shade"></div><div class="series-hero-copy"><a href="#library" class="back-link">${icon("arrow-left")} Wszystkie seriale</a><span class="eyebrow">${show.creator}</span><h1>${show.title}</h1><p class="series-subtitle">${show.subtitle}</p><div class="meta"><span class="age">${show.age}</span><span>${show.year}</span><span>${show.genre}</span></div><p class="series-description">${show.description}</p><div class="hero-actions"><button class="button primary" data-go="watch/${show.key}/1/1">${icon("play")} Zacznij oglądać</button>${saveButton(show)}</div></div></section><section class="section episodes-section"><div class="detail-tabs"><span class="active">Odcinki</span><button data-info="languages" data-show="${show.key}">${icon("languages")} Audio i napisy</button><a href="${show.channel}" target="_blank" rel="noopener">Kanał twórców ${icon("arrow-up-right")}</a></div><div class="season-tabs" role="group" aria-label="Wybierz sezon">${show.seasons.map((s) => `<button data-season="${s.key}" class="${s.key === selected ? "selected" : ""}" aria-pressed="${s.key === selected}">${s.label}</button>`).join("")}</div><div class="episode-toolbar"><div><h2>${season.label}</h2><p>${season.note}</p></div><div class="episode-options"><label><span class="sr-only">Filtr audio</span><select id="audio-filter"><option value="all">Wszystkie wersje</option><option value="fandub" ${filter.language === "fandub" ? "selected" : ""}>Polski fandub</option></select></label><label><span class="sr-only">Kolejność odcinków</span><select id="episode-sort"><option value="asc">Od pierwszego</option><option value="desc" ${filter.sort === "desc" ? "selected" : ""}>Od ostatniego</option></select></label><div class="view-switch" role="group" aria-label="Układ odcinków"><button data-view="list" class="${view === "list" ? "selected" : ""}" aria-label="Lista" aria-pressed="${view === "list"}">${icon("list")}</button><button data-view="grid" class="${view === "grid" ? "selected" : ""}" aria-label="Siatka" aria-pressed="${view === "grid"}">${icon("layout-grid")}</button></div></div></div>${show.key === "circus" ? `<div class="language-strip">${icon("languages")} <span>Polskiego audio szukaj w <b>ustawieniach źródłowego odtwarzacza</b>. Języki i napisy mogą różnić się między odcinkami.</span><button data-info="languages" data-show="${show.key}">Jak włączyć? ${icon("arrow-right")}</button></div>` : ""}<div class="episodes ${view}" id="episodes">${list.length ? list.map((e) => episodeCard(show, e)).join("") : empty("Tu jeszcze cicho.", "Brak odcinków dla tej frazy lub filtra.", "Wyczyść filtry", `reset/${show.key}`)}</div><p class="catalog-note">${icon("info")} ${show.key === "circus" ? "Sezon 1 · 9 odcinków. Pilot jest odcinkiem 1, nie osobnym sezonem." : show.key === "helluva" ? "Sezony 1–2 kompletne. Sezon 3 i shorts to oznaczone, częściowe listy." : "W tej kolekcji dostępny jest pilot; pozostałe odcinki znajdziesz na kanale twórców."} Czas odcinków podany w przybliżeniu.</p></section>`;
+}
+function episodeCard(show, e) {
+  const key = episodeKey(show.key, e),
+    done = watched.includes(key);
+  return `<article class="episode ${done ? "watched" : ""}" data-episode="${key}"><a class="episode-image" href="#watch/${show.key}/${e.season}/${e.number}" aria-label="${e.id ? "Oglądaj" : "Sprawdź źródło"}: ${esc(e.title)}"><img src="${thumb(e.id || show.art)}" alt="" loading="lazy"><span class="episode-number">${String(e.number).padStart(2, "0")}</span><span class="episode-duration">${e.time}</span><span class="episode-play">${icon(e.id ? "play" : "arrow-up-right")}</span></a><div class="episode-copy"><div class="episode-overline">${episodeLabel(e)} ${e.pl ? '<span class="pl-label">PL FANDUB</span>' : ""}${!e.id ? '<span class="external-label">PRIME VIDEO · ZEWNĘTRZNIE</span>' : ""}</div><a href="#watch/${show.key}/${e.season}/${e.number}"><h3>${esc(e.title)}</h3></a><p>${esc(e.desc)}</p><span class="episode-foot">${done ? `${icon("check-circle-2")} Obejrzane` : e.date ? new Date(e.date + "T12:00:00").toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" }) : e.id ? "Oficjalne źródło YouTube" : "Sprawdź dostępność u dystrybutora"}</span></div><button class="watched-button ${done ? "done" : ""}" data-watched="${key}" aria-label="${done ? "Cofnij oznaczenie" : "Oznacz jako obejrzane"}: ${esc(e.title)}" aria-pressed="${done}">${icon(done ? "check-circle-2" : "check")}</button></article>`;
+}
+function record(show, e) {
+  if (!e.id) return;
+  const key = episodeKey(show.key, e);
+  recent = [
+    { show: show.key, key },
+    ...recent.filter((r) => r.key !== key),
+  ].slice(0, 8);
+  store("rej-recent", recent);
+}
+function watchPage(show, e) {
+  activeShow = show;
+  activeEpisode = e;
+  record(show, e);
+  const list = show.episodes
+    .filter((x) => String(x.season) === String(e.season))
+    .sort((a, b) => a.number - b.number);
+  const pos = list.indexOf(e);
+  return `<section class="watch-section"><a class="back-link" href="#series/${show.key}">${icon("arrow-left")} ${show.title} <span>/ ${episodeLabel(e)}</span></a><div class="watch-layout"><div class="watch-main"><div class="player-frame" id="video-wrap">${e.id ? "" : `<div class="external-player"><span>${icon("arrow-up-right")}</span><h2>Ten odcinek jest w innym serwisie</h2><p>Sprawdź dostępność, wymagany abonament oraz języki w Prime Video.</p><a href="${e.external}" target="_blank" rel="noopener" class="button primary">Przejdź do Prime Video ${icon("arrow-up-right")}</a></div>`}</div><div class="watch-title-row"><div><span class="eyebrow">${episodeLabel(e)} · ${e.time}</span><h1>${esc(e.title)}</h1></div><button class="button secondary" data-watched="${episodeKey(show.key, e)}" aria-pressed="${watched.includes(episodeKey(show.key, e))}">${icon(watched.includes(episodeKey(show.key, e)) ? "check-circle-2" : "check")} ${watched.includes(episodeKey(show.key, e)) ? "Obejrzane" : "Oznacz jako obejrzane"}</button></div><p class="watch-description">${esc(e.desc)}</p>${e.id ? `<div class="playback-options"><label>Wersja materiału<select id="audio"><option value="original">Oryginalny materiał · audio w ustawieniach</option>${e.pl ? '<option value="pl">Polski · nieoficjalny fandub</option>' : ""}</select></label><label>Preferowane napisy<select id="subs"><option value="">Ustawienia źródła</option><option value="pl">Polskie — jeśli dostępne</option><option value="en">English — jeśli dostępne</option></select></label></div><details class="language-details"><summary>${icon("languages")} Audio, dubbing i napisy ${icon("chevron-down")}</summary><p>${show.languageNote}</p><p>Wybierz koło zębate w odtwarzaczu → Ścieżka dźwiękowa lub Napisy. Preferencja napisów nie gwarantuje, że źródło je udostępnia. Polski fandub, jeśli jest wymieniony wyżej, otwiera osobny materiał.</p></details><div class="source-row"><span id="playback-source">${icon("shield-check")} Źródło: ${show.creator.split(" · ")[0]} / YouTube</span><a id="youtube-link" target="_blank" rel="noopener">Otwórz w YouTube ${icon("arrow-up-right")}</a></div>` : ""}<div class="episode-navigation">${pos > 0 ? `<a class="button secondary" href="#watch/${show.key}/${e.season}/${list[pos - 1].number}">${icon("arrow-left")} Poprzedni</a>` : "<span></span>"}${pos < list.length - 1 ? `<a class="button primary" href="#watch/${show.key}/${e.season}/${list[pos + 1].number}">Następny odcinek ${icon("arrow-right")}</a>` : `<a class="button secondary" href="#series/${show.key}">Wróć do serialu ${icon("arrow-right")}</a>`}</div></div><aside class="watch-queue"><div class="queue-heading"><h2>${typeof e.season === "number" ? "Sezon " + e.season : e.season === "special" ? "Piloty" : "Shorts"}</h2><span>${list.length} wpisów</span></div><div class="queue-list">${list.map((x) => `<a href="#watch/${show.key}/${x.season}/${x.number}" class="queue-item ${x === e ? "current" : ""}" ${x === e ? 'aria-current="true"' : ""}><span class="queue-number">${String(x.number).padStart(2, "0")}</span><img src="${thumb(x.id || show.art)}" alt="" loading="lazy"><span><b>${esc(x.title)}</b><small>${x === e ? "Teraz otwarte" : watched.includes(episodeKey(show.key, x)) ? "Obejrzane" : x.time}</small></span>${x === e ? icon("play") : ""}</a>`).join("")}</div></aside></div></section>`;
+}
+function loadEmbed() {
+  if (!activeEpisode?.id) return;
+  const e = activeEpisode;
+  const lang = document.querySelector("#audio")?.value;
+  const sub = document.querySelector("#subs")?.value;
+  const id = lang === "pl" && e.pl ? e.pl : e.id;
+  document.querySelector("#video-wrap").innerHTML =
+    `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0${sub ? "&cc_load_policy=1&cc_lang_pref=" + sub : ""}" title="${esc(activeShow.title + " — " + e.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+  document.querySelector("#youtube-link").href =
+    `https://www.youtube.com/watch?v=${id}`;
+  document.querySelector("#playback-source").textContent =
+    lang === "pl"
+      ? "Źródło: polski fandub (nieoficjalny) / YouTube"
+      : `Źródło: ${activeShow.creator.split(" · ")[0]} / YouTube`;
+}
+function localPage() {
+  return `<section class="section local-section"><div class="page-heading"><span class="eyebrow">TYLKO TY I TWOJA HISTORIA</span><h1>Twój prywatny seans<span>.</span></h1><p>Otwórz legalnie posiadany plik z urządzenia. Niczego nie wysyłamy na serwer.</p></div><div id="native-mount"></div><div class="local-tips"><span>${icon("film")} Pliki obsługiwane przez przeglądarkę</span><span>${icon("captions")} Własne napisy SRT i VTT</span><span>${icon("shield-check")} Bez uploadu i bez konta</span></div></section>`;
+}
+function empty(title, description, action, path) {
+  return `<div class="empty-state">${icon("search")}<h3>${title}</h3><p>${description}</p><button class="button secondary" data-go="${path}">${action} ${icon("arrow-right")}</button></div>`;
+}
+function render() {
+  const focusedId = content.contains(document.activeElement)
+    ? document.activeElement.id
+    : null;
+  dispose?.();
+  dispose = null;
+  activeShow = null;
+  activeEpisode = null;
+  const parts = route(),
+    page = parts[0] || "home",
+    show = getSeries(parts[1]);
+  let html;
+  if (page === "series" && show) {
+    seasonState[show.key] ??= "1";
+    html = seriesPage(show);
+  } else if (page === "watch" && show) {
+    const ep = show.episodes.find(
+      (e) => String(e.season) === parts[2] && String(e.number) === parts[3],
+    );
+    if (ep) {
+      seasonState[show.key] = String(ep.season);
+      html = watchPage(show, ep);
+    } else
+      html = `<section class="section">${empty("Nie znaleźliśmy tego odcinka.", "Wróć do listy i wybierz inny.", "Zobacz odcinki", "series/" + show.key)}</section>`;
+  } else if (page === "library" || page === "saved")
+    html = library(page === "saved");
+  else if (page === "local") html = localPage();
+  else if (page === "home") html = home();
+  else
+    html = `<section class="section">${empty("Ta strona nie istnieje.", "Wróć do odkrywania historii.", "Strona główna", "home")}</section>`;
+  content.innerHTML = html;
+  document.title = `${show ? show.title : page === "saved" ? "Moja lista" : page === "local" ? "Twój player" : "Odkrywaj historie"} · RejStream`;
+  const crumb = document.querySelector("#breadcrumbs");
+  crumb.innerHTML = `<a href="#home">Odkrywaj</a><span>/</span><b>${show ? show.title : page === "library" ? "Seriale" : page === "saved" ? "Moja lista" : page === "local" ? "Własny player" : "Strona główna"}</b>`;
+  document.querySelectorAll("[data-nav]").forEach((n) => {
+    const active =
+      n.dataset.nav === (["series", "watch"].includes(page) ? "library" : page);
+    n.classList.toggle("active", active);
+    if (active) n.setAttribute("aria-current", "page");
+    else n.removeAttribute("aria-current");
+  });
+  document.querySelector("#favorite-count").textContent = favorites.length;
+  createIcons({ icons });
+  bindContent();
+  if (activeEpisode?.id) loadEmbed();
+  if (page === "local")
+    dispose = mountNativePlayer(document.querySelector("#native-mount"), {
+      title: "Lokalny plik",
+      local: true,
+    });
+  if (focusedId) document.getElementById(focusedId)?.focus();
+}
+function bindContent() {
+  content.querySelector("#catalog-sort")?.addEventListener("change", (e) => {
+    sort = e.target.value;
+    render();
+  });
+  const key = route()[1];
+  content.querySelector("#episode-sort")?.addEventListener("change", (e) => {
+    filterState[key] = { ...filterState[key], sort: e.target.value };
+    render();
+  });
+  content.querySelector("#audio-filter")?.addEventListener("change", (e) => {
+    filterState[key] = { ...filterState[key], language: e.target.value };
+    render();
+  });
+  content.querySelector("#audio")?.addEventListener("change", loadEmbed);
+  content.querySelector("#subs")?.addEventListener("change", loadEmbed);
+}
+function showDialog(type, key) {
+  const show = getSeries(key);
+  dialogFocus = document.activeElement;
+  const body =
+    type === "languages"
+      ? `<span class="eyebrow">AUDIO I NAPISY</span><h2>Oglądaj po swojemu.</h2><p>${show?.languageNote || ""}</p><ol><li>Otwórz wybrany odcinek.</li><li>W odtwarzaczu wybierz koło zębate.</li><li>Wybierz <b>Ścieżkę dźwiękową</b> lub <b>Napisy</b>.</li></ol><p>Nie wyświetlamy fikcyjnej listy wersji językowych. Ostateczna lista jest dostępna w samym źródle; osadzenie nie udostępnia nam pełnej listy ścieżek.</p>`
+      : type === "sources"
+        ? `<span class="eyebrow">STWORZONE PRZEZ LUDZI Z PASJĄ</span><h2>Historie należą do twórców.</h2><p>RejStream jest niezależnym katalogiem. Oficjalne materiały odtwarzamy z YouTube, bez ukrywania oznaczeń i reklam. Dostępność zależy od autora i regionu.</p><div class="creator-list">${series.map((s) => `<a href="${s.channel}" target="_blank" rel="noopener"><span><b>${s.title}</b><small>${s.creator}</small></span>${icon("arrow-up-right")}</a>`).join("")}</div><p>Polskie fanduby są nieoficjalne. Własny player służy Twoim lokalnym plikom; nie wysyła ich do sieci. Biblioteka jest aktualizowana ręcznie, ostatni przegląd: 25.10.2026.</p>`
+        : `<span class="eyebrow">WYGODNIE, BEZ ZAKŁADANIA KONTA</span><h2>Wybierz świat. Włącz historię.</h2><p>Otwórz stronę serialu, wybierz sezon i odcinek. Kolejność zmienisz nad listą. Ikoną ✓ możesz ręcznie oznaczyć obejrzane odcinki; nie śledzimy automatycznie postępu na YouTube.</p><p>Moja lista, obejrzane i ostatnio otwarte są zapisywane tylko w tej przeglądarce. Do własnych plików służy sekcja „Mój player”.</p><p>Szukaj tytułów seriali w katalogu, a odcinków na stronie konkretnego serialu. Skrót / otwiera wyszukiwanie, Escape zamyka ten panel.</p>`;
+  const dialog = document.querySelector("#dialog");
+  dialog.innerHTML = `<section class="dialog-box" role="dialog" aria-modal="true" aria-label="${type === "languages" ? "Audio i napisy" : "Informacje o RejStream"}"><button class="dialog-close" aria-label="Zamknij">${icon("x")}</button>${body}</section>`;
+  dialog.hidden = false;
+  document.body.classList.add("dialog-open");
+  createIcons({ icons });
+  dialog.querySelector("button").focus();
+}
+function closeDialog() {
+  const d = document.querySelector("#dialog");
+  d.hidden = true;
+  d.innerHTML = "";
+  document.body.classList.remove("dialog-open");
+  dialogFocus?.focus();
+}
+app.addEventListener("click", (e) => {
+  const button = e.target.closest("button");
+  if (!button) return;
+  if (button.dataset.go) {
+    const path = button.dataset.go;
+    if (path.startsWith("reset/")) {
+      const key = path.split("/")[1];
+      filterState[key] = { sort: "asc", language: "all" };
+      search = "";
+      document.querySelector("#search").value = "";
+      render();
+    } else go(path);
+  }
+  if (button.dataset.save) favorite(button.dataset.save);
+  if (button.dataset.feature) {
+    featured = button.dataset.feature;
+    render();
+  }
+  if (button.dataset.season) {
+    seasonState[route()[1]] = button.dataset.season;
+    render();
+  }
+  if (button.dataset.view) {
+    view = button.dataset.view;
+    store("rej-view", view);
+    render();
+  }
+  if (button.dataset.watched) {
+    const key = button.dataset.watched;
+    watched = watched.includes(key)
+      ? watched.filter((x) => x !== key)
+      : [...watched, key];
+    store("rej-watched", watched);
+    if (activeEpisode) {
+      const done = watched.includes(key);
+      button.innerHTML =
+        icon(done ? "check-circle-2" : "check") +
+        " " +
+        (done ? "Obejrzane" : "Oznacz jako obejrzane");
+      button.setAttribute("aria-pressed", done);
+      document
+        .querySelectorAll(".queue-item.current small")
+        .forEach((n) => (n.textContent = done ? "Obejrzane" : "Teraz otwarte"));
+      createIcons({ icons });
+    } else render();
+  }
+  if (button.dataset.info) showDialog(button.dataset.info, button.dataset.show);
+  if (button.classList.contains("dialog-close")) closeDialog();
+});
+document.querySelector("#help").onclick = () => showDialog("help");
+document.querySelector("#sources").onclick = () => showDialog("sources");
+document.querySelector("#dialog").onclick = (e) => {
+  if (e.target.id === "dialog") closeDialog();
+};
+const searchInput = document.querySelector("#search");
+searchInput.addEventListener("input", (e) => {
+  search = e.target.value;
+  const page = route()[0];
+  if (!["series", "library", "saved"].includes(page)) {
+    searchNavigation = true;
+    go("library");
+  } else render();
+});
+document.querySelector(".mobile-search").onclick = () => {
+  document.querySelector(".topbar").classList.toggle("search-open");
+  searchInput.focus();
+};
+window.addEventListener("hashchange", () => {
+  closeDialog();
+  if (!searchNavigation) {
+    search = "";
+    searchInput.value = "";
+  }
+  searchNavigation = false;
+  render();
+  window.scrollTo({ top: 0, behavior: "instant" });
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeDialog();
+    document.querySelector(".topbar").classList.remove("search-open");
+  }
+  if (
+    e.key === "/" &&
+    !["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)
+  ) {
+    e.preventDefault();
+    document.querySelector(".topbar").classList.add("search-open");
+    searchInput.focus();
+  }
+  const dialog = document.querySelector("#dialog");
+  if (e.key === "Tab" && !dialog.hidden) {
+    const focusables = [
+      ...dialog.querySelectorAll("button,a[href],input,select"),
+    ];
+    const first = focusables[0],
+      last = focusables.at(-1);
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    }
+    if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+});
+render();
+
+app.addEventListener(
+  "error",
+  (e) => {
+    if (e.target.tagName === "IMG") {
+      e.target.style.opacity = "0";
+      e.target.parentElement.classList.add("image-unavailable");
+    }
+  },
+  true,
+);
