@@ -224,16 +224,38 @@ it("resets legacy English preference once for the new Polish-first defaults", as
   expect(document.querySelector("#audio").value).toBe("pl");
   expect(document.querySelector("#subs").value).toBe("pl");
 });
-it("links to trailers from series pages and the featured hero", async () => {
-  await navigate("series/drones");
-  expect(
-    document.querySelector('.hero-actions a[href="#trailer/drones"]')
-      .textContent,
-  ).toContain("Zwiastun PL");
+it("embeds the Polish trailer immediately below each series description, not a navigation button", async () => {
+  for (const [show, id] of [
+    ["circus", "rrz4UYIs8h4"],
+    ["helluva", "DUD6S1XBVUI"],
+    ["drones", "TvayzJG0BS8"],
+  ]) {
+    await navigate(`series/${show}`);
+    const figure = document.querySelector(
+      ".series-description + .inline-trailer",
+    );
+    expect(figure).not.toBeNull();
+    const frame = figure.querySelector("iframe");
+    expect(frame.title.toLowerCase()).toContain("zwiastun");
+    const url = new URL(frame.src);
+    expect(url.pathname).toContain(id);
+    expect(url.searchParams.get("cc_lang_pref")).toBe("pl");
+    expect(url.searchParams.has("autoplay")).toBe(false);
+    expect(frame.getAttribute("loading")).toBe("lazy");
+    expect(figure.querySelector("figcaption a").href).toContain(
+      "youtube.com/@",
+    );
+    expect(
+      document.querySelector('.hero-actions a[href^="#trailer/"]'),
+    ).toBeNull();
+  }
   await navigate("home");
   expect(
-    document.querySelector('.hero-actions a[href^="#trailer/"]'),
+    document.querySelector(".spotlight-copy > p + .inline-trailer iframe"),
   ).not.toBeNull();
+  expect(
+    document.querySelector('.hero-actions a[href^="#trailer/"]'),
+  ).toBeNull();
 });
 it("opens all three Polish-dubbed trailer uploads without polluting viewing history", async () => {
   const recent = localStorage.getItem("rej-recent");
@@ -261,7 +283,8 @@ it("opens all three Polish-dubbed trailer uploads without polluting viewing hist
   document.querySelector("#subs").dispatchEvent(new Event("change"));
   expect(document.querySelector("iframe").src).toContain("cc_lang_pref=en");
   await navigate("series/drones");
-  expect(document.querySelector("iframe")).toBeNull();
+  expect(document.querySelector(".trailer-section")).toBeNull();
+  expect(document.querySelectorAll(".inline-trailer iframe")).toHaveLength(1);
 });
 it("uses the original vector brand mark in navigation and footer", () => {
   expect(
