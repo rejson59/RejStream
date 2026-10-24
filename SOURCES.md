@@ -89,3 +89,17 @@ Pilot jest odcinkiem 1 tego samego sezonu. Nie tworzymy pozornych dodatkowych se
 ## Usunięty film i własny player
 
 Big Buck Bunny usunięto z aktywnego katalogu, playera i panelu źródeł. Własny player pozostał wyłącznie dla lokalnych plików użytkownika. Wybrany plik jest otwierany przez `URL.createObjectURL`, bez uploadu. Obsługiwane kodeki zależą od przeglądarki. VTT/SRT nie są pobierane z cudzych serwisów; użytkownik dodaje posiadane pliki. Nazwa pliku identyfikuje ścieżkę. Osobny dubbing wymaga osobnego pliku wideo; nie obiecujemy przełączania dowolnych wewnętrznych ścieżek MKV w HTML5.
+
+## Polskie zwiastuny i identyfikacja RejStream
+
+Przegląd bezpośrednich stron YouTube 25.10.2026 (autor, opis, czas i polska transkrypcja; nie test transmisji):
+
+- Digital Circus: https://www.youtube.com/watch?v=rrz4UYIs8h4 — BruDolina Studios, oficjalny polski zwiastun, 1:19.
+- Helluva Boss: https://www.youtube.com/watch?v=DUD6S1XBVUI — Głośne Zacisze, zwiastun **sezonu 2**, 2:13; opis jasno wskazuje nieoficjalny fandub. Nie nazywamy go zwiastunem całego serialu ani oficjalnym polskim dubbingiem.
+- Murder Drones: https://www.youtube.com/watch?v=TvayzJG0BS8 — BruDolina Studios, polski zwiastun dubbingu, 1:13; opis potwierdza współpracę z GLITCH.
+
+Zwiastuny są osobnymi polskojęzycznymi uploadami; nie wymagają sterowania ścieżkami audio YouTube. Odnośniki są dostępne na stronach seriali i w wyróżnionym serialu na starcie. Nie zapisują się jako obejrzany odcinek ani w historii odcinków.
+
+Logo `public/rejstream-mark.svg` to własny znak wektorowy RejStream: litera R z wycięciem play, koralowo-różowy gradient na ciemnym polu. Nie wykorzystuje znaków GLITCH, SpindleHorse ani grafik seriali. Używane w nawigacji, stopce i faviconie.
+
+Polskie napisy są domyślnie zamawiane przez `cc_load_policy=1&cc_lang_pref=pl`, a interfejs źródła przez `hl=pl`. Parametry te **nie wymuszają polskiego audio**, nie tworzą brakującej ścieżki i nie gwarantują napisów. Dla odcinków z polskim osobnym materiałem wybieramy go domyślnie; dla oficjalnych wielojęzycznych filmów nadal może być potrzebny wybór audio w ustawieniach YouTube. Nowa preferencja `rej-prefer-polish-v2` startuje od PL także dla osób, które w poprzedniej wersji pozostawiły oryginał; kolejne świadome wybory są respektowane.

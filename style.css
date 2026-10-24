@@ -3417,3 +3417,82 @@ footer button svg {
     font-size: 11px;
   }
 }
+
+.brand-symbol {
+  flex-shrink: 0;
+  display: block;
+  border-radius: 10px;
+}
+.mobile-brand {
+  display: none;
+}
+.trailer-section {
+  max-width: 1120px;
+  margin: auto;
+}
+.trailer-heading {
+  margin: 24px 0;
+}
+.trailer-heading h1 {
+  font-size: clamp(26px, 4vw, 42px);
+  margin: 10px 0;
+}
+.trailer-heading p,
+.trailer-credit {
+  color: var(--muted);
+  line-height: 1.8;
+}
+.trailer-credit a {
+  color: #efedf5;
+  text-decoration: underline;
+}
+@media (max-width: 480px) {
+  .topbar::before {
+    display: none !important;
+  }
+  .mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: auto;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .trailer-heading,
+  .trailer-credit {
+    margin: 20px;
+  }
+  .trailer-heading .eyebrow {
+    line-height: 1.8;
+  }
+}
+@media (min-width: 481px) and (max-width: 760px) {
+  .topbar::before {
+    display: none;
+  }
+  .mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: auto;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+}
+.brand > .brand-symbol {
+  width: 36px;
+  height: 36px;
+  margin-right: 8px;
+  object-fit: contain;
+}
+.brand.small > .brand-symbol {
+  width: 28px;
+  height: 28px;
+}
+.mobile-brand > img {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}

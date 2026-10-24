@@ -124,7 +124,7 @@ it("handles unknown routes and unknown episodes gracefully", async () => {
 });
 
 it("defaults to credited Polish material and remembers an explicit original preference", async () => {
-  localStorage.removeItem("rej-prefer-polish");
+  localStorage.removeItem("rej-prefer-polish-v2");
   await navigate("watch/helluva/1/2");
   expect(document.querySelector("#audio").value).toBe("pl");
   expect(document.querySelector("iframe").src).toContain("jamGQ6oBo4w");
@@ -200,4 +200,74 @@ it("explains official Polish audio without claiming to control YouTube tracks", 
   filter.dispatchEvent(new Event("change"));
   expect(document.querySelectorAll("[data-episode]")).toHaveLength(9);
   expect(document.querySelector("#audio-filter").value).toBe("polish");
+});
+
+it("defaults captions to Polish even on official multi-audio uploads", async () => {
+  await navigate("watch/circus/1/2");
+  expect(document.querySelector("#subs").value).toBe("pl");
+  const url = new URL(document.querySelector("iframe").src);
+  expect(url.searchParams.get("hl")).toBe("pl");
+  expect(url.searchParams.get("cc_load_policy")).toBe("1");
+  expect(url.searchParams.get("cc_lang_pref")).toBe("pl");
+  document.querySelector("#subs").value = "";
+  document.querySelector("#subs").dispatchEvent(new Event("change"));
+  expect(
+    new URL(document.querySelector("iframe").src).searchParams.has(
+      "cc_load_policy",
+    ),
+  ).toBe(false);
+});
+it("resets legacy English preference once for the new Polish-first defaults", async () => {
+  localStorage.setItem("rej-prefer-polish", "false");
+  localStorage.removeItem("rej-prefer-polish-v2");
+  await navigate("watch/helluva/1/5");
+  expect(document.querySelector("#audio").value).toBe("pl");
+  expect(document.querySelector("#subs").value).toBe("pl");
+});
+it("links to trailers from series pages and the featured hero", async () => {
+  await navigate("series/drones");
+  expect(
+    document.querySelector('.hero-actions a[href="#trailer/drones"]')
+      .textContent,
+  ).toContain("Zwiastun PL");
+  await navigate("home");
+  expect(
+    document.querySelector('.hero-actions a[href^="#trailer/"]'),
+  ).not.toBeNull();
+});
+it("opens all three Polish-dubbed trailer uploads without polluting viewing history", async () => {
+  const recent = localStorage.getItem("rej-recent");
+  for (const [show, id] of [
+    ["circus", "rrz4UYIs8h4"],
+    ["helluva", "DUD6S1XBVUI"],
+    ["drones", "TvayzJG0BS8"],
+  ]) {
+    await navigate(`trailer/${show}`);
+    const url = new URL(document.querySelector("iframe").src);
+    expect(url.pathname).toContain(id);
+    expect(url.searchParams.get("cc_lang_pref")).toBe("pl");
+    expect(document.querySelector("#youtube-link").href).toContain(id);
+    expect(document.querySelector(".trailer-credit a").href).toContain(
+      "youtube.com/@",
+    );
+    expect(document.querySelector(".polish-notice").textContent).toContain(
+      show === "helluva"
+        ? "nieoficjalny fandub"
+        : "oficjalnego polskiego dubbingu",
+    );
+  }
+  expect(localStorage.getItem("rej-recent")).toBe(recent);
+  document.querySelector("#subs").value = "en";
+  document.querySelector("#subs").dispatchEvent(new Event("change"));
+  expect(document.querySelector("iframe").src).toContain("cc_lang_pref=en");
+  await navigate("series/drones");
+  expect(document.querySelector("iframe")).toBeNull();
+});
+it("uses the original vector brand mark in navigation and footer", () => {
+  expect(
+    document.querySelectorAll('img[src="./rejstream-mark.svg"]'),
+  ).toHaveLength(3);
+  expect(
+    document.querySelector(".mobile-brand").getAttribute("aria-label"),
+  ).toContain("RejStream");
 });
