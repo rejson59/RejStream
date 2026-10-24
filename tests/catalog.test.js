@@ -19,10 +19,10 @@ describe("catalog", () => {
     expect(
       selectEpisodes({ season: 2, query: "seeing" }).map((e) => e.title),
     ).toEqual(["Seeing Stars"]);
-    expect(selectEpisodes({ season: 2, filter: "pl" })).toHaveLength(0);
+    expect(selectEpisodes({ season: 2, filter: "pl" })).toHaveLength(9);
     expect(
       selectEpisodes({ season: 1, filter: "pl" }).map((e) => e.number),
-    ).toEqual([1]);
+    ).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     expect(selectEpisodes({ savedOnly: true, saved: false })).toHaveLength(0);
     expect(selectEpisodes({ savedOnly: true, saved: true })).toHaveLength(
       helluvaEpisodes.length,

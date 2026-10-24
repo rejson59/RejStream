@@ -30,15 +30,23 @@ npm run build
 
 ## Audio i napisy
 
-Oficjalne produkcje korzystają z osadzeń YouTube. Ścieżki audio wybiera się w ustawieniach źródłowego playera. Nie udajemy, że API osadzenia udostępnia pełną listę języków: nie pobieramy jej i nie gwarantujemy tych samych ścieżek w każdym odcinku/regionie. Preferencje napisów PL/EN nie gwarantują ich obecności. Znalezione polskie fanduby HB (pilot 2019 i S1E1) mają osobne, wyraźnie nieoficjalne źródła.
+Oficjalne produkcje korzystają z osadzeń YouTube. Ścieżki audio wybiera się w ustawieniach źródłowego playera. Nie udajemy, że API osadzenia udostępnia pełną listę języków: nie pobieramy jej i nie gwarantujemy tych samych ścieżek w każdym odcinku/regionie. Preferencje napisów PL/EN nie gwarantują ich obecności. Polskie wersje są teraz opisane osobno przy każdym odcinku:
+
+- **Helluva Boss:** pełne fanduby do całego sezonu 1, dziewięciu odcinków sezonu 2 (1, 3–5, 7–11), pilota 2019 i wszystkich trzech shorts z katalogu (1, 3, 4). S1E1 ma do wyboru NanoKarrin i BruDolina Studios. Autorzy mają odnośniki do kanału i materiału z pełną obsadą.
+- **S2E2:** pełny polski lektor amatorski, wyraźnie oddzielony od dubbingu. Nie dodajemy znalezionego 10-minutowego fragmentu jako pełnego odcinka.
+- **Luki:** nie potwierdzono pełnego, dostępnego fandubu S2E6, S2E12 ani Mission: Zero. UI mówi to wprost; wskazuje też oficjalnego lektora w płatnym Prime Video. Dla sezonu 3 języki trzeba sprawdzić u dystrybutora.
+- **Digital Circus (9 odcinków) i pilot Murder Drones:** oficjalny polski dubbing GLITCH; widoczna instrukcja `⚙ → Ścieżka dźwiękowa → Polski`. Nie tworzymy pozornej opcji automatycznego przełączenia audio, bo osadzenie tego nie umożliwia.
+
+Domyślnie wybieramy znaleziony polski materiał, jeżeli istnieje. Ręczny wybór oryginału lub polskiej wersji zapamiętuje preferencję na tym urządzeniu, także dla następnego odcinka. Filtry rozróżniają wszystkie potwierdzone polskie wersje i same fanduby. Materiał S2E1 z ograniczeniem wieku prowadzi do YouTube zamiast niedziałającego osadzenia. Pozostałe źródła również mają bezpośredni link, jeśli odtwarzanie w osadzeniu jest zablokowane. Metadane i ograniczenia przeglądu są w `SOURCES.md`; nie przeprowadzono testu transmisji YouTube w sandboxie.
 
 Własny player HTML5 pozostaje w sekcji „Mój player” / „Własny odtwarzacz”: lokalne pliki wideo, SRT/VTT, wiele plików napisów, ±10 s, seek, tempo, głośność i fullscreen. Żaden lokalny plik nie jest wysyłany na serwer. Obsługa kodeków zależy od przeglądarki; oddzielny dubbing wymaga pliku wideo z tą wersją audio.
 
 ## Walidacja
 
-- `npm test`: 22 testy danych i interfejsu (Vitest/jsdom).
+- `npm test`: 35 testów danych i interfejsu (Vitest/jsdom).
 - `npm run build`: statyczne zasoby w `dist/` (ignorowane przez Git).
 - Test przeglądarkowy Chromium/Playwright w sandboxie: 24 kombinacje tras i szerokości, sortowanie, siatka, ulubione po reloadzie, kolejka, następny odcinek, ręczne obejrzane, import SRT, błąd lokalnego wideo i sprzątanie po opuszczeniu playera. Brak błędów JS.
+- Po uzupełnieniu audio: 40 kombinacji tras/szerokości; wybór polskiego materiału i alternatywnego fandubu, zapamiętywanie preferencji, następny odcinek, lektor, luki, ograniczenie wieku, filtrowanie i sortowanie. Brak błędów JS i poziomego overflow.
 - Test przeglądarkowy dotyczy naszej aplikacji. Zewnętrzne transmisje YouTube i obrazki mają blokadę sieci w sandboxie; nie potwierdza to dekodowania ani dostępności reklam/audio/napisów w regionie użytkownika. Miniatury przy blokadzie mają zaprojektowane zastępstwo.
 
 ## Wdrożenie
