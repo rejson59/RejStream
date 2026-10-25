@@ -1,3 +1,4 @@
+import { account } from "./account.js";
 import {
   records,
   position,
@@ -86,29 +87,29 @@ const icons = {
 const icon = (name) => `<i data-lucide="${name}" aria-hidden="true"></i>`;
 const read = (key, fallback) => {
   try {
-    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+    return (
+      JSON.parse(
+        (["rej-favorites", "rej-watched"].includes(key)
+          ? account.storage()
+          : localStorage
+        ).getItem(key),
+      ) ?? fallback
+    );
   } catch {
     return fallback;
   }
 };
 const store = (key, value) => {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    (["rej-favorites", "rej-watched"].includes(key)
+      ? account.storage()
+      : localStorage
+    ).setItem(key, JSON.stringify(value));
   } catch {}
 };
-let favorites = read("rej-favorites", []),
-  watched = read("rej-watched", []),
-  recent = read("rej-recent", []);
-if (!Array.isArray(favorites)) favorites = [];
-if (!Array.isArray(watched)) watched = [];
-if (!Array.isArray(recent)) recent = [];
-if (read("rej-saved", false) === true && !favorites.includes("helluva")) {
-  favorites.push("helluva");
-  store("rej-favorites", favorites);
-  try {
-    localStorage.removeItem("rej-saved");
-  } catch {}
-}
+let favorites = [],
+  watched = [],
+  recent = [];
 let searchNavigation = false;
 let search = "",
   sort = "recommended",
@@ -121,11 +122,27 @@ const seasonState = {},
   filterState = {};
 let dialogFocus = null;
 const app = document.querySelector("#app");
-app.innerHTML = `<a class="skip-link" href="#content">Przejdź do treści</a><aside class="sidebar"><a href="#home" class="brand" aria-label="RejStream — strona główna"><img class="brand-symbol" src="./rejstream-mark.svg" width="36" height="36" alt="">rej<span>stream</span><b>•</b></a><div class="nav-label">TWOJE MIEJSCE NA DOBRE HISTORIE</div><nav aria-label="Menu główne">${navButtons()}</nav><div class="sidebar-bottom"><div class="studio-note">${icon("sparkles")} Poza głównym nurtem.<p>Niezależni twórcy.<br>Nieprzeciętne historie.</p></div><button class="quiet" data-go="local">${icon("film")} Własny odtwarzacz</button><button class="quiet" id="help">${icon("circle-help")} Jak to działa?</button><div class="profile"><span class="avatar">R</span><div>Twój mały seans<small>Bez konta. Po swojemu.</small></div></div></div></aside><div class="page"><header class="topbar"><a href="#home" class="mobile-brand" aria-label="RejStream — strona główna"><img src="./rejstream-mark.svg" width="30" height="30" alt=""><span>rejstream</span></a><div id="breadcrumbs"></div><label class="search-box">${icon("search")}<input id="search" type="search" placeholder="Znajdź swoją następną obsesję…" aria-label="Szukaj seriali i odcinków"><kbd>/</kbd></label><button class="mobile-search" aria-label="Otwórz wyszukiwanie">${icon("search")}</button><span class="avatar header-avatar">R</span></header><main id="content" tabindex="-1"></main><footer><a class="brand small" href="#home"><img class="brand-symbol" src="./rejstream-mark.svg" width="28" height="28" alt="">rej<span>stream</span><b>•</b></a><p>Mało przewijania. Dużo dobrych historii.</p><button id="sources">Źródła i twórcy ${icon("arrow-up-right")}</button><span>© ${new Date().getFullYear()} RejStream</span></footer></div><nav class="bottom-nav" aria-label="Menu mobilne">${navButtons(true)}</nav><div class="dialog-backdrop" id="dialog" hidden></div><div id="toast" role="status"></div>`;
+app.innerHTML = `<a class="skip-link" href="#content">Przejdź do treści</a><aside class="sidebar"><a href="#home" class="brand" aria-label="RejStream — strona główna"><img class="brand-symbol" src="./rejstream-mark.svg" width="36" height="36" alt="">rej<span>stream</span><b>•</b></a><div class="nav-label">TWOJE MIEJSCE NA DOBRE HISTORIE</div><nav aria-label="Menu główne">${navButtons()}</nav><div class="sidebar-bottom"><div class="studio-note">${icon("sparkles")} Poza głównym nurtem.<p>Niezależni twórcy.<br>Nieprzeciętne historie.</p></div><button class="quiet" data-go="local">${icon("film")} Własny odtwarzacz</button><button class="quiet" id="help">${icon("circle-help")} Jak to działa?</button><div class="profile"><span class="avatar">R</span><div>Twój mały seans<small>Bez konta. Po swojemu.</small></div></div></div></aside><div class="page"><header class="topbar"><a href="#home" class="mobile-brand" aria-label="RejStream — strona główna"><img src="./rejstream-mark.svg" width="30" height="30" alt=""><span>rejstream</span></a><div id="breadcrumbs"></div><label class="search-box">${icon("search")}<input id="search" type="search" placeholder="Znajdź swoją następną obsesję…" aria-label="Szukaj seriali i odcinków"><kbd>/</kbd></label><button class="mobile-search" aria-label="Otwórz wyszukiwanie">${icon("search")}</button><a href="#account" class="avatar header-avatar" aria-label="Konto społeczności">R</a></header><p id="cloud-status" role="status" hidden></p><main id="content" tabindex="-1"></main><footer><a class="brand small" href="#home"><img class="brand-symbol" src="./rejstream-mark.svg" width="28" height="28" alt="">rej<span>stream</span><b>•</b></a><p>Mało przewijania. Dużo dobrych historii.</p><button id="sources">Źródła i twórcy ${icon("arrow-up-right")}</button><span>© ${new Date().getFullYear()} RejStream</span></footer></div><nav class="bottom-nav" aria-label="Menu mobilne">${navButtons(true)}</nav><div class="dialog-backdrop" id="dialog" hidden></div><div id="toast" role="status"></div>`;
+function requireAccount() {
+  if (account.state().username) return true;
+  go("account");
+  showToast("Zaloguj się kontem społeczności, aby korzystać z tej opcji.");
+  return false;
+}
+function accountPrompt(title) {
+  return `<section class="section"><div class="page-heading"><h1>${title}</h1><p>Zaloguj się kontem społeczności Rejson, aby synchronizować historię, pozycje odcinków, ulubione i oznaczenia obejrzanych.</p><p>Bez logowania oglądasz swobodnie — nie zapisujemy Twojej historii ani pozycji.</p><a class="button primary" href="#account">Zaloguj się</a></div></section>`;
+}
+function accountPage() {
+  const { username, error } = account.state();
+  return `<section class="section account-section"><div class="page-heading"><span class="eyebrow">JEDNO KONTO · SPOŁECZNOŚĆ REJSON</span><h1>${username ? `Cześć, ${esc(username)}` : "Zaloguj się"}<span>.</span></h1><p>To samo konto co na rejson59.github.io/spolecznosc. Historia, wznawianie, ulubione i obejrzane są przypisane do konta. Nie przechowujemy ich lokalnie.</p></div>${username ? `<p>Sesja konta jest wspólna ze społecznością na tej samej domenie.</p><div class="hero-actions"><button id="account-sync" class="button secondary">Ponów synchronizację</button><button id="account-logout" class="button secondary">Wyloguj się</button></div>` : `<form id="account-form" class="account-form"><label>Nazwa użytkownika<input name="username" autocomplete="username" required maxlength="64"></label><label>PIN społeczności<input name="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" autocomplete="current-password" required></label><button class="button primary" type="submit">Zaloguj się</button></form><p>Nie masz konta? <a href="https://rejson59.github.io/spolecznosc.html" target="_blank" rel="noopener">Utwórz je w społeczności ↗</a></p>`}<p id="account-error" role="status">${esc(error)}</p><p>Na urządzeniu pozostaje tylko token logowania i ustawienia interfejsu. Plików wideo nie wysyłamy; dla lokalnego filmu zapisujemy nazwę i pozycję na koncie.</p></section>`;
+}
 function navButtons(mobile = false) {
   return [
     { key: "home", icon: "house", label: mobile ? "Start" : "Strona główna" },
     { key: "library", icon: "clapperboard", label: "Seriale" },
+    ...(!mobile
+      ? [{ key: "account", icon: "shield-check", label: "Konto" }]
+      : []),
     { key: "saved", icon: "bookmark", label: "Moja lista" },
     {
       key: "history",
@@ -157,6 +174,7 @@ function showToast(text) {
   window.toastTimer = setTimeout(() => el.classList.remove("visible"), 2600);
 }
 function favorite(key) {
+  if (!requireAccount()) return;
   favorites = isSaved(key)
     ? favorites.filter((x) => x !== key)
     : [...favorites, key];
@@ -170,12 +188,13 @@ function saveButton(show, small = false) {
   return `<button class="${small ? "save-card" : "button secondary"} ${isSaved(show.key) ? "is-saved" : ""}" data-save="${show.key}" aria-label="${isSaved(show.key) ? "Usuń z listy" : "Dodaj do listy"}: ${show.title}" aria-pressed="${isSaved(show.key)}">${icon(isSaved(show.key) ? "check" : "plus")}${small ? "" : isSaved(show.key) ? "Na mojej liście" : "Moja lista"}</button>`;
 }
 function seriesCard(show) {
-  return `<article class="series-card" style="--accent:${show.color}"><a href="#series/${show.key}" class="series-image" aria-label="Zobacz ${show.title}"><img src="${thumb(show.art)}" alt="${show.title}" loading="lazy"><span class="image-gradient"></span><span class="image-badge">${show.key === "circus" ? "9 ODCINKÓW" : show.key === "helluva" ? "2 PEŁNE SEZONY" : "WYBRANY PILOT"}</span><span class="hover-play">${icon("arrow-right")}</span></a>${saveButton(show, true)}<div class="card-line"><span>${show.creator.split(" · ")[0]}</span><span>${show.age}</span></div><a href="#series/${show.key}"><h3>${show.title}</h3></a><p>${show.genre} <span>•</span> ${show.year}</p></article>`;
+  return `<article class="series-card" style="--accent:${show.color}"><a href="#series/${show.key}" class="series-image" aria-label="Zobacz ${show.title}"><img src="${thumb(show.art)}" alt="${show.title}" loading="lazy"><span class="image-gradient"></span><span class="image-badge">${show.key === "circus" ? "9 ODCINKÓW" : show.key === "helluva" ? "2 PEŁNE SEZONY" : "8 ODCINKÓW"}</span><span class="hover-play">${icon("arrow-right")}</span></a>${saveButton(show, true)}<div class="card-line"><span>${show.creator.split(" · ")[0]}</span><span>${show.age}</span></div><a href="#series/${show.key}"><h3>${show.title}</h3></a><p>${show.genre} <span>•</span> ${show.year}</p></article>`;
 }
 function hero(show) {
   return `<section class="spotlight" style="--accent:${show.color}"><img class="spotlight-art" src="${thumb(show.hero, "maxresdefault")}" alt="" fetchpriority="high"><div class="spotlight-shade"></div><div class="spotlight-copy"><div class="eyebrow">${icon("sparkles")} REJSTREAM SELECT <span>•</span> NIEZALEŻNA ANIMACJA</div><span class="feature-label"><span class="live-dot"></span> ${show.key === "circus" ? "Wszystkie 9 odcinków. Jedna niezwykła historia." : show.label}</span><h1>${show.key === "circus" ? "THE AMAZING<br><span>DIGITAL CIRCUS</span>" : show.key === "helluva" ? "HELLUVA<br><span>BOSS</span>" : "MURDER<br><span>DRONES</span>"}</h1><div class="meta"><span class="age">${show.age}</span><span>${show.year}</span><span>${show.genre}</span></div><p>${show.description}</p>${inlineTrailer(show)}<div class="hero-actions"><button class="button primary" data-go="watch/${show.key}/${show.episodes[0].season}/${show.episodes[0].number}">${icon("play")} Oglądaj od początku</button><a class="button secondary" href="#series/${show.key}">Poznaj serial ${icon("arrow-right")}</a></div><div class="hero-source">${icon("languages")} Języki i napisy w źródłowym odtwarzaczu</div></div><div class="spotlight-switcher" aria-label="Wyróżniony serial">${series.map((s, i) => `<button data-feature="${s.key}" class="${s.key === show.key ? "selected" : ""}" aria-label="Wyróżnij ${s.title}" aria-pressed="${s.key === show.key}"><span>0${i + 1}</span><b>${s.short}</b><i></i></button>`).join("")}</div></section>`;
 }
 function historyPage() {
+  if (!account.state().username) return accountPrompt("Historia oglądania");
   const seen = new Set();
   const entries = Object.values(records())
     .filter((r) => r.seconds > 0 || r.position > 0 || r.completed)
@@ -186,7 +205,7 @@ function historyPage() {
       seen.add(key);
       return true;
     });
-  return `<section class="section history-section"><div class="page-heading"><span class="eyebrow">OSTATNIO OGLĄDANE</span><h1>Historia oglądania<span>.</span></h1><p>Twoje materiały i zapisane pozycje, od najnowszych. Historia zostaje tylko na tym urządzeniu.</p></div>${
+  return `<section class="section history-section"><div class="page-heading"><span class="eyebrow">OSTATNIO OGLĄDANE</span><h1>Historia oglądania<span>.</span></h1><p>Twoje materiały i zapisane pozycje, od najnowszych. Historia jest zapisywana na Twoim koncie społeczności, nie w pamięci przeglądarki.</p></div>${
     entries.length
       ? `<ul class="history-list">${entries
           .map((r) => {
@@ -212,7 +231,9 @@ function historyPage() {
 }
 function progressMarkup(entry) {
   if (!entry)
-    return '<span class="progress-empty">Postęp zapisuje się lokalnie podczas odtwarzania.</span>';
+    return account.state().username
+      ? '<span class="progress-empty">Postęp pojawi się po rozpoczęciu odtwarzania.</span>'
+      : '<a class="progress-empty" href="#account">Zaloguj się, aby zapisywać postęp na koncie.</a>';
   const duration = Math.max(1, entry.duration),
     value = Math.min(duration, entry.completed ? duration : entry.position);
   return `<span class="position-progress"><progress max="${duration}" value="${value}" aria-label="Zapisana pozycja: ${formatTime(value)} z ${formatTime(duration)}"></progress><span class="position-time">${formatTime(value)}</span></span>`;
@@ -230,6 +251,7 @@ function recentCard({ r, s }) {
   return `<section class="recent-section"><div class="section-heading compact"><h2>Wróć do swojej historii</h2><span>Ostatnio otwarty odcinek</span></div><a class="recent-card" href="#watch/${s.key}/${e.season}/${e.number}"><img src="${thumb(e.id || s.art)}" alt=""><span class="recent-copy"><small>${s.title} · ${episodeLabel(e)}</small><b>${esc(e.title)}</b><span>Wróć do odcinka ${icon("arrow-right")}</span></span><span class="recent-play">${icon("play")}</span></a></section>`;
 }
 function library(saved = false) {
+  if (saved && !account.state().username) return accountPrompt("Moja lista");
   let shows = series.filter(
     (s) =>
       (!saved || isSaved(s.key)) &&
@@ -271,13 +293,12 @@ function episodeCard(show, e) {
   return `<article class="episode ${done ? "watched" : ""}" data-episode="${key}"><a class="episode-image" href="#watch/${show.key}/${e.season}/${e.number}" aria-label="${e.id ? "Oglądaj" : "Sprawdź źródło"}: ${esc(e.title)}"><img src="${thumb(e.id || show.art)}" alt="" loading="lazy"><span class="episode-number">${String(e.number).padStart(2, "0")}</span><span class="episode-duration">${e.time}</span><span class="episode-play">${icon(e.id ? "play" : "arrow-up-right")}</span></a><div class="episode-copy"><div class="episode-overline">${episodeLabel(e)} ${e.id ? `<span class="pl-label ${polishKind(e) === "missing" ? "pl-missing" : ""}">${polishLabel(e)}</span>` : ""}${!e.id ? '<span class="external-label">PRIME VIDEO · ZEWNĘTRZNIE</span>' : ""}</div><a href="#watch/${show.key}/${e.season}/${e.number}"><h3>${esc(e.title)}</h3></a><p>${esc(e.desc)}</p><span class="episode-foot">${progress ? progressMarkup(progress) : done ? `${icon("check-circle-2")} Obejrzane` : e.date ? new Date(e.date + "T12:00:00").toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" }) : e.id ? "Oficjalne źródło YouTube" : "Sprawdź dostępność u dystrybutora"}</span></div><button class="watched-button ${done ? "done" : ""}" data-watched="${key}" aria-label="${done ? "Cofnij oznaczenie" : "Oznacz jako obejrzane"}: ${esc(e.title)}" aria-pressed="${done}">${icon(done ? "check-circle-2" : "check")}</button></article>`;
 }
 function record(show, e) {
-  if (!e.id) return;
+  if (!e.id || !account.state().username) return;
   const key = episodeKey(show.key, e);
   recent = [
     { show: show.key, key },
     ...recent.filter((r) => r.key !== key),
   ].slice(0, 8);
-  store("rej-recent", recent);
 }
 function polishNotice(show, e) {
   const kind = polishKind(e);
@@ -468,15 +489,16 @@ function render() {
       html = `<section class="section">${empty("Nie znaleźliśmy tego odcinka.", "Wróć do listy i wybierz inny.", "Zobacz odcinki", "series/" + show.key)}</section>`;
   } else if (page === "library" || page === "saved")
     html = library(page === "saved");
+  else if (page === "account") html = accountPage();
   else if (page === "history") html = historyPage();
   else if (page === "local") html = localPage();
   else if (page === "home") html = home();
   else
     html = `<section class="section">${empty("Ta strona nie istnieje.", "Wróć do odkrywania historii.", "Strona główna", "home")}</section>`;
   content.innerHTML = html;
-  document.title = `${show ? show.title : page === "history" ? "Historia oglądania" : page === "saved" ? "Moja lista" : page === "local" ? "Twój player" : "Odkrywaj historie"} · RejStream`;
+  document.title = `${show ? show.title : page === "account" ? "Konto społeczności" : page === "history" ? "Historia oglądania" : page === "saved" ? "Moja lista" : page === "local" ? "Twój player" : "Odkrywaj historie"} · RejStream`;
   const crumb = document.querySelector("#breadcrumbs");
-  crumb.innerHTML = `<a href="#home">Odkrywaj</a><span>/</span><b>${show ? show.title : page === "library" ? "Seriale" : page === "history" ? "Historia oglądania" : page === "saved" ? "Moja lista" : page === "local" ? "Własny player" : "Strona główna"}</b>`;
+  crumb.innerHTML = `<a href="#home">Odkrywaj</a><span>/</span><b>${show ? show.title : page === "library" ? "Seriale" : page === "account" ? "Konto społeczności" : page === "history" ? "Historia oglądania" : page === "saved" ? "Moja lista" : page === "local" ? "Własny player" : "Strona główna"}</b>`;
   document.querySelectorAll("[data-nav]").forEach((n) => {
     const active =
       n.dataset.nav ===
@@ -486,6 +508,13 @@ function render() {
     else n.removeAttribute("aria-current");
   });
   document.querySelector("#favorite-count").textContent = favorites.length;
+  const accountLink = document.querySelector(".header-avatar");
+  const username = account.state().username;
+  accountLink.textContent = username ? username.charAt(0).toUpperCase() : "R";
+  accountLink.title = username
+    ? `Konto: ${username}`
+    : "Zaloguj się kontem społeczności";
+  accountLink.setAttribute("aria-label", accountLink.title);
   createIcons({ icons });
   bindContent();
   inlineDisposers = [...content.querySelectorAll(".inline-trailer iframe")].map(
@@ -493,6 +522,31 @@ function render() {
   );
   if (activeEpisode?.id) loadEmbed();
   else document.querySelector(".player-health")?.remove();
+  document
+    .querySelector("#account-form")
+    ?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget,
+        button = form.querySelector("button");
+      const username = form.elements.username.value,
+        pin = form.elements.pin.value;
+      form.elements.pin.value = "";
+      button.disabled = true;
+      try {
+        await account.login(username, pin);
+        go("account");
+      } catch (error) {
+        showToast(error.message);
+      } finally {
+        button.disabled = false;
+      }
+    });
+  document
+    .querySelector("#account-logout")
+    ?.addEventListener("click", () => account.logout());
+  document
+    .querySelector("#account-sync")
+    ?.addEventListener("click", () => account.flush());
   if (page === "local")
     dispose = mountNativePlayer(document.querySelector("#native-mount"), {
       title: "Lokalny plik",
@@ -533,7 +587,7 @@ function showDialog(type, key) {
       ? `<span class="eyebrow">AUDIO I NAPISY</span><h2>Oglądaj po swojemu.</h2><p>${show?.languageNote || ""}</p><ol><li>Otwórz wybrany odcinek.</li><li>W odtwarzaczu wybierz koło zębate.</li><li>Wybierz <b>Ścieżkę dźwiękową</b> lub <b>Napisy</b>.</li></ol><p>Nie wyświetlamy fikcyjnej listy wersji językowych. Ostateczna lista jest dostępna w samym źródle; osadzenie nie udostępnia nam pełnej listy ścieżek.</p>`
       : type === "sources"
         ? `<span class="eyebrow">STWORZONE PRZEZ LUDZI Z PASJĄ</span><h2>Historie należą do twórców.</h2><p>RejStream jest niezależnym katalogiem. Oficjalne materiały odtwarzamy z YouTube, bez ukrywania oznaczeń i reklam. Dostępność zależy od autora i regionu.</p><div class="creator-list">${series.map((s) => `<a href="${s.channel}" target="_blank" rel="noopener"><span><b>${s.title}</b><small>${s.creator}</small></span>${icon("arrow-up-right")}</a>`).join("")}</div><p>Polskie fanduby są nieoficjalne. Własny player służy Twoim lokalnym plikom; nie wysyła ich do sieci. Biblioteka jest aktualizowana ręcznie, ostatni przegląd: 25.10.2026.</p>`
-        : `<span class="eyebrow">WYGODNIE, BEZ ZAKŁADANIA KONTA</span><h2>Wybierz świat. Włącz historię.</h2><p>Otwórz stronę serialu, wybierz sezon i odcinek. Kolejność zmienisz nad listą. Ikoną ✓ możesz ręcznie oznaczyć obejrzane odcinki; postęp zapisujemy lokalnie przez API YouTube, gdy odtwarzacz je udostępnia.</p><p>Moja lista, obejrzane i ostatnio otwarte są zapisywane tylko w tej przeglądarce. Do własnych plików służy sekcja „Mój player”.</p><p>Szukaj tytułów seriali w katalogu, a odcinków na stronie konkretnego serialu. Skrót / otwiera wyszukiwanie, Escape zamyka ten panel.</p>`;
+        : `<span class="eyebrow">WYGODNIE, BEZ ZAKŁADANIA KONTA</span><h2>Wybierz świat. Włącz historię.</h2><p>Otwórz stronę serialu, wybierz sezon i odcinek. Kolejność zmienisz nad listą. Ikoną ✓ możesz ręcznie oznaczyć obejrzane odcinki; postęp zapisujemy na koncie przez API YouTube, gdy odtwarzacz je udostępnia.</p><p>Historia, pozycje, Moja lista i obejrzane wymagają zalogowania kontem społeczności. Gościom nie zapisujemy historii. Do własnych plików służy sekcja „Mój player”.</p><p>Szukaj tytułów seriali w katalogu, a odcinków na stronie konkretnego serialu. Skrót / otwiera wyszukiwanie, Escape zamyka ten panel.</p>`;
   const dialog = document.querySelector("#dialog");
   dialog.innerHTML = `<section class="dialog-box" role="dialog" aria-modal="true" aria-label="${type === "languages" ? "Audio i napisy" : "Informacje o RejStream"}"><button class="dialog-close" aria-label="Zamknij">${icon("x")}</button>${body}</section>`;
   dialog.hidden = false;
@@ -576,6 +630,7 @@ app.addEventListener("click", (e) => {
     render();
   }
   if (button.dataset.watched) {
+    if (!requireAccount()) return;
     const key = button.dataset.watched;
     watched = watched.includes(key)
       ? watched.filter((x) => x !== key)
@@ -656,6 +711,25 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
+let previousUser = null;
+account.subscribe(() => {
+  const state = account.state();
+  const globalStatus = document.querySelector("#cloud-status");
+  if (globalStatus) {
+    globalStatus.textContent = state.error;
+    globalStatus.hidden = !state.error;
+  }
+  const status = document.querySelector("#account-error");
+  if (status) status.textContent = state.error;
+  if (state.username === previousUser) return;
+  previousUser = state.username;
+  favorites = read("rej-favorites", []);
+  watched = read("rej-watched", []);
+  recent = [];
+  render();
+});
+account.init();
+
 render();
 
 app.addEventListener(

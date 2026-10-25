@@ -3727,3 +3727,34 @@ footer button svg {
     gap: 16px;
   }
 }
+
+.account-form {
+  max-width: 400px;
+  display: grid;
+  gap: 18px;
+  margin: 24px 0;
+}
+.account-form label {
+  display: grid;
+  gap: 8px;
+}
+.account-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #55415f;
+  border-radius: 8px;
+  background: #18131f;
+  color: #eee;
+  font: inherit;
+}
+.account-section p {
+  color: var(--muted);
+  line-height: 1.8;
+}
+#cloud-status {
+  margin: 16px 24px;
+  padding: 14px;
+  background: #38252e;
+  border-radius: 8px;
+}

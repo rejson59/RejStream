@@ -1,9 +1,6 @@
+import { account } from "./account.js";
 function defaultStorage() {
-  try {
-    return globalThis.localStorage;
-  } catch {
-    return null;
-  }
+  return account.storage();
 }
 const STORAGE_KEY = "rej-playback-v1";
 const valid = (n) => typeof n === "number" && Number.isFinite(n) && n >= 0;
@@ -56,6 +53,7 @@ export function createProgress(
     ended = false,
     force = false,
   }) {
+    if (storage?.enabled === false) return;
     if (!valid(time) || !valid(duration) || !duration) return;
     if (!previous && !playing && !ended && !force) return;
     const now = clock(),

@@ -1,5 +1,14 @@
 // @vitest-environment jsdom
 import { it, expect, vi, beforeAll } from "vitest";
+vi.mock("../account.js", () => ({
+  account: {
+    state: () => ({ username: "Test viewer", error: "" }),
+    storage: () => localStorage,
+    subscribe: () => () => {},
+    init: async () => {},
+    flush: async () => {},
+  },
+}));
 const navigate = async (path) => {
   location.hash = path;
   await new Promise((r) => setTimeout(r, 15));

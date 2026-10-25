@@ -1,0 +1,225 @@
+// Public browser key from the community site; authorization is enforced by RPC.
+const URL = "https://hzbqzfimtroixnldzjeq.supabase.co";
+const KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6YnF6ZmltdHJvaXhubGR6amVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1OTYzOTEsImV4cCI6MjEwODE3MjM5MX0.oeZWOaNd6p3wZBZQQu3QWjRHlrkxV_BFQRNSN-6YntE";
+const SESSION = "rejson_community_session_v1";
+export async function rpc(name, params) {
+  const response = await fetch(`${URL}/rest/v1/rpc/${name}`, {
+    method: "POST",
+    headers: {
+      apikey: KEY,
+      Authorization: `Bearer ${KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+    keepalive: true,
+    signal: AbortSignal.timeout(12000),
+  });
+  const body = await response.json();
+  if (!response.ok)
+    throw new Error(body.message || "Nie udało się połączyć z kontem.");
+  return body;
+}
+export function createAccountStore(
+  request = rpc,
+  browserStorage = (() => {
+    try {
+      return globalThis.localStorage;
+    } catch {
+      return null;
+    }
+  })(),
+) {
+  let session = null,
+    data = {},
+    generation = 0,
+    timer,
+    error = "",
+    pending = new Map(),
+    saving = false;
+  const listeners = new Set();
+  const notify = () => listeners.forEach((fn) => fn());
+  const kindFor = (key) =>
+    ({
+      "rej-playback-v1": "progress",
+      "rej-favorites": "favorite",
+      "rej-watched": "watched",
+    })[key];
+  const state = () => ({ username: session?.username || null, error });
+  async function flush() {
+    clearTimeout(timer);
+    timer = null;
+    if (saving || !session || !pending.size) return;
+    saving = true;
+    const token = session.token,
+      version = generation;
+    try {
+      for (const [id, item] of [...pending]) {
+        if (version !== generation) break;
+        await request("rejstream_write", {
+          p_token: token,
+          p_kind: item.kind,
+          p_key: item.key,
+          p_payload: item.payload,
+        });
+        if (version === generation && pending.get(id) === item)
+          pending.delete(id);
+      }
+      if (version === generation) error = "";
+    } catch {
+      if (version === generation)
+        error =
+          "Nie zapisano zmian na koncie. Sprawdź połączenie i ponów synchronizację przed zamknięciem strony.";
+    } finally {
+      saving = false;
+      notify();
+      if (!error && pending.size) timer = setTimeout(flush, 5000);
+    }
+  }
+  function storage() {
+    const version = generation;
+    return {
+      get enabled() {
+        return !!session && version === generation;
+      },
+      getItem(key) {
+        return session && version === generation
+          ? JSON.stringify(
+              data[kindFor(key)] || (kindFor(key) === "progress" ? {} : []),
+            )
+          : null;
+      },
+      setItem(key, value) {
+        if (!session || version !== generation) return;
+        const kind = kindFor(key);
+        if (!kind) return;
+        const next = JSON.parse(value),
+          old = data[kind] || (kind === "progress" ? {} : []);
+        const before =
+          kind === "progress"
+            ? old
+            : Object.fromEntries(old.map((k) => [k, true]));
+        const after =
+          kind === "progress"
+            ? next
+            : Object.fromEntries(next.map((k) => [k, true]));
+        for (const k of new Set([
+          ...Object.keys(before),
+          ...Object.keys(after),
+        ])) {
+          if (JSON.stringify(before[k]) === JSON.stringify(after[k])) continue;
+          pending.set(`${kind}:${k}`, {
+            kind,
+            key: k,
+            payload: after[k] ?? null,
+          });
+        }
+        data[kind] = next;
+        if (!timer)
+          timer = setTimeout(() => {
+            timer = null;
+            flush();
+          }, 5000);
+      },
+    };
+  }
+  async function restore(candidate) {
+    const version = ++generation;
+    session = null;
+    data = {};
+    pending.clear();
+    clearTimeout(timer);
+    timer = null;
+    error = "";
+    notify();
+    if (!candidate?.token) return;
+    try {
+      const identity = await request("community_whoami", {
+        p_token: candidate.token,
+      });
+      if (!identity?.username)
+        throw new Error("Sesja wygasła. Zaloguj się ponownie.");
+      const rows = await request("rejstream_read", {
+        p_token: candidate.token,
+      });
+      if (version !== generation) return;
+      data = { progress: {}, favorite: [], watched: [] };
+      for (const row of rows) {
+        if (row.kind === "progress") data.progress[row.key] = row.payload;
+        else if (
+          ["favorite", "watched"].includes(row.kind) &&
+          row.payload === true
+        )
+          data[row.kind].push(row.key);
+      }
+      session = { token: candidate.token, username: identity.username };
+    } catch (e) {
+      if (version === generation) error = e.message;
+    }
+    if (version === generation) notify();
+  }
+  return {
+    state,
+    storage,
+    flush,
+    subscribe(fn) {
+      listeners.add(fn);
+      return () => listeners.delete(fn);
+    },
+    async init() {
+      // Deliberately delete legacy guest history, not silently upload it.
+      try {
+        for (const k of [
+          "rej-playback-v1",
+          "rej-favorites",
+          "rej-watched",
+          "rej-recent",
+          "rej-saved",
+        ])
+          browserStorage?.removeItem(k);
+      } catch {}
+      let stored;
+      try {
+        stored = JSON.parse(browserStorage?.getItem(SESSION) || "null");
+      } catch {}
+      await restore(stored);
+    },
+    async login(username, pin) {
+      const result = await request("community_login", {
+        p_username: username,
+        p_pin: pin,
+      });
+      await restore(result);
+      if (!session) throw new Error(error || "Nie udało się wczytać konta.");
+      try {
+        browserStorage?.setItem(SESSION, JSON.stringify(session));
+      } catch {}
+    },
+    async logout() {
+      await flush();
+      try {
+        browserStorage?.removeItem(SESSION);
+      } catch {}
+      await restore(null);
+    },
+    restore,
+  };
+}
+export const account = createAccountStore();
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key === SESSION) {
+      let s;
+      try {
+        s = JSON.parse(e.newValue);
+      } catch {}
+      account.restore(s);
+    }
+  });
+  window.addEventListener("pagehide", () =>
+    queueMicrotask(() => account.flush()),
+  );
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") account.flush();
+  });
+}

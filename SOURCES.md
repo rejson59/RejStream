@@ -118,3 +118,24 @@ Polskie napisy są domyślnie zamawiane przez `cc_load_policy=1&cc_lang_pref=pl`
 Punkt odniesienia: https://developers.google.com/youtube/iframe_api_reference (zdarzenia gotowości, zmiany API i stanu; API nie gwarantuje wyboru audio ani pełnego wyboru języka napisów). `captions.track` / odczyt `languageCode` są próbą zgodności z embedami, nie gwarantowanym interfejsem dla każdej wersji YouTube. Brak odpowiedzi lub inny język nie oznacza potwierdzenia PL; podajemy instrukcję ręcznego wyboru napisów / tłumaczenia w YouTube. Nie pobieramy napisów ani nie obchodzimy izolacji iframe.
 
 Testy obejmują symulowany odtwarzacz: opóźnione załadowanie modułu captions, odrzucenie preferencji PL, ograniczoną liczbę prób, zmianę napisów bez zmiany iframe/czasu, usuwanie playera i watchdogów, brak podwójnego seekowania oraz ręczne odzyskiwanie po błędzie. Te testy nie potwierdzają rzeczywistego dekodowania obrazu ani dostępności napisów na YouTube w regionie użytkownika.
+
+## Aktualizacja: cały Murder Drones i konta społeczności (25.10.2026)
+
+Poprzednie wzmianki o samym pilocie i wyłącznie lokalnych danych opisują wcześniejsze wersje. Aktualny katalog zawiera 8 odcinków; historia, wznawianie, ulubione i obejrzane wymagają konta społeczności w Supabase. Stare anonimowe dane lokalne są usuwane, nie importowane.
+
+Oficjalne publiczne uploady GLITCH (sprawdzono metadane stron, nie rzeczywiste dekodowanie wideo):
+
+| Odcinek | Oryginalny tytuł | Źródło                                      | Premiera   |
+| ------- | ---------------- | ------------------------------------------- | ---------- |
+| 1       | PILOT            | https://www.youtube.com/watch?v=mImFz8mkaHo | 2021-10-29 |
+| 2       | Heartbeat        | https://www.youtube.com/watch?v=7z8DO1KhPFo | 2022-11-18 |
+| 3       | The Promening    | https://www.youtube.com/watch?v=djsJqNAGMuY | 2023-02-17 |
+| 4       | Cabin Fever      | https://www.youtube.com/watch?v=63bUBEIhpNk | 2023-04-07 |
+| 5       | Home             | https://www.youtube.com/watch?v=rk0HBqSqpgg | 2023-06-09 |
+| 6       | Dead End         | https://www.youtube.com/watch?v=U7i6fi3z9Nk | 2023-08-18 |
+| 7       | Mass Destruction | https://www.youtube.com/watch?v=EOqw86OGIB0 | 2024-03-29 |
+| 8       | Absolute End     | https://www.youtube.com/watch?v=caR9ouipm8o | 2024-08-23 |
+
+Potwierdzenie oficjalnego polskiego dubbingu całego sezonu BruDolina Studios i polskich tytułów: https://dubbingpedia.pl/wiki/Murder_Drones oraz https://murder-drones.fandom.com/wiki/Murder_Drones_(Polish). Dubbing jest ścieżką audio oficjalnych materiałów, nie fikcyjnym osobnym uploadem. Inne języki wybiera się w źródłowym odtwarzaczu; nie deklarujemy pełnej, niezweryfikowanej listy języków per odcinek ani automatycznego przełączania audio.
+
+Integrację kont oparto na publicznym kodzie `rejson59/rejson59.github.io`: `js/community.js`, `rejson-widgets/js/supabase-config.js` i schemacie/metadanych projektu `rejson-widgets`. Nie pobierano rekordów użytkowników, hashy PIN-ów ani istniejących tokenów sesji. Nowa tabela i RPC: `supabase/rejstream.sql`. Test izolacji używał wyłącznie losowych danych testowych w transakcji wycofanej ROLLBACK.
