@@ -57,7 +57,7 @@ export function addPolishAudio(shows) {
             : [];
       // Keep the legacy fandub field accurate for existing catalog consumers.
       ep.pl = ep.polishAudio.find((s) => s.kind === "fandub")?.video;
-      ep.polishTrack = show.key === "circus" || show.key === "drones";
+      ep.polishTrack = ["circus", "drones", "gameoverse"].includes(show.key);
     }
   }
 }
