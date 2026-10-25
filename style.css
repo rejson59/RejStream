@@ -3861,3 +3861,21 @@ footer button svg {
     margin-right: 20px;
   }
 }
+
+.availability-note {
+  padding: 14px 18px;
+  border: 1px solid #dcb86d50;
+  border-radius: 10px;
+  background: #dcb86d0c;
+  color: #e4c990;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.watch-main > .availability-note {
+  margin: 0 0 16px;
+}
+@media (max-width: 600px) {
+  .watch-main > .availability-note {
+    margin: 0 20px 16px;
+  }
+}
