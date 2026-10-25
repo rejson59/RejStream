@@ -15,9 +15,24 @@ export async function rpc(name, params) {
     keepalive: true,
     signal: AbortSignal.timeout(12000),
   });
-  const body = await response.json();
-  if (!response.ok)
-    throw new Error(body.message || "Nie udało się połączyć z kontem.");
+  // PostgreSQL RETURNS void is normally a successful empty HTTP response.
+  const text = await response.text();
+  let body = null;
+  if (text.trim()) {
+    try {
+      body = JSON.parse(text);
+    } catch {
+      if (response.ok) throw new Error("Nieprawidłowa odpowiedź serwera.");
+    }
+  }
+  if (!response.ok) {
+    const error = new Error(
+      body?.message || "Nie udało się połączyć z kontem.",
+    );
+    error.status = response.status;
+    error.code = body?.code;
+    throw error;
+  }
   return body;
 }
 export function createAccountStore(
@@ -36,7 +51,9 @@ export function createAccountStore(
     timer,
     error = "",
     pending = new Map(),
-    saving = false;
+    activeSave = null,
+    retryDelay = 5000,
+    retryAllowed = true;
   const listeners = new Set();
   const notify = () => listeners.forEach((fn) => fn());
   const kindFor = (key) =>
@@ -46,11 +63,18 @@ export function createAccountStore(
       "rej-watched": "watched",
     })[key];
   const state = () => ({ username: session?.username || null, error });
-  async function flush() {
+  function flush() {
+    // Callers (including logout) must wait for an already-running save.
+    if (activeSave) return activeSave;
+    activeSave = save().finally(() => {
+      activeSave = null;
+    });
+    return activeSave;
+  }
+  async function save() {
     clearTimeout(timer);
     timer = null;
-    if (saving || !session || !pending.size) return;
-    saving = true;
+    if (!session || !pending.size) return;
     const token = session.token,
       version = generation;
     try {
@@ -65,17 +89,39 @@ export function createAccountStore(
         if (version === generation && pending.get(id) === item)
           pending.delete(id);
       }
-      if (version === generation) error = "";
-    } catch {
-      if (version === generation)
-        error =
-          "Nie zapisano zmian na koncie. Sprawdź połączenie i ponów synchronizację przed zamknięciem strony.";
+      if (version === generation) {
+        error = "";
+        retryDelay = 5000;
+        retryAllowed = true;
+      }
+    } catch (failure) {
+      if (version === generation) {
+        retryAllowed =
+          !failure.status ||
+          [408, 429].includes(failure.status) ||
+          failure.status >= 500;
+        if (retryAllowed) {
+          error =
+            "Nie zapisano jeszcze zmian na koncie. Ponowimy automatycznie po odzyskaniu połączenia. Nie zamykaj strony przed synchronizacją.";
+          retryDelay = Math.min(retryDelay * 2, 60000);
+        } else if (
+          [401, 403].includes(failure.status) ||
+          /sesj|zalog/i.test(failure.message)
+        ) {
+          error =
+            "Sesja konta jest nieważna lub wygasła. Zaloguj się ponownie, aby zapisywać zmiany.";
+        } else {
+          error =
+            "Serwer odrzucił zapis na koncie. Ponów synchronizację; jeśli problem wraca, zgłoś błąd zapisu.";
+        }
+      }
     } finally {
-      saving = false;
       notify();
-      if (!error && pending.size) timer = setTimeout(flush, 5000);
+      if (session && pending.size && retryAllowed && !timer)
+        timer = setTimeout(flush, retryDelay);
     }
   }
+
   function storage() {
     const version = generation;
     return {
@@ -115,7 +161,7 @@ export function createAccountStore(
           });
         }
         data[kind] = next;
-        if (!timer)
+        if (!timer && !activeSave && retryAllowed)
           timer = setTimeout(() => {
             timer = null;
             flush();
@@ -131,6 +177,8 @@ export function createAccountStore(
     clearTimeout(timer);
     timer = null;
     error = "";
+    retryDelay = 5000;
+    retryAllowed = true;
     notify();
     if (!candidate?.token) return;
     try {
@@ -219,6 +267,7 @@ if (typeof window !== "undefined") {
   window.addEventListener("pagehide", () =>
     queueMicrotask(() => account.flush()),
   );
+  window.addEventListener("online", () => account.flush());
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") account.flush();
   });

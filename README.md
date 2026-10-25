@@ -70,3 +70,11 @@ Wszystkie wpisy Digital Circus i Helluva Boss (także piloty, shorts i zewnętrz
 Gość widzi niewielki baner z korzyściami (historia na koncie, zapisana sekunda, ulubione) przy wejściu i nad odtwarzaczem odcinka, również dla materiału zewnętrznego. Baner nie zasłania playera, nie odlicza czasu i nie blokuje odtwarzania. Zamknięcie usuwa tylko baner, nie iframe. Zamknięcie wejściowej zachęty obowiązuje do przeładowania strony, a odcinkowej — dla danego odcinka w tej sesji aplikacji; stan jest tylko w RAM, bez localStorage/cookies. Po zalogowaniu z banera wracamy do poprzedniej strony. Zalogowani nie widzą zachęty.
 
 Dodatkowa walidacja: 24 kombinacje tras/szerokości Chromium (360, 390, 768, 1440), zamknięcie bez restartu iframe, powrót po logowaniu i brak banera po zalogowaniu. Sieć RPC/YouTube była symulowana; nie stanowi to testu rzeczywistej transmisji.
+
+## Poprawka synchronizacji konta
+
+Klient RPC akceptuje pustą udaną odpowiedź HTTP 200/204 (`rejstream_write` zwraca SQL `void`), zamiast zawsze wywoływać `response.json()` i zgłaszać fałszywy błąd po poprawnym zapisie. Odpowiedzi JSON nadal są odczytywane, a błędy HTTP zachowują status/kod do klasyfikacji. Błędna niepusta odpowiedź sukcesu nie jest traktowana jako potwierdzenie zapisu.
+
+Po problemach sieciowych/408/429/5xx kolejka w RAM jest ponawiana automatycznie co 10, 20, 40, maksymalnie 60 s oraz po odzyskaniu połączenia (`online`). Nowe próbki odtwarzania nie resetują tego opóźnienia. Odrzucenie sesji/danych przez serwer nie powoduje ciągłej pętli żądań; użytkownik widzi odpowiedni komunikat i ma ręczne ponowienie. Równoległe wywołania synchronizacji czekają na tę samą operację. Historia nadal nie trafia do trwałej pamięci przeglądarki.
+
+Aktualna walidacja: 81 testów, w tym transport HTTP z pustą odpowiedzią 200/204, JSON, błędy nie-JSON, usunięcie potwierdzonych wpisów z kolejki, automatyczne retry i brak zapętlenia przy nieważnej sesji. To testy symulowanej sieci, nie rzeczywistego logowania kontem użytkownika.
