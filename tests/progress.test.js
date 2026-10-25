@@ -1,5 +1,14 @@
 // @vitest-environment jsdom
 import { it, expect, vi, beforeEach, afterEach } from "vitest";
+vi.mock("../account.js", () => ({
+  account: {
+    state: () => ({ username: "Test viewer", error: "" }),
+    storage: () => localStorage,
+    subscribe: () => () => {},
+    init: async () => {},
+    flush: async () => {},
+  },
+}));
 import {
   createProgress,
   records,

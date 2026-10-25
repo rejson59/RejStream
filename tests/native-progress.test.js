@@ -1,5 +1,14 @@
 // @vitest-environment jsdom
 import { it, expect, vi } from "vitest";
+vi.mock("../account.js", () => ({
+  account: {
+    state: () => ({ username: "Test viewer", error: "" }),
+    storage: () => localStorage,
+    subscribe: () => () => {},
+    init: async () => {},
+    flush: async () => {},
+  },
+}));
 import { mountNativePlayer } from "../native-player.js";
 import { records } from "../progress.js";
 it("resumes the same reselected local file at the last fractional second", () => {

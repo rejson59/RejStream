@@ -1,6 +1,6 @@
 # RejStream
 
-Polskojęzyczny katalog niezależnej animacji z osobnymi stronami seriali, sezonów oraz ekranem oglądania. Vite + JavaScript + Lucide. Node.js 22.12+.
+Polskojęzyczny katalog niezależnej animacji. Vite + JavaScript + Lucide, Node.js 22.12+.
 
 ```sh
 npm ci
@@ -9,84 +9,56 @@ npm test
 npm run build
 ```
 
-`npm run preview` udostępnia kompilację. Vite nasłuchuje na 0.0.0.0 i obsługuje host podglądu Arena. `base: './'` pozwala publikować pod `/RejStream/`. Routing przez hash działa na GitHub Pages bez reguł serwera.
+Vite nasłuchuje na `0.0.0.0`, akceptuje host podglądu Arena. `base: './'` i routing hash pozwalają publikować pod `/RejStream/` na GitHub Pages. Build `dist/` jest ignorowany przez Git.
 
-## Biblioteka
+## Biblioteka i audio
 
-- **The Amazing Digital Circus** — 1 sezon, wszystkie 9 odcinków z oficjalnej playlisty GLITCH, pilot jako odcinek 1. Tytuły, numeracja i linki sprawdzone 25.10.2026.
-- **Helluva Boss** — pełne sezony 1 (8 odcinków) i 2 (12 odcinków), osobno dwa piloty i trzy wybrane shorts. Sezon 3: pięć wpisów z linkiem do Prime Video, nie darmowe osadzenia ani pełny sezon.
-- **Murder Drones** — wybrany pilot, z wyraźnym oznaczeniem niepełnej kolekcji.
-- Usunięto Big Buck Bunny z aktywnego katalogu.
+- **The Amazing Digital Circus:** wszystkie 9 odcinków, jeden sezon; pilot jest odcinkiem 1.
+- **Helluva Boss:** pełne sezony 1 (8) i 2 (12), osobne piloty i trzy wybrane shorts. Pięć wpisów S3 prowadzi do płatnego Prime Video, nie do bezpłatnych osadzeń.
+- **Murder Drones:** cały serial, 8 odcinków z oficjalnego kanału GLITCH, od pilota do Absolute End. Wszystkie mają oficjalny polski dubbing BruDolina Studios w ścieżkach audio YouTube. Źródła, daty i ograniczenia w `SOURCES.md`.
+- Big Buck Bunny nie jest częścią katalogu.
 
-## UX i funkcje
+Oficjalny dubbing wybiera się w YouTube: **⚙ → Ścieżka dźwiękowa → Polski**. API iframe nie oferuje wiarygodnego automatycznego wyboru ścieżki audio. Nie udajemy takiej funkcji i nie tworzymy sztucznych osobnych uploadów językowych. Inne dubbingi/napisy zależą od źródła i regionu.
 
-- Start → seriale → szczegóły serialu → sezony → ekran oglądania z kolejką odcinków, poprzednim/następnym odcinkiem i linkiem do źródła.
-- Wyszukiwanie seriali w katalogu i odcinków na stronie wybranego serialu. Zmiana kontekstu czyści frazę, więc nazwa serialu nie filtruje przypadkowo jego odcinków.
-- Sortowanie seriali: polecane, A–Z, Z–A; odcinki od pierwszego lub ostatniego. Widok listy i siatki.
-- Moja lista dla każdego serialu; migracja poprzedniej listy Helluva Boss. Ręczne oznaczenie obejrzanych (bez przeładowywania odtwarzacza), ostatnio otwarty odcinek. Dane w localStorage, bez konta.
-- Telefon: dolna nawigacja, zwijana wyszukiwarka, przewijane zakładki sezonów, kolejka pod playerem. Testowano szerokości 360, 390, 768 i 1440 px bez poziomego overflow.
-- Fonty DM Sans i Barlow Condensed przechowywane lokalnie przez Fontsource, bez żądań do Google Fonts. Obrazki źródłowe mają gradientowy fallback na wypadek blokady sieci.
-- Dostępność: skip link, etykiety ikon, aria-current / aria-pressed, fokus w panelach informacyjnych, Escape, skrót `/`, reduced-motion.
+Helluva Boss: potwierdzone pełne fanduby całego S1, dziewięciu odcinków S2 (1, 3–5, 7–11), pilota 2019 i shorts 1, 3, 4. S2E2 ma lektora, nie dubbing. S1E1: NanoKarrin lub BruDolina Studios. S2E1 z ograniczeniem wieku otwiera YouTube zamiast obiecywać osadzenie. Brak potwierdzonego pełnego fandubu S2E6, S2E12 i Mission: Zero — UI mówi to wprost. Autorzy i kanały są podpisani.
 
-## Audio i napisy
+Preferowane napisy PL: parametry URL plus ograniczone próby przez API po gotowości i zmianie modułów. `captions.track` to próba kompatybilności, nie gwarantowany kontrakt YouTube; potwierdzenie wymaga odczytu języka. Brak ścieżki lub obsługi API daje instrukcję ustawień, nie fałszywy komunikat sukcesu. Zmiana napisów nie przeładowuje iframe. Preferencja oryginału/polskiego uploadu pozostaje ustawieniem interfejsu na urządzeniu.
 
-Oficjalne produkcje korzystają z osadzeń YouTube. Ścieżki audio wybiera się w ustawieniach źródłowego playera. Nie udajemy, że API osadzenia udostępnia pełną listę języków: nie pobieramy jej i nie gwarantujemy tych samych ścieżek w każdym odcinku/regionie. Preferencje napisów PL/EN nie gwarantują ich obecności. Polskie wersje są teraz opisane osobno przy każdym odcinku:
+Zwiastuny są osadzone pod opisem i dopasowane do sezonu. Brak zweryfikowanego zwiastuna = brak playera, zamiast podmiany sezonu. Bez autoplay i bez zapisu zwiastunów do historii. Logo jest w `public/rejstream-mark.svg`.
 
-- **Helluva Boss:** pełne fanduby do całego sezonu 1, dziewięciu odcinków sezonu 2 (1, 3–5, 7–11), pilota 2019 i wszystkich trzech shorts z katalogu (1, 3, 4). S1E1 ma do wyboru NanoKarrin i BruDolina Studios. Autorzy mają odnośniki do kanału i materiału z pełną obsadą.
-- **S2E2:** pełny polski lektor amatorski, wyraźnie oddzielony od dubbingu. Nie dodajemy znalezionego 10-minutowego fragmentu jako pełnego odcinka.
-- **Luki:** nie potwierdzono pełnego, dostępnego fandubu S2E6, S2E12 ani Mission: Zero. UI mówi to wprost; wskazuje też oficjalnego lektora w płatnym Prime Video. Dla sezonu 3 języki trzeba sprawdzić u dystrybutora.
-- **Digital Circus (9 odcinków) i pilot Murder Drones:** oficjalny polski dubbing GLITCH; widoczna instrukcja `⚙ → Ścieżka dźwiękowa → Polski`. Nie tworzymy pozornej opcji automatycznego przełączenia audio, bo osadzenie tego nie umożliwia.
+## Konta społeczności i prywatność
 
-Domyślnie wybieramy znaleziony polski materiał, jeżeli istnieje. Ręczny wybór oryginału lub polskiej wersji zapamiętuje preferencję na tym urządzeniu, także dla następnego odcinka. Filtry rozróżniają wszystkie potwierdzone polskie wersje i same fanduby. Materiał S2E1 z ograniczeniem wieku prowadzi do YouTube zamiast niedziałającego osadzenia. Pozostałe źródła również mają bezpośredni link, jeśli odtwarzanie w osadzeniu jest zablokowane. Metadane i ograniczenia przeglądu są w `SOURCES.md`; nie przeprowadzono testu transmisji YouTube w sandboxie.
+RejStream używa **istniejących kont społeczności** z `rejson59.github.io/spolecznosc.html` w projekcie Supabase `rejson-widgets`. To własny system **nazwa + 4-cyfrowy PIN**, nie Supabase Auth ani nowe konta. Zakładka `#account` loguje przez istniejące `community_login`, sprawdza `community_whoami` i pobiera bibliotekę konta. Rejestracja prowadzi do społeczności.
 
-Własny player HTML5 pozostaje w sekcji „Mój player” / „Własny odtwarzacz”: lokalne pliki wideo, SRT/VTT, wiele plików napisów, ±10 s, seek, tempo, głośność i fullscreen. Żaden lokalny plik nie jest wysyłany na serwer. Obsługa kodeków zależy od przeglądarki; oddzielny dubbing wymaga pliku wideo z tą wersją audio.
+- Gość może oglądać odcinki i lokalne pliki; **nie zapisujemy ani nie wznawiamy jego historii**.
+- Historia `#history`, zapisane sekundy (z ułamkami), ulubione i ręczne „obejrzane” wymagają konta; dane przechowywane są w Supabase, nie w localStorage/IndexedDB.
+- W przeglądarce pozostają token sesji społeczności (`rejson_community_session_v1`, wspólny na tym samym originie) i preferencje interfejsu. PIN nie jest zapisywany.
+- Stare lokalne `rej-playback-v1`, `rej-recent`, `rej-favorites`, `rej-watched`, `rej-saved` są usuwane. **Nie przenosimy anonimowej historii na konto bez zgody.**
+- Dane są w pamięci aplikacji podczas sesji; synchronizacja zmienionych wpisów odbywa się co około 5 s. Błąd jest widoczny globalnie, a kolejkę można ponowić z ekranu konta. Nie ma trwałego lokalnego fallbacku offline; zamknięcie karty przed udanym zapisem może utracić ostatnie sekundy.
+- Wylogowanie i zmiana konta usuwają dane z pamięci; stary tracker nie może zapisać pozycji do nowego konta. Zmiany wspólnej sesji w innych kartach są obsługiwane przez `storage`.
+- Odtwarzanie zewnętrzne w YouTube/Prime Video nie jest mierzone. Pomiar odtwarzania nie zlicza seeków, pauzy ani buforowania.
 
-## Walidacja
+`supabase/rejstream.sql` zawiera wdrożoną migrację: tabela `rejstream_library` z RLS i odebranym bezpośrednim dostępem dla `anon`/`authenticated`. RPC odczytu/zapisu ustalają użytkownika **wyłącznie z tokena przez istniejące `community_session_user`**, nigdy z identyfikatora przesłanego przez klienta. Kod przeglądarki zawiera tylko istniejący publiczny klucz anon. Nie dodajemy klucza service-role i nie zmieniamy kont, PIN-ów ani tabel społeczności.
 
-- `npm test`: 63 testy danych i interfejsu (Vitest/jsdom).
-- `npm run build`: statyczne zasoby w `dist/` (ignorowane przez Git).
-- Test przeglądarkowy Chromium/Playwright w sandboxie: 24 kombinacje tras i szerokości, sortowanie, siatka, ulubione po reloadzie, kolejka, następny odcinek, ręczne obejrzane, import SRT, błąd lokalnego wideo i sprzątanie po opuszczeniu playera. Brak błędów JS.
-- Po uzupełnieniu audio: 40 kombinacji tras/szerokości; wybór polskiego materiału i alternatywnego fandubu, zapamiętywanie preferencji, następny odcinek, lektor, luki, ograniczenie wieku, filtrowanie i sortowanie. Brak błędów JS i poziomego overflow.
-- Test przeglądarkowy dotyczy naszej aplikacji. Zewnętrzne transmisje YouTube i obrazki mają blokadę sieci w sandboxie; nie potwierdza to dekodowania ani dostępności reklam/audio/napisów w regionie użytkownika. Miniatury przy blokadzie mają zaprojektowane zastępstwo.
+Odziedziczony PIN czterocyfrowy zapewnia mniejszą ochronę niż pełne hasło/MFA; integracja nie zmienia globalnego mechanizmu społeczności. Token sesji jest poufny. Nie należy umieszczać go w linkach ani logach.
 
-## Wdrożenie
+## Player i interfejs
 
-Workflow `.github/workflows/pages.yml`: testy i build w PR, a po scaleniu do `main` również publikacja GitHub Pages. Źródło Pages: **GitHub Actions**. Bez backendu, Supabase i rehostingu filmów.
+Katalog, wyszukiwanie seriali/odcinków, sezony, sortowanie, lista/siatka, poprzedni/następny odcinek i kolejka. Mobilne menu ma historię; konto jest pod awatarem nagłówka i w menu desktopowym. Ulubione i oznaczanie obejrzanych zachęcają do zalogowania, ale nie blokują oglądania.
 
-Więcej o źródłach i prawach: [SOURCES.md](SOURCES.md).
+Historia pokazuje najnowszą zapisaną pozycję materiału, datę i link do odcinka. Oddzielne uploady zachowują oddzielny postęp. Pasek przy odcinku pokazuje pozycję/długość, nie skumulowany czas. Wznawianie wykorzystuje `start` oraz najwyżej jedną korektę API po cue/play przy odchyleniu >1,5 s; bez redundantnego seekowania podczas `onReady`. Rzeczywisty punkt startu zależy od dekodera YouTube.
 
-## Polski od startu, logo i zwiastuny
+Informacja o buforowaniu i ręczne „Wczytaj ponownie” po długim oczekiwaniu/błędzie, bez automatycznej pętli restartów i bez zakrywania kontrolek. Nie gwarantujemy usunięcia problemów sieci i kodeków YouTube. Zwiastuny podpinają API blisko viewportu.
 
-Polskie napisy są teraz domyślnie włączane (jeśli źródło je udostępnia), a znalezione polskie materiały wybierane w pierwszej kolejności. Starsza preferencja oryginału nie blokuje nowych ustawień PL; późniejsze ręczne zmiany nadal są respektowane. `hl=pl` ustawia język interfejsu YouTube, nie ścieżkę audio. Dla oficjalnych wielościeżkowych odcinków automatyczny wybór dubbingu nadal zależy od YouTube.
+Własny player HTML5: legalnie posiadane lokalne pliki, SRT/VTT, ±10 s, seek, tempo, głośność i fullscreen. **Bajtów wideo i napisów nie wysyłamy.** Po zalogowaniu nazwa/identyfikator pliku i pozycja są zapisywane na koncie; po powrocie trzeba ponownie wybrać plik. Kodeki zależą od przeglądarki.
 
-Każdy serial ma osadzony odtwarzacz zwiastuna bezpośrednio pod opisem na stronie szczegółów oraz w wyróżnieniu strony głównej — bez przycisku przenoszącego na inną stronę. Zwiastuny korzystają z osobnych polskich uploadów: dwa od twórców oficjalnego dubbingu GLITCH i fanowski zwiastun sezonu 2 Helluva Boss. Podpisani autorzy, źródło, domyślne polskie napisy, powrót do odcinków; bez autoplay i bez dopisywania do historii odcinków.
+Dostępność: skip link, etykiety, aria-current/pressed, fokus dialogu, Escape, skrót `/`, reduced-motion. Fonty Fontsource są lokalne. Miniatury źródłowe mają fallback przy niedostępnej sieci.
 
-Własny wektorowy znak R/play jest w `public/rejstream-mark.svg`, na pasku bocznym, w mobilnym nagłówku, stopce i faviconie. Skaluje się bez utraty ostrości.
+## Walidacja i wdrożenie
 
-Walidacja tej aktualizacji: 40 testów Vitest, build produkcyjny, 35 kontroli tras/szerokości (360, 390, 600, 768, 1440 px), bez poziomego overflow i błędów JS. Zewnętrzne odtwarzanie YouTube nie było testowane.
+- 71 testów Vitest/jsdom: dane, napisy/player, logowanie i izolacja sesji, cloud sync/retry, brak historii gościa, przejścia UI.
+- Chromium: 32 kombinacje tras/szerokości (360, 390, 768, 1440), logowanie, historia/wznowienie, ulubione po reloadzie, brak lokalnego zapisu i wylogowanie. **Zamockowana sieć RPC/YouTube**, bez błędów JS i poziomego overflow.
+- W działającym Supabase: RLS włączone, brak bezpośrednich praw anon do tabeli; transakcyjny test dwóch tymczasowych użytkowników potwierdził odmowę gościa, własny odczyt i brak odczytu/usuwania danych drugiego konta. Cały test wycofano (`ROLLBACK`), bez zmian prawdziwych kont.
+- Produkcyjny build oraz npm audit. Rzeczywistego logowania przez przeglądarkę do Supabase, streamingu/dekodowania YouTube i wyboru języków nie da się sprawdzić w sandboxie z ograniczoną siecią.
 
-Zwiastuny w opisie: responsywne proporcje 16:9, podpisani autorzy, link awaryjny do YouTube, domyślne napisy PL, ładowanie lazy i brak autoplay. Dotychczasowe adresy `#trailer/...` nadal działają.
-
-## Sezonowe zwiastuny i automatyczny postęp
-
-Zakładki sezonów wybierają pasujący zwiastun; bez zweryfikowanego polskiego materiału odtwarzacz jest ukryty (także piloty/shorts). Helluva Boss ma oddzielne polskie fanduby zwiastunów S2 i S3 część 1; S1 nie podmienia się już na S2.
-
-Odcinki YouTube mają lokalny pomiar przez oficjalne IFrame API: zapis pozycji co sekundę oraz przy pauzie/wyjściu, automatyczne wznawianie zapisanej pozycji, czas oglądania przy odcinku i na karcie oraz podsumowanie z podziałem na materiały na stronie głównej. Poszczególne wersje wideo mają osobny zapis, bo mogą mieć inny montaż. Napisy/audio, ręczne oznaczenia i ulubione nadal działają. Zwiastuny nie są wliczane do czasu odcinków.
-
-Własny player zapisuje również postęp lokalnych plików; po powrocie trzeba ponownie wskazać ten sam plik. Filmy ani historia nie trafiają do naszego serwera. Czyszczenie danych witryny usuwa historię. Pomiar to przybliżony czas faktycznego odtwarzania, nie ilość unikalnych minut treści. Nie zliczamy skoków, pauzy ani buforowania. Blokada API/pamięci, uśpienie karty i nagłe zamknięcie mogą ograniczyć dokładność. Zewnętrzne odtwarzanie w Prime Video/YouTube poza RejStream nie jest mierzone.
-
-Walidacja zapisu postępu: 54 testy Vitest (w tym symulowane API YouTube i ponowne wskazanie lokalnego pliku), build, 20 kontroli tras/szerokości. Przeglądarkowa symulacja API potwierdziła zapis, podsumowanie i wznowienie pozycji 121,375 s po reloadzie. Rzeczywistej transmisji/API YouTube nie potwierdzono z powodu ograniczeń sieci sandboxa.
-
-## Napisy przez API i stabilniejsze przełączanie
-
-Oprócz `hl=pl` / `cc_lang_pref=pl` / `cc_load_policy=1` odtwarzacz próbuje ustawić polską ścieżkę napisów po `onReady`, po późnym `onApiChange` i przy pierwszych zdarzeniach odtwarzania. Próby są ograniczone, bez pętli przeładowywania. Wybór języka przez opcję `captions.track` nie jest gwarantowany przez publiczny kontrakt YouTube: jeśli embed nie obsługuje tej opcji lub nie ma PL, UI podaje preferencję i instrukcję ustawień zamiast deklarować sukces. Potwierdzenie PL pokazujemy wyłącznie po odczycie pasującego języka z odtwarzacza. Nie wymuszamy nieistniejącego dubbingu ani tłumaczenia.
-
-Zmiana napisów nie niszczy iframe ani nie wraca do punktu startowego; działa na bieżącej instancji API. Ten sam materiał nie jest ponownie tworzony bez potrzeby. Wznawianie używa `start`, a korekta API następuje najwyżej raz, po cue/play i tylko przy odchyleniu ponad 1,5 s, nie podczas `onReady`. Zapobiega to zbędnemu, podwójnemu seekowaniu przy inicjalizacji dekodera. Pozostaje zapis pozycji z ułamkiem sekundy, ale faktyczny start zależy od dekodera YouTube. Zwiastuny podpinają API dopiero blisko widocznego obszaru.
-
-Stan połączenia/buforowania jest widoczny pod odtwarzaczem. Po długim oczekiwaniu lub błędzie dostępne jest ręczne „Wczytaj ponownie” oraz link do źródła; bez automatycznej pętli restartów i bez zasłaniania kontrolek YouTube. Nie możemy zagwarantować usunięcia problemów kodeka, sieci lub serwisu źródłowego.
-
-Przy odcinkach i playerze tekst „Widziano / Wznów” zastąpiono paskiem zapisanej pozycji i czasem `m:ss`. Pasek wskazuje pozycję/długość, nie skumulowany czas oglądania; ten nadal jest w podsumowaniu historii.
-
-Walidacja ostatniej poprawki: 63 testy jednostkowe/integracyjne, 24 kontrole tras i szerokości w Chromium. Symulacja YouTube potwierdziła zmianę napisów na tej samej instancji iframe, ręczne odzyskiwanie po błędzie z zachowaniem pozycji, brak zbędnego seekowania i pasek z `3:44`. Rzeczywistej transmisji/dekodowania i skuteczności wyboru PL w produkcyjnym YouTube nie dało się sprawdzić w sandboxie.
-
-Historia oglądania jest dostępna w osobnej zakładce `#history` (również w menu mobilnym), zamiast dawnego bloku „Twój czas z historiami”. Lista pokazuje ostatnią zapisaną pozycję każdego materiału, od najnowszych, i link do odcinka lub ponownego wyboru lokalnego pliku. Samo otwarcie strony bez odtwarzania nie dodaje wpisu. Dane nadal pozostają lokalne. Aktualny zestaw: 64 testy.
+Workflow `.github/workflows/pages.yml`: testy/build w PR, po scaleniu do `main` publikacja GitHub Pages. Frontend jest statyczny; funkcje konta wymagają Supabase. Filmów nie rehostujemy. Więcej o autorach i prawach: [SOURCES.md](SOURCES.md).
