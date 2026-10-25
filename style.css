@@ -3901,3 +3901,11 @@ a.profile:hover .profile-heading { color: var(--accent, #e1b359); }
 a.profile:focus-visible { outline: 2px solid #e1b359; outline-offset: 4px; }
 .profile > div { min-width: 0; overflow-wrap: anywhere; }
 .profile .avatar { flex-shrink: 0; }
+
+.watch-order { margin: 24px 0; padding: clamp(18px, 3vw, 28px); border: 1px solid #e1b35945; border-radius: 16px; background: #e1b35908; }
+.watch-order h2 { font-size: clamp(20px, 3vw, 26px); margin: 10px 0; }
+.watch-order p { color: var(--muted); line-height: 1.7; max-width: 850px; }
+.watch-order ul { list-style: none; padding: 0; display: grid; gap: 8px; }
+.watch-order a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; color: inherit; background: #ffffff05; line-height: 1.5; }
+.watch-order a:hover { background: #ffffff10; }
+.watch-order a svg { flex-shrink: 0; width: 16px; }
