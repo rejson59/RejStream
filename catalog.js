@@ -189,7 +189,7 @@ export const helluvaEpisodes = [
       "—",
       "Odcinek katalogowy. Sprawdź dostępność i języki w Prime Video.",
     ),
-    time: "Prime Video",
+    time: `${[25, 33, 23, 26, 29][i]} min`,
     external: "https://www.primevideo.com/detail/0GEB35CUYRCDVXUV0UXQY9FHIF",
   })),
   episode(

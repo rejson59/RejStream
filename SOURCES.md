@@ -187,3 +187,13 @@ To przegląd list i metadanych, nie test odtwarzania każdego filmu z polskiego 
 - https://aythanjm.com/glitch-productions/meta-runner/ — lista S2/S3 i montażu S1; dokumentacja oryginalnego S1: https://meta-runner.fandom.com/wiki/Season_1 (10 odcinków). Brak osobnych oryginałów S1 pozostaje jawnie opisany.
 
 Polskie tytuły nowych shorts to tłumaczenia redakcyjne. Zachowano dotychczasowe fanduby 1, 3, 4 i stabilne klucze historii. Wyszukiwanie nie potwierdziło pełnych polskich fandubów pozostałych shorts — nie dopisano fikcyjnych ścieżek audio ani napisów.
+
+## Ciekawostka o czasie katalogu — 25.10.2026
+
+`runtime.js` sumuje po jednym oryginalnym materiale na wpis, bez alternatywnych dubbingów, reklam i plików użytkowników. Zwiastuny z `seasonTrailers` deduplikowane po ID. Wliczone 5 zewnętrznych odcinków Prime Video (25, 33, 23, 26, 29 min, oficjalna strona sezonu wymieniona wyżej), z osobnym objaśnieniem w UI. Nie wliczamy niedodanych odcinków Meta Runner S1 ani teledysku, którego nie ma w katalogu.
+
+Uzupełniono dokładniejsze czasy wszystkich 19 materiałów Meta Runner z oficjalnych playlist GLITCH (pobrane 25.10.2026):
+- https://www.youtube.com/playlist?list=PLHovnlOusNLj_bSwvpE3ycI4iHuJDRCps
+- https://www.youtube.com/playlist?list=PLHovnlOusNLj6lcWUy8mRTOdRzPSfIp7k
+
+Wartości w `metaRunnerTimes` w kolejności katalogu. Inne seriale zachowują istniejące przybliżone czasy minutowe, shorts mają mm:ss. Dlatego UI zawsze mówi „około”, a nie o dokładnym czasie całego katalogu. Wynik: 92 544 s (~25 godz. 42 min), w tym Prime Video 8 160 s (2 godz. 16 min), zwiastuny 416 s (~7 min). Suma materiałów YouTube ze zwiastunami: 84 384 s (~23 godz. 26 min). Obliczenie jest dynamiczne, nie wpisane na sztywno w banerze. Przy nieznanej długości nowego materiału baner nie pokazuje niepełnej sumy jako całości.

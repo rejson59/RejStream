@@ -6,7 +6,8 @@ import {
   latestProgress,
   trackYouTube,
 } from "./progress.js";
-import { trailers, embedURL, seasonTrailer } from "./trailers.js";
+import { catalogRuntime, runtimeLabel } from "./runtime.js";
+import { trailers, embedURL, seasonTrailer, seasonTrailers } from "./trailers.js";
 import { polishKind, polishLabel, audioSource } from "./polish-audio.js";
 import {
   createIcons,
@@ -271,13 +272,18 @@ function progressMarkup(entry) {
     value = Math.min(duration, entry.completed ? duration : entry.position);
   return `<span class="position-progress"><progress max="${duration}" value="${value}" aria-label="Zapisana pozycja: ${formatTime(value)} z ${formatTime(duration)}"></progress><span class="position-time">${formatTime(value)}</span></span>`;
 }
+function runtimeTrivia() {
+  const stats = catalogRuntime(series, seasonTrailers);
+  if (stats.unknown) return ""; // Never present a partial sum as everything.
+  return `<aside class="runtime-trivia" aria-labelledby="runtime-trivia-title"><span class="eyebrow">MAŁY KATALOG, DŁUGI MARATON</span><h3 id="runtime-trivia-title">Tylko ${stats.seriesCount} seriale? Wyzwanie przyjęte 😜</h3><p>Wiemy, że aktualnie mamy tylko ${stats.seriesCount} seriale, ale założymy się, że tak szybko ich nie obejrzysz! Wszystko, co dodaliśmy do katalogu, zajmie Ci łącznie <strong>około ${runtimeLabel(stats.total)}</strong>.</p><details><summary>Skąd ta liczba?</summary><ul>${stats.breakdown.map((row) => `<li>${esc(row.title)}: około ${runtimeLabel(row.seconds)}</li>`).join("")}<li>Zwiastuny: ${runtimeLabel(stats.trailerSeconds)}</li></ul><p>Wliczamy odcinki, shorts, oba piloty Helluva, montaż sezonu 1 Meta Runner i zwiastuny — każdy materiał raz, bez powtórek dubbingów. W tym około ${runtimeLabel(stats.external)} to odcinki dostępne tylko zewnętrznie w Prime Video. W RejStream: około ${runtimeLabel(stats.embedded + stats.trailerSeconds)} materiałów z YouTube. Część czasów jest zaokrąglona; bez reklam, przerw i własnych plików.</p></details></aside>`;
+}
 function home() {
   const last = recent
     .map((r) => ({ r, s: getSeries(r.show) }))
     .find(({ r, s }) =>
       s?.episodes.some((e) => episodeKey(s.key, e) === r.key),
     );
-  return `${hero(getSeries(featured))}<section class="section"><div class="section-heading"><div><span class="eyebrow">WYBIERZ SWÓJ ŚWIAT</span><h2>Nieprzeciętne historie<span>.</span></h2><p>Więcej światów. Jeden dobry wieczór.</p></div><a class="text-link" href="#library">Wszystkie tytuły ${icon("arrow-right")}</a></div><div class="series-grid">${series.map(seriesCard).join("")}</div>${last ? recentCard(last) : ""}<div class="editorial"><span class="editorial-icon">${icon("heart")}</span><div><span class="eyebrow">OD TWÓRCÓW. DLA CIEBIE.</span><h3>Duże historie nie potrzebują wielkiego studia.</h3><p>Odkrywaj niezależną animację. Oglądaj z oficjalnych źródeł i wspieraj ludzi, którzy ją tworzą.</p></div><button class="text-link" data-info="sources">Poznaj twórców ${icon("arrow-up-right")}</button></div></section>`;
+  return `${hero(getSeries(featured))}<section class="section"><div class="section-heading"><div><span class="eyebrow">WYBIERZ SWÓJ ŚWIAT</span><h2>Nieprzeciętne historie<span>.</span></h2><p>Więcej światów. Jeden dobry wieczór.</p></div><a class="text-link" href="#library">Wszystkie tytuły ${icon("arrow-right")}</a></div><div class="series-grid">${series.map(seriesCard).join("")}</div>${runtimeTrivia()}${last ? recentCard(last) : ""}<div class="editorial"><span class="editorial-icon">${icon("heart")}</span><div><span class="eyebrow">OD TWÓRCÓW. DLA CIEBIE.</span><h3>Duże historie nie potrzebują wielkiego studia.</h3><p>Odkrywaj niezależną animację. Oglądaj z oficjalnych źródeł i wspieraj ludzi, którzy ją tworzą.</p></div><button class="text-link" data-info="sources">Poznaj twórców ${icon("arrow-up-right")}</button></div></section>`;
 }
 function recentCard({ r, s }) {
   const e = s.episodes.find((e) => episodeKey(s.key, e) === r.key);
