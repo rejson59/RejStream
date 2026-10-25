@@ -225,3 +225,55 @@ Dodano dwa tytuły, nie dwa kompletne sezony. Ciekawostka mówi teraz o **7 tytu
 - https://dubbingpedia.pl/wiki/Gameoverse — pełna wersja polska BruDolina Studios i link YT do **tego samego oficjalnego ID `1jNk5tmjhpc`**. To oficjalna polska ścieżka audio, nie wymyślony osobny polski film; wybór w ustawieniach YouTube, bez gwarancji automatycznego przełączenia. Dostępność napisów nadal zależna od źródła.
 
 Lackadaisy: suma wybranych materiałów 2239 s (37:19). Gameoverse: 1946 s (32:26). Łączny katalog: 109 528 s, około **30 godz. 25 min** (pozostałe seriale mają czasy zaokrąglone, a Prime Video pozostaje osobno objaśnioną częścią sumy). Metadane nie dowodzą braku ograniczeń iframe w Polsce. Osadzamy oficjalne źródła, bez pobierania/rehostingu. Brak zweryfikowanych polskich zwiastunów tych tytułów, więc nie pokazujemy zwiastunów jako polskich.
+
+## Uzupełnienie dubbingu i kolejności — 25.10.2026
+
+Ponowne wyszukiwanie dla wszystkich braków (Meta Runner, Lackadaisy, Metal Family,
+Helluva sezony i Shorts). Nie znaleziono kompletu dubbingów do całego katalogu.
+Dodano **7 pełnych wersji materiałów** do istniejących wpisów, bez zmiany kluczy:
+
+| Wpis | Polski materiał | Autor | Czas PL |
+|---|---|---|---|
+| Lackadaisy pilot | https://www.youtube.com/watch?v=TOu1f4fnhDs | VOX record | 27:31 |
+| Lackadaisy Stratagem | https://www.youtube.com/watch?v=hCDXd3a-tyM | Pawlikowe Fanduby | 1:21 |
+| Helluva Shorts 2 | https://www.youtube.com/watch?v=6UpLvD-5TOI | Dubbing Unima | 4:09 |
+| Metal Family S1E7 | https://www.youtube.com/watch?v=frbUzuwa6fU | Serhiej | 7:17 |
+| Metal Family S1E8 | https://www.youtube.com/watch?v=ZUWca9_fDJQ | Serhiej | 7:01 |
+| Metal Family S1E9 | https://www.youtube.com/watch?v=ScYy3QZIRHU | Serhiej | 17:21 |
+| Metal Family S2E6 | https://www.youtube.com/watch?v=ZgDr_d7gc_k | HellsBroadcastStudio | 17:35 |
+
+Bezpośredni odczyt watch URL potwierdził publiczne materiały i autorów dla wszystkich
+powyższych oprócz Shorts 2, które potwierdza oficjalna playlista autora fandubu:
+https://www.youtube.com/playlist?list=PLW3UHTVEb932jAgsKirh10avtB1zwyJZD .
+Polskie tytuły mogą różnić się od redakcyjnych. Serhiej S1E8 to „Klub motocyklowy”;
+opis ma skopiowany link do rosyjskiego E7, nie używamy tego linku jako ID bazowego.
+HellsBroadcastStudio dubbinguje cenzurowaną wersję S2E6 (opis wskazuje sdKg6d4yNuU).
+Stratagem PL ma inną długość niż oryginalny upload (bez identycznego outro).
+Nie sumujemy dubbingów ponownie w czasie maratonu.
+
+Pozostałe braki i wykluczenia:
+- Meta Runner: https://fandubbingwiki.miraheze.org/wiki/Meta_Runner opisuje fandub
+  EnderStudio i tylko 1 wydany odcinek Wrong Warp. Nie jest to dubbing całego
+  124-minutowego Movie Cut; nie przypinamy go do montażu ani do S2/S3. Nie
+  potwierdzono pełnych PL do obecnych 19 pozycji katalogu.
+- Metal Family S1E10: autor Serhiej udostępnia dwie części (pjUGZ96mrNI 16:08,
+  rb5gSsnLpsM 10:48, widoczne na https://www.youtube.com/@serhiejpl3321).
+  Nie oznaczamy jednej części jako pełnego odcinka. Brak potwierdzonego pełnego
+  materiału w jednym filmie dla S1E6/E10 i S2E1–5/E7. Kompilacji obcych reuploadów
+  nie podpinamy jako konkretnego odcinka.
+- Lackadaisy Ingenue YOqZm1dGnVI bezpośrednio zwraca zamknięte konto; nie dodano.
+  Pilot wYPAcpumi-4 pozostaje usunięty — znaleziono zamiast niego pełny VOX record.
+  Nie potwierdzono dostępnych pełnych PL do pozostałych 4 krótkich animacji.
+- Helluva: brak potwierdzonego pełnego dubbingu PL Mission Zero, S2E6/E12,
+  Shorts 5–14 i zewnętrznych S3. Polski lektor na Prime Video (opisany w
+  https://dubdb.fandom.com/wiki/Helluva_Boss_(Polish)) nie jest dubbingiem i nie
+  tworzy osadzanej wersji. S2E2 nadal lektor, nie fandub. Krótkich scenek i piosenek
+  nie przypinamy jako pełnych odcinków.
+- Circus, Drones i Gameoverse zachowują dotychczas potwierdzone oficjalne ścieżki
+  polskie; wybór w ustawieniach YouTube, nie wymuszenie parametrem hl.
+
+„Polecane” na stronie głównej i w bibliotece: Circus, Helluva, Metal Family,
+Gameoverse, Drones, Lackadaisy, Meta Runner. Sortowanie alfabetyczne niezależne.
+Wszystkie nowe wersje PL oznaczone jako nieoficjalne fanduby, z autorami i linkami;
+publiczne metadane nie stanowią gwarancji odtwarzania iframe w Polsce ani zgody
+na rehosting. Nie pobieramy ani nie rehostujemy filmów.

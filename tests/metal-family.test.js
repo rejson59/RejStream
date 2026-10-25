@@ -23,15 +23,17 @@ it("adds all 17 verified official episodes in season order with runtimes", () =>
   expect(show.seasons[1].note).toContain("sezon trwa");
   expect(watchGuide(show).note).not.toContain("Pilot jest już odcinkiem 1");
 });
-it("offers five credited Polish fandubs, not fictional official Polish tracks", () => {
-  expect(libraryEpisodes(show,{season:1,language:"fandub"})).toHaveLength(5);
-  expect(libraryEpisodes(show,{season:2,language:"polish"})).toEqual([]);
+it("offers nine credited Polish fandubs, not fictional official Polish tracks", () => {
+  expect(libraryEpisodes(show,{season:1,language:"fandub"})).toHaveLength(8);
+  expect(libraryEpisodes(show,{season:2,language:"polish"}).map((e) => e.number)).toEqual([6]);
   for (const e of show.episodes) {
     expect(e.polishTrack).toBe(false);
     if (e.season === 1 && e.number <= 5) {
       expect(polishKind(e)).toBe("fandub");
       expect(e.polishAudio[0].creator).toBe("BruDolina Studios");
       expect(e.polishAudio[0].channel).toBe("https://www.youtube.com/@BruDolinaStudios");
+    } else if (e.season === 1 && [7,8,9].includes(e.number) || e.season === 2 && e.number === 6) {
+      expect(polishKind(e)).toBe("fandub");
     } else expect(polishKind(e)).toBe("missing");
   }
 });

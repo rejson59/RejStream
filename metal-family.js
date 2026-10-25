@@ -26,8 +26,8 @@ export const metalFamily = {
   color: "#dbaa65", art: "CAgWbpB83qU", hero: "HO33O2-DYYY",
   cardBadge: "17 ODCINKÓW · SEZONY 1–2", label: "METALOWA RODZINA · SEZON 2 TRWA",
   description: "Glam i Victoria wychowują Dee i Heavy’ego po swojemu: w rytmie metalu i wbrew oczekiwaniom otoczenia. Rodzinna komedia miesza absurd, ciężkie brzmienie i poważniejsze historie. Pełne odcinki z oficjalnego kanału Metal Family English.",
-  catalogNote: "Sprawdzono 25.10.2026: sezon 1 kompletny — 10 odcinków. Sezon 2 — wszystkie 7 opublikowanych odcinków, sezon trwa. Oficjalne audio angielskie; rosyjski jest językiem oryginału serialu. Polskie fanduby BruDolina dostępne do S1E1–5. Nie dodajemy zwiastunów i Q&A jako odcinków. Prolog/teledysk nie jest częścią tej listy 17 odcinków.",
-  languageNote: "Materiały bazowe: oficjalny dubbing angielski Metal Family English (oryginał serialu jest rosyjski). S1E1–5: osobne polskie fanduby BruDolina Studios, wybrane domyślnie. Pozostałe odcinki: brak potwierdzonego dostępnego polskiego dubbingu. Napisy PL zależą od źródła; nie potwierdzono ich dla całego serialu.",
+  catalogNote: "Sprawdzono 25.10.2026: sezon 1 kompletny — 10 odcinków. Sezon 2 — wszystkie 7 opublikowanych odcinków, sezon trwa. Oficjalne audio angielskie; rosyjski jest językiem oryginału serialu. Polskie fanduby: BruDolina S1E1–5, Serhiej S1E7–9, HellsBroadcastStudio S2E6. Nie dodajemy zwiastunów i Q&A jako odcinków. Prolog/teledysk nie jest częścią tej listy 17 odcinków.",
+  languageNote: "Materiały bazowe: oficjalny dubbing angielski Metal Family English (oryginał serialu jest rosyjski). Polskie fanduby wybierane domyślnie: BruDolina Studios S1E1–5, Serhiej S1E7–9, HellsBroadcastStudio S2E6 (wersja cenzurowana). S1E6, S1E10 i pozostałe odcinki sezonu 2: brak potwierdzonej pełnej polskiej wersji w jednym materiale. Napisy PL zależą od źródła; nie potwierdzono ich dla całego serialu.",
   channel: "https://www.youtube.com/@metalfamilyenglish2907",
   episodes: rows.map(([season, number, id, time, polishTitle, originalTitle]) => ({
     season, number, id, time, polishTitle, originalTitle, titleTranslation: "editorial",

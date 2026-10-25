@@ -124,3 +124,14 @@ odtwarzania i źródła opisano w SOURCES.md. Nowa suma ciekawostki: około
   PL w ustawieniach YouTube. Bez niewydanych odcinków i bez starej wersji 2009.
 - Ciekawostka: 7 **tytułów**, około 30 godz. 25 min. To celowe rozróżnienie
   pilotów i pełnych seriali. Weryfikacja metadanych: 25.10.2026; SOURCES.md.
+
+### Polecane i uzupełnienia PL (25.10.2026)
+
+Kolejność: Circus → Helluva → Metal Family → Gameoverse → Drones → Lackadaisy
+→ Meta Runner. Dodano 7 fandubów: Lackadaisy pilot (VOX record) i Stratagem
+(Pawlikowe), Helluva Shorts 2 (Unima), Metal Family S1E7–9 (Serhiej) i S2E6
+(HellsBroadcastStudio, wersja cenzurowana). Są wybierane domyślnie przy preferencji
+polskiego audio. Nadal **nie ma potwierdzonego kompletu dubbingu do wszystkiego**;
+pozostałe braki i wykluczenia opisano w SOURCES.md. Dubbingów nie doliczamy
+ponownie do długości katalogu. Starsze wpisy dokumentacji odzwierciedlają stan
+poprzednich aktualizacji; ten wpis aktualizuje ich informacje o polskim audio.
