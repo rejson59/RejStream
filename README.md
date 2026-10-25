@@ -104,3 +104,13 @@ przekierowania do Prime ani automatycznego uruchamiania kolejnego odcinka.
 Circus i Drones zaczynają się od pilota będącego odcinkiem 1. Meta Runner:
 S1 Movie Cut (nie 10 oryginałów) → pełne S2 → pełne S3.
 Identyfikatory odcinków i zapisane pozycje nie zmieniają się.
+
+### Metal Family
+
+Piąty serial: 10 odcinków S1 i 7 dotąd wydanych S2 (sezon trwa), z oficjalnego
+kanału Metal Family English. Polski fandub BruDolina do S1E1–5; pozostałe
+odcinki z angielskim audio, bez obietnicy polskich napisów. Proponowana
+kolejność: S1 → S2. Q&A, teledysk/prolog i zwiastuny nie są doliczane do
+17 pełnych odcinków. Publiczne metadane sprawdzone 25.10.2026; ograniczenia
+odtwarzania i źródła opisano w SOURCES.md. Nowa suma ciekawostki: około
+29 godz. 16 min dla 5 seriali (w tym zewnętrzne odcinki Prime Video).

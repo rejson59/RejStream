@@ -197,3 +197,20 @@ Uzupełniono dokładniejsze czasy wszystkich 19 materiałów Meta Runner z oficj
 - https://www.youtube.com/playlist?list=PLHovnlOusNLj6lcWUy8mRTOdRzPSfIp7k
 
 Wartości w `metaRunnerTimes` w kolejności katalogu. Inne seriale zachowują istniejące przybliżone czasy minutowe, shorts mają mm:ss. Dlatego UI zawsze mówi „około”, a nie o dokładnym czasie całego katalogu. Wynik: 92 544 s (~25 godz. 42 min), w tym Prime Video 8 160 s (2 godz. 16 min), zwiastuny 416 s (~7 min). Suma materiałów YouTube ze zwiastunami: 84 384 s (~23 godz. 26 min). Obliczenie jest dynamiczne, nie wpisane na sztywno w banerze. Przy nieznanej długości nowego materiału baner nie pokazuje niepełnej sumy jako całości.
+
+## Metal Family — 25.10.2026
+
+Dodano piąty serial, 17 pełnych odcinków: S1 1–10, S2 1–7. Sezon 2 nadal trwa; nie dodajemy przyszłych odcinków. Materiały bazowe to oficjalna wersja **angielska**, nie rosyjski oryginał. Polskie tytuły w katalogu są tłumaczeniami redakcji; angielskie nazwy fabularne nie są tytułami widocznymi w nagłówkach uploadów (tam są numery sezonu/odcinka).
+
+Źródła podstawowe (odczytano wszystkie pozycje playlisty, części 0 i 1):
+- https://www.youtube.com/channel/UCuiERoR0BqE-6A7OZf38dKQ — Metal Family English, kanał oficjalnej wersji EN.
+- https://www.youtube.com/playlist?list=UUuiERoR0BqE-6A7OZf38dKQ — lista uploadów tego kanału: wszystkie 17 ID, numery sezonów/odcinków i czasy mm:ss zapisane w `metal-family.js`. Ostatni potwierdzony pełny odcinek: S2E7 `SSxZ5vorJNA`, 32:50. Lista ma 21 pozycji: 17 pełnych odcinków, 2 zwiastuny i 2 Q&A. Nie dodano Q&A ani zwiastunów jako odcinków; nie dodano prologu/teledysku, którego nie ma na tej liście.
+- https://metalfamily.fandom.com/wiki/Season_1 i https://metalfamily.fandom.com/wiki/Season_2 — pomocnicza kontrola 10/7 i angielskich nazw epizodów; nie źródło praw do rehostingu.
+
+Polski dubbing:
+- https://www.youtube.com/playlist?list=PLjVwMl5Vo3TChDOxfIkt6jVmAUC5DPvLb — BruDolina Studios, 5 pełnych polskich uploadów: `Tis9tqJb4qA` (2:58), `8LnhHwLaz60` (4:18), `8K-soD5rU6Y` (4:21), `F16yMJXM4vY` (7:56), `vLFA51fD5fk` (5:40). Tytuły playlisty potwierdzają S1E1–5. Opisy pierwszych uploadów deklarują zgodę producentów na polską wersję. W UI ostrożnie oznaczamy je jako osobne **fanduby**, nie oficjalną ścieżkę YouTube i nie gwarantujemy praw do rehostingu. Autorzy i linki zachowani. Odmienne długości wersji PL nie są dodawane po raz drugi do czasu katalogu.
+- Wyszukiwarka wskazała polskie S1E6 `57Ds4RTSD2s` i S1E7 `N1nNdBZuTfs`, lecz bezpośredni odczyt obu watch URL zwrócił „account … terminated”; **nie dodano niedostępnych wersji**. Pozostałe odcinki nie mają potwierdzonego dostępnego polskiego audio. Napisy PL nie są potwierdzone dla całości.
+
+To weryfikacja publicznych metadanych, nie dowód odtwarzania iframe w Polsce ani kompletności polskich tłumaczeń. Oficjalne osadzenia YouTube, bez pobierania i rehostingu. Brak zweryfikowanego polskiego zwiastuna — nie pokazujemy obcego zwiastuna jako polskiego.
+
+Czas Metal Family (jedna bazowa wersja każdego odcinka): 12 799 s = 3:33:19. Ciekawostka aktualizuje się do 5 seriali i 105 343 s, około 29 godz. 16 min całego katalogu. Suma pozostaje przybliżona z powodu zaokrąglonych czasów innych seriali. Zalecana kolejność Metal Family: S1E1–10 → opublikowane S2E1–7; bez fałszywej informacji, że odcinek 1 to pilot.

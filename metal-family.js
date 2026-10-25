@@ -1,0 +1,41 @@
+// Official Metal Family English uploads. Checked 2026-10-25; see SOURCES.md.
+const rows = [
+  [1, 1, "CAgWbpB83qU", "3:01", "Tata w szkole", "Father Goes to School"],
+  [1, 2, "J92rFOqsXYM", "4:17", "Obrońca", "Protector"],
+  [1, 3, "aUt6BnKt7QQ", "4:24", "Stasik kontra", "Stasik Contra"],
+  [1, 4, "GPGvNpoL2a4", "7:56", "Poker", "Poker"],
+  [1, 5, "v7aPGgrL8sE", "5:54", "Pudełko 37", "Box 37"],
+  [1, 6, "7TZ2D4yOnkk", "10:37", "Zadanie", "Quest"],
+  [1, 7, "CQUvoNv6eDE", "7:21", "Grasz na gitarze?", "Do You Play the Guitar?"],
+  [1, 8, "VSDSFIgE3Ak", "7:37", "Dzienne bobry", "Morning Beavers"],
+  [1, 9, "YarJLdqJi5Y", "17:20", "Słuch absolutny", "Ideal Tone"],
+  [1, 10, "HO33O2-DYYY", "26:09", "Glam", "Glam"],
+  [2, 1, "OZp78lD4jjQ", "12:50", "Jego sekrety", "His Secrets"],
+  [2, 2, "8AvEyTyfFHQ", "7:06", "Lif", "Lif"],
+  [2, 3, "w9au12lAXXQ", "28:07", "Co to za dziwacy na scenie?", "Who Are Those Freaks On Stage"],
+  [2, 4, "zsDesI1MX3w", "8:17", "Prezent", "Present"],
+  [2, 5, "46t5TekZqrI", "11:55", "Wróć", "Come Back"],
+  [2, 6, "uGCsmCWFrgM", "17:38", "Apofenia", "Apophenia"],
+  [2, 7, "SSxZ5vorJNA", "32:50", "Ustawka", "The Set Up"],
+];
+export const metalFamily = {
+  key: "metal-family", title: "Metal Family", short: "Metal Family",
+  subtitle: "Ciężkie brzmienie. Nieprzeciętna rodzina.",
+  creator: "Alina Kovalyova i Dmitry Vdovenko · Metal Family",
+  year: "2018–", age: "Dla starszych widzów", genre: "Czarna komedia · rodzina · muzyka",
+  color: "#dbaa65", art: "CAgWbpB83qU", hero: "HO33O2-DYYY",
+  cardBadge: "17 ODCINKÓW · SEZONY 1–2", label: "METALOWA RODZINA · SEZON 2 TRWA",
+  description: "Glam i Victoria wychowują Dee i Heavy’ego po swojemu: w rytmie metalu i wbrew oczekiwaniom otoczenia. Rodzinna komedia miesza absurd, ciężkie brzmienie i poważniejsze historie. Pełne odcinki z oficjalnego kanału Metal Family English.",
+  catalogNote: "Sprawdzono 25.10.2026: sezon 1 kompletny — 10 odcinków. Sezon 2 — wszystkie 7 opublikowanych odcinków, sezon trwa. Oficjalne audio angielskie; rosyjski jest językiem oryginału serialu. Polskie fanduby BruDolina dostępne do S1E1–5. Nie dodajemy zwiastunów i Q&A jako odcinków. Prolog/teledysk nie jest częścią tej listy 17 odcinków.",
+  languageNote: "Materiały bazowe: oficjalny dubbing angielski Metal Family English (oryginał serialu jest rosyjski). S1E1–5: osobne polskie fanduby BruDolina Studios, wybrane domyślnie. Pozostałe odcinki: brak potwierdzonego dostępnego polskiego dubbingu. Napisy PL zależą od źródła; nie potwierdzono ich dla całego serialu.",
+  channel: "https://www.youtube.com/@metalfamilyenglish2907",
+  episodes: rows.map(([season, number, id, time, polishTitle, originalTitle]) => ({
+    season, number, id, time, polishTitle, originalTitle, titleTranslation: "editorial",
+    title: `${polishTitle} / ${originalTitle}`,
+    desc: `Historia Glama, Victorii, Dee i Heavy’ego. Sezon ${season}, odcinek ${number} — pełny odcinek z oficjalnego kanału Metal Family English.`,
+  })),
+  seasons: [
+    { key: "1", label: "Sezon 1", note: "10 pełnych odcinków · sezon kompletny" },
+    { key: "2", label: "Sezon 2", note: "7 opublikowanych odcinków · sezon trwa · sprawdzono 25.10.2026" },
+  ],
+};

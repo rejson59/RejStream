@@ -64,7 +64,7 @@ describe("series library", () => {
     expect(getSeries("circus").seasons).toHaveLength(1);
   });
   it("has no removed open movie and explicitly labels a partial Drones collection", () => {
-    expect(series.map((s) => s.key)).toEqual(["circus", "helluva", "drones", "meta-runner"]);
+    expect(series.map((s) => s.key)).toEqual(["circus", "helluva", "drones", "meta-runner", "metal-family"]);
     expect(getSeries("drones").episodes).toHaveLength(8);
     expect(getSeries("drones").episodes.map((e) => e.number)).toEqual([
       1, 2, 3, 4, 5, 6, 7, 8,

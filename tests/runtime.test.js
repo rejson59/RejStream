@@ -11,9 +11,9 @@ it("parses supported times without silently treating ranges as exact", () => {
 });
 it("counts the entire catalog once, separating external episodes and unique trailers", () => {
   const stats = catalogRuntime(series, seasonTrailers);
-  expect(stats.seriesCount).toBe(4);
+  expect(stats.seriesCount).toBe(5);
   expect(stats.unknown).toBe(0);
-  expect(stats.total).toBe(92544);
+  expect(stats.total).toBe(105343);
   expect(stats.external).toBe(136 * 60);
   expect(stats.trailerSeconds).toBe(416);
   expect(stats.total).toBe(stats.embedded + stats.external + stats.trailerSeconds);

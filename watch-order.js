@@ -32,6 +32,10 @@ export function watchGuide(show) {
       ["special", 1, "Opcjonalnie: pilot 2019 — starsza wersja poza aktualnym kanonem"],
     ],
   };
+  if (show.key === "metal-family") return {
+    note: "Zacznij od sezonu 1, odcinka 1, potem przejdź do sezonu 2. Kolejność numerów to propozycja na pierwszy seans. Prolog/teledysk jest opcjonalnym dodatkiem i nie znajduje się w tym katalogu. Sezon 2 nadal trwa.",
+    steps: [[1, 1, "1. Sezon 1 — od odcinka 1 do 10"], [2, 1, "2. Sezon 2 — 7 opublikowanych odcinków"]],
+  };
   if (show.key === "meta-runner") return {
     note: "Najpierw poznaj historię Tari z sezonu 1. Mamy jego skrócony Animated Movie Cut, nie 10 oryginalnych odcinków. Następnie oglądaj pełne sezony 2 i 3 po kolei.",
     steps: [[1, 1, "1. Sezon 1 — wersja montażowa"], [2, 1, "2. Sezon 2"], [3, 1, "3. Sezon 3 — finał"]],
