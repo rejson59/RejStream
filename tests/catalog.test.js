@@ -18,7 +18,7 @@ describe("catalog", () => {
   it("combines search, season, saved and Polish filters", () => {
     expect(
       selectEpisodes({ season: 2, query: "seeing" }).map((e) => e.title),
-    ).toEqual(["Seeing Stars"]);
+    ).toEqual(["Patrząc w gwiazdy / Seeing Stars"]);
     expect(selectEpisodes({ season: 2, filter: "pl" })).toHaveLength(9);
     expect(
       selectEpisodes({ season: 1, filter: "pl" }).map((e) => e.number),
@@ -95,4 +95,21 @@ describe("series library", () => {
       episodeKey("helluva", { season: 1, number: 1 }),
     );
   });
+});
+
+it("gives every Circus and Helluva entry an editorial Polish title without losing original search", () => {
+  for (const key of ["circus", "helluva"]) {
+    const show = getSeries(key);
+    for (const ep of show.episodes) {
+      expect(ep.polishTitle).toBeTruthy();
+      expect(ep.originalTitle).toBeTruthy();
+      expect(ep.title).toBe(`${ep.polishTitle} / ${ep.originalTitle}`);
+      expect(ep.titleTranslation).toBe("editorial");
+      for (const query of [ep.polishTitle, ep.originalTitle]) {
+        expect(
+          libraryEpisodes(show, { season: String(ep.season), query }),
+        ).toContain(ep);
+      }
+    }
+  }
 });

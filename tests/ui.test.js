@@ -29,13 +29,17 @@ it("opens circus as a complete numbered season, not a mixed homepage", async () 
   await navigate("series/circus");
   expect(document.querySelectorAll("[data-episode]")).toHaveLength(9);
   expect(document.querySelectorAll(".series-card")).toHaveLength(0);
-  expect(document.querySelector(".episode h3").textContent).toBe("PILOT");
+  expect(document.querySelector(".episode h3").textContent).toBe(
+    "Pilot / PILOT",
+  );
 });
 it("sorts episodes descending and preserves audio filter across re-renders", () => {
   const sort = document.querySelector("#episode-sort");
   sort.value = "desc";
   sort.dispatchEvent(new Event("change"));
-  expect(document.querySelector(".episode h3").textContent).toBe("Remember");
+  expect(document.querySelector(".episode h3").textContent).toBe(
+    "Pamiętaj / Remember",
+  );
   const audio = document.querySelector("#audio-filter");
   audio.value = "fandub";
   audio.dispatchEvent(new Event("change"));
@@ -345,7 +349,7 @@ it("starts an upload at its own saved second and reports per-episode progress", 
   expect(document.body.textContent).not.toContain("Twój czas z historiami");
   await navigate("history");
   expect(document.querySelector(".history-item").textContent).toContain(
-    "Circus — Pilot",
+    "The Amazing Digital Circus — Pilot / PILOT",
   );
   expect(document.querySelector(".history-item progress").value).toBe(83.75);
   expect(document.querySelector(".history-item a").hash).toBe(
@@ -411,4 +415,17 @@ it("shows an honest empty history and no statistics in the local player", async 
   await navigate("local");
   expect(document.querySelector(".local-progress")).toBeNull();
   if (saved) localStorage.setItem("rej-playback-v1", saved);
+});
+
+it("does not advertise login to signed-in viewers", async () => {
+  await navigate("home");
+  expect(document.querySelector(".login-nudge")).toBeNull();
+  await navigate("watch/circus/1/2");
+  expect(document.querySelector(".login-nudge")).toBeNull();
+  expect(document.querySelector(".watch-title-row h1").textContent).toContain(
+    "Cukierkowy konwój chaosu!",
+  );
+  expect(
+    document.querySelector(".title-translation-note").textContent,
+  ).toContain("nie oficjalny");
 });

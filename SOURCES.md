@@ -139,3 +139,7 @@ Oficjalne publiczne uploady GLITCH (sprawdzono metadane stron, nie rzeczywiste d
 Potwierdzenie oficjalnego polskiego dubbingu całego sezonu BruDolina Studios i polskich tytułów: https://dubbingpedia.pl/wiki/Murder_Drones oraz https://murder-drones.fandom.com/wiki/Murder_Drones_(Polish). Dubbing jest ścieżką audio oficjalnych materiałów, nie fikcyjnym osobnym uploadem. Inne języki wybiera się w źródłowym odtwarzaczu; nie deklarujemy pełnej, niezweryfikowanej listy języków per odcinek ani automatycznego przełączania audio.
 
 Integrację kont oparto na publicznym kodzie `rejson59/rejson59.github.io`: `js/community.js`, `rejson-widgets/js/supabase-config.js` i schemacie/metadanych projektu `rejson-widgets`. Nie pobierano rekordów użytkowników, hashy PIN-ów ani istniejących tokenów sesji. Nowa tabela i RPC: `supabase/rejstream.sql`. Test izolacji używał wyłącznie losowych danych testowych w transakcji wycofanej ROLLBACK.
+
+## Tytuły redakcyjne (Digital Circus i Helluva Boss)
+
+`episode-titles.js` zawiera własne polskie przekłady/adaptacje wszystkich tytułów tych dwóch seriali z aktywnego katalogu. Oryginały pozostają widoczne i wyszukiwalne. To nie jest lista zweryfikowanych oficjalnych tytułów polskiego dystrybutora ani cytat tytułów poszczególnych fandubów. Przy nazwach własnych, grach słownych i celowo nonsensownym `hjsakldfhl` zastosowano adaptację opisową, nie deklarację dosłownego przekładu. UI oznacza redakcyjne pochodzenie tych tytułów. Dotychczasowych polskich tytułów Murder Drones nie podmieniano.

@@ -1,3 +1,4 @@
+import { localizeEpisodeTitles } from "./episode-titles.js";
 import { addPolishAudio, polishKind } from "./polish-audio.js";
 // Sources and verification notes: SOURCES.md. Null IDs deliberately mean external-only.
 const episode = (season, number, title, id, minutes, desc, pl) => ({
@@ -493,6 +494,7 @@ export const series = [
     channel: "https://www.youtube.com/@GLITCH",
   },
 ];
+localizeEpisodeTitles(series);
 addPolishAudio(series);
 
 export function getSeries(key) {
