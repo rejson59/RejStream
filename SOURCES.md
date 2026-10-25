@@ -162,3 +162,28 @@ Nowe wpisy korzystają z oryginalnych osadzeń YouTube i podpisanych kanałów, 
 - Primary opening/finale uploads fetched for seasons 2 and 3: jKDT-tjFXYg (13:02), PBd5Z_o-BXg (19:08), F_i4C-lvs8k (14:30), x8lQLgGLy64 (23:34); all public GLITCH uploads. No reaction videos or Archive reuploads used.
 - Standard existing YouTube iframe integration; no download/rehosting or removal of provider branding. Real Polish-region iframe playback and every middle episode's current embed eligibility have NOT been tested from this sandbox. Provider restrictions still apply; existing retry/source links remain available.
 - Original English audio. No confirmed Polish audio/subtitles claimed. Polish episode titles are editorial translations, not official localized titles. Episode runtimes except season-one cut are deliberately a range, not fabricated exact metadata.
+
+## Przegląd kompletności — 25.10.2026
+
+To przegląd list i metadanych, nie test odtwarzania każdego filmu z polskiego IP.
+
+| Katalog | Stan po przeglądzie |
+| --- | --- |
+| Helluva S1 / S2 | 8/8 i 12/12, zgodność numerów i ID z oficjalną playlistą |
+| Helluva Shorts | 14/14 numerowanych odcinków; dodano brakujące 2 i 5–14 |
+| Helluva S3 | 5/5 dotąd opublikowanych, tylko zewnętrznie Prime Video; sezon trwa, to nie cały zaplanowany sezon |
+| Digital Circus | 9/9, zgodne z oficjalną playlistą GLITCH i finałem Remember |
+| Murder Drones | 8/8, zakończony serial; opis finału GLITCH i strona producenta potwierdzają zakończenie |
+| Meta Runner S2 / S3 | 10/10 i 8/8, zgodność z listą odcinków członka ekipy produkcyjnej |
+| Meta Runner S1 | **Brak 10 osobnych odcinków w katalogu**; dostępny tylko skrócony Animated Movie Cut. Nie oznaczamy jako komplet oryginalnych odcinków. |
+
+Źródła ponownie sprawdzone:
+- https://www.youtube.com/playlist?list=PL-uopgYBi65EcoPrkpmInO7cfDRKokjQA — oficjalna lista zawiera 15 filmów, ale tylko 14 numerowanych shorts; piętnasty film to teledysk Shark Boy Summer. Nie wolno numerować odcinków według indeksu playlisty. Mimo komunikatu 401 w nagłówku odpowiedź zawierała pełną listę tytułów, autorów i ID.
+- Każdy dodany short 2, 5–14: pobrano bezpośrednią stronę YouTube; wszystkie Public, autor Vivziepop / @SpindleHorse. ID, daty i długości w helluva-shorts.js. Różnica 1 sekundy pomiędzy metadanymi filmu i playlisty: użyto metadanych strony filmu.
+- https://www.youtube.com/playlist?list=PL-uopgYBi65HwiiDR9Y23lomAkGr9mm-S — pobrano obie części; 20 odcinków sezonów 1–2, Mission: Zero, shorts i teledysk. Poprawiono błędny czas Mission: Zero z 26 do około 12 minut (playlista 11:47).
+- https://www.primevideo.com/detail/0GEB35CUYRCDVXUV0UXQY9FHIF — oficjalna strona ma pięć odcinków S3, tytuły zgodne z katalogiem. Podmieniono ogólną wyszukiwarkę na stronę sezonu. Nie dodawano jeszcze nieopublikowanych E6/E7 planowanych na 28.10.
+- https://www.youtube.com/playlist?list=PLHovnlOusNLgvAbnxluXCVB3KLj8e4QB- — 9/9 ID zgodnych z katalogiem; https://www.youtube.com/watch?v=PVy-bcTsO8A — publiczny finał od GLITCH.
+- https://www.glitchprod.com/murder-drones — producent opisuje osiem odcinków i zakończony sezon; https://www.youtube.com/watch?v=caR9ouipm8o — opis od GLITCH mówi wprost o finale serialu.
+- https://aythanjm.com/glitch-productions/meta-runner/ — lista S2/S3 i montażu S1; dokumentacja oryginalnego S1: https://meta-runner.fandom.com/wiki/Season_1 (10 odcinków). Brak osobnych oryginałów S1 pozostaje jawnie opisany.
+
+Polskie tytuły nowych shorts to tłumaczenia redakcyjne. Zachowano dotychczasowe fanduby 1, 3, 4 i stabilne klucze historii. Wyszukiwanie nie potwierdziło pełnych polskich fandubów pozostałych shorts — nie dopisano fikcyjnych ścieżek audio ani napisów.

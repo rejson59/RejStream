@@ -1,5 +1,16 @@
 // Editorial Polish translations, not claimed to be distributor/fandub titles.
 const polish = {
+  "Mission: Antarctica": "Misja: Antarktyda",
+  "Mission: Orphan Time": "Misja: Czas sierot",
+  "Mission: Bad Drivezo": "Misja: Drogowy wariat",
+  "Mission: Whacked Off": "Misja: Mafijne porachunki",
+  "Mission: Big Boss": "Misja: Wielka szycha",
+  "Mission: Bigfoot": "Misja: Wielka Stopa",
+  "Mission: It's Chaz Funeral": "Misja: Pogrzeb Chaza",
+  "Barbie's Bad Day": "Zły dzień Barbie",
+  "IMP Training Video": "Film szkoleniowy I.M.P.",
+  "Mission: Book Report": "Misja: Powieściowy raport",
+  "The Princess & the Pupper": "Księżniczka i psinka",
   "Murder Family": "Mordercza rodzinka",
   "Loo Loo Land": "Kraina Loo Loo",
   "Spring Broken": "Wiosenne rozstanie",
