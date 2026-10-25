@@ -114,3 +114,13 @@ kolejność: S1 → S2. Q&A, teledysk/prolog i zwiastuny nie są doliczane do
 17 pełnych odcinków. Publiczne metadane sprawdzone 25.10.2026; ograniczenia
 odtwarzania i źródła opisano w SOURCES.md. Nowa suma ciekawostki: około
 29 godz. 16 min dla 5 seriali (w tym zewnętrzne odcinki Prime Video).
+
+### Lackadaisy i Gameoverse
+
+- Lackadaisy: pilot + 5 **wybranych** krótkich animacji w osobnej zakładce;
+  to nie cały sezon 1. Zacznij od pilota; dodatki opcjonalne. Audio EN,
+  polskie napisy/dubbing niepotwierdzone.
+- Gameoverse (GLITCH, 2026): jeden wydany pilot 32:26 z oficjalnym dubbingiem
+  PL w ustawieniach YouTube. Bez niewydanych odcinków i bez starej wersji 2009.
+- Ciekawostka: 7 **tytułów**, około 30 godz. 25 min. To celowe rozróżnienie
+  pilotów i pełnych seriali. Weryfikacja metadanych: 25.10.2026; SOURCES.md.

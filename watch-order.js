@@ -32,6 +32,14 @@ export function watchGuide(show) {
       ["special", 1, "Opcjonalnie: pilot 2019 — starsza wersja poza aktualnym kanonem"],
     ],
   };
+  if (show.key === "lackadaisy") return {
+    note: "Najpierw pełny pilot, potem opcjonalnie krótkie animacje. Kolejność dodatków jest propozycją redakcji, nie chronologią. Pełny sezon 1 nie jest jeszcze dostępny.",
+    steps: [[1, 1, "1. Pilot — zacznij tutaj"], ["shorts", 1, "2. Opcjonalnie: Ingenue i pozostałe krótkie animacje"]],
+  };
+  if (show.key === "gameoverse") return {
+    note: "Zacznij od pilota nowej wersji GLITCH z 2026 roku. Obecnie to jedyny opublikowany odcinek — dalszy sezon jeszcze nie jest dostępny. Nie mieszamy go z dawną wersją z 2009 roku.",
+    steps: [[1, 1, "Pilot — jedyny dostępny odcinek"]],
+  };
   if (show.key === "metal-family") return {
     note: "Zacznij od sezonu 1, odcinka 1, potem przejdź do sezonu 2. Kolejność numerów to propozycja na pierwszy seans. Prolog/teledysk jest opcjonalnym dodatkiem i nie znajduje się w tym katalogu. Sezon 2 nadal trwa.",
     steps: [[1, 1, "1. Sezon 1 — od odcinka 1 do 10"], [2, 1, "2. Sezon 2 — 7 opublikowanych odcinków"]],

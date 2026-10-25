@@ -22,7 +22,7 @@ beforeAll(async () => {
   await import("../src.js");
 });
 it("starts with a series catalog and no removed movie", () => {
-  expect(document.querySelectorAll(".series-card")).toHaveLength(5);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(7);
   expect(document.body.textContent).not.toContain("Big Buck Bunny");
   expect(document.querySelector(".bottom-nav")).not.toBeNull();
 });
@@ -433,7 +433,7 @@ it("does not advertise login to signed-in viewers", async () => {
 
 it("does not expose the rejected LEGO titles or players through old links", async () => {
   await navigate("library");
-  expect(document.querySelectorAll(".series-card")).toHaveLength(5);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(7);
   expect(document.querySelector("#content").textContent).not.toContain("LEGO");
   for (const key of ["lego-spider", "lego-ninjago"]) {
     await navigate(`series/${key}`);
@@ -531,8 +531,8 @@ it("plays newly added shorts with stable numbering and previous/next navigation"
 it("shows the calculated marathon trivia on home with an honest external breakdown", async () => {
   await navigate("home");
   const trivia = document.querySelector(".runtime-trivia");
-  expect(trivia.textContent).toContain("5 seriali");
-  expect(trivia.textContent).toContain("29 godz. 16 min");
+  expect(trivia.textContent).toContain("7 tytułów");
+  expect(trivia.textContent).toContain("30 godz. 25 min");
   expect(trivia.textContent).toContain("Prime Video");
   expect(trivia.querySelector("details")).not.toBeNull();
 });
@@ -597,5 +597,32 @@ it("opens Metal Family with ordered seasons, credited Polish audio and honest ga
   expect(document.querySelector('.episode-navigation .primary').getAttribute("href")).toBe("#watch/metal-family/2/1");
   await navigate("watch/metal-family/2/7");
   expect(document.querySelector("#episode-player").src).toContain("SSxZ5vorJNA");
+  expect(document.querySelector(".episode-navigation").textContent).toContain("Wróć do serialu");
+});
+
+
+it("adds honest pilot collections for Lackadaisy and Gameoverse with working routes", async () => {
+  await navigate("series/lackadaisy");
+  expect(document.querySelectorAll("[data-episode]")).toHaveLength(1);
+  expect(document.querySelector(".availability-note").textContent).toContain("nie dodajemy zapowiedzi");
+  expect(document.querySelector(".watch-order").textContent).toContain("Najpierw pełny pilot");
+  expect(document.querySelector(".language-strip").textContent).not.toContain("Oficjalny polski dubbing");
+  document.querySelector('[data-season="shorts"]').click();
+  expect(document.querySelectorAll("[data-episode]")).toHaveLength(5);
+  await navigate("watch/lackadaisy/1/1");
+  expect(document.querySelector("#episode-player").src).toContain("vffu6FG4YP4");
+  expect(document.querySelector(".queue-heading h2").textContent).toBe("Pilot");
+  expect(document.querySelector('#audio option[value="pl"]')).toBeNull();
+  await navigate("watch/lackadaisy/shorts/1");
+  expect(document.querySelector("#episode-player").src).toContain("GqkUy8M-GfQ");
+  expect(document.querySelector(".queue-heading h2").textContent).toBe("Krótkie animacje");
+  await navigate("series/gameoverse");
+  expect(document.querySelectorAll("[data-episode]")).toHaveLength(1);
+  expect(document.querySelector(".availability-note").textContent).toContain("1 pilot");
+  expect(document.querySelector(".inline-trailer")).toBeNull();
+  await navigate("watch/gameoverse/1/1");
+  expect(document.querySelector("#episode-player").src).toContain("1jNk5tmjhpc");
+  expect(document.querySelector(".polish-notice").textContent).toContain("Oficjalny polski dubbing");
+  expect(document.querySelector(".queue-heading h2").textContent).toBe("Pilot");
   expect(document.querySelector(".episode-navigation").textContent).toContain("Wróć do serialu");
 });
