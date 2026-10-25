@@ -3879,3 +3879,18 @@ footer button svg {
     margin: 0 20px 16px;
   }
 }
+
+.runtime-trivia {
+  margin-top: 28px;
+  padding: clamp(20px, 4vw, 32px);
+  border: 1px solid #e1b35945;
+  border-radius: 18px;
+  background: linear-gradient(120deg, #e1b35912, #ff536c08);
+}
+.runtime-trivia h3 { margin: 10px 0; font-size: clamp(22px, 3vw, 30px); }
+.runtime-trivia p { line-height: 1.7; max-width: 850px; }
+.runtime-trivia strong { color: #e1b359; white-space: nowrap; }
+.runtime-trivia details { margin-top: 14px; font-size: 14px; }
+.runtime-trivia summary { cursor: pointer; }
+.runtime-trivia li { margin: 6px 0; }
+@media (max-width: 480px) { .runtime-trivia strong { white-space: normal; } }

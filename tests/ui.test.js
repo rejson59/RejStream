@@ -526,3 +526,12 @@ it("plays newly added shorts with stable numbering and previous/next navigation"
   ).toBeNull();
   expect(document.querySelector("#audio option[value=pl]")).toBeNull();
 });
+
+it("shows the calculated marathon trivia on home with an honest external breakdown", async () => {
+  await navigate("home");
+  const trivia = document.querySelector(".runtime-trivia");
+  expect(trivia.textContent).toContain("4 seriale");
+  expect(trivia.textContent).toContain("25 godz. 42 min");
+  expect(trivia.textContent).toContain("Prime Video");
+  expect(trivia.querySelector("details")).not.toBeNull();
+});

@@ -1,3 +1,4 @@
+import { metaRunnerTimes, durationSeconds } from "./runtime.js";
 // Official YouTube uploads; provenance and verification limits in SOURCES.md.
 const seasons = {
   2: [
@@ -56,3 +57,8 @@ export const metaRunner = {
     { key: "3", label: "Sezon 3 · finał", note: "8 pełnych odcinków" },
   ],
 };
+
+metaRunner.episodes.forEach((ep, i) => {
+  ep.time = metaRunnerTimes[i];
+  ep.durationSeconds = durationSeconds(ep.time);
+});
