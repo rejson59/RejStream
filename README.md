@@ -79,6 +79,6 @@ Po problemach sieciowych/408/429/5xx kolejka w RAM jest ponawiana automatycznie 
 
 Aktualna walidacja: 81 testów, w tym transport HTTP z pustą odpowiedzią 200/204, JSON, błędy nie-JSON, usunięcie potwierdzonych wpisów z kolejki, automatyczne retry i brak zapętlenia przy nieważnej sesji. To testy symulowanej sieci, nie rzeczywistego logowania kontem użytkownika.
 
-## Nowe tytuły LEGO
+## Wycofane wpisy LEGO
 
-Katalog obejmuje również **LEGO Marvel Spider-Man: Wkręcony w Venoma** (krótki film ok. 21 min z Marvel HQ Polska) i **LEGO Ninjago: Mistrzowie Spinjitzu** (jedna polska kompilacja 1:03:25 z kanału LEGO). To nie kinowe filmy pełnometrażowe ani kompletne sezony. Ninjago ma jawne ostrzeżenie regionalne: odtwarzania w Polsce nie potwierdzono. Oficjalne linki pozostają dostępne przy playerze. Nowe uploady są już po polsku, więc UI nie każe wybierać wielościeżkowego dubbingu. Brak wymyślonych zwiastunów. Ulubione, historia i zapis pozycji nadal wymagają konta. Szczegóły przeglądu i odrzucone fragmenty: SOURCES.md.
+Na życzenie użytkownika usunięto LEGO Marvel Spider-Man: Wkręcony w Venoma oraz kompilację LEGO Ninjago. Nie odpowiadały wymaganiu popularnych, aktualnych filmów pełnometrażowych. Nie są dostępne w katalogu ani pod starymi adresami playera. Historia usuniętych wpisów nie jest pokazywana jako lokalny film; zapisów konta w Supabase nie kasujemy. Pozostała biblioteka i funkcje konta pozostają bez zmian. Nie dodano zastępczych materiałów bez potwierdzonego źródła pełnego filmu.

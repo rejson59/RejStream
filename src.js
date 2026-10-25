@@ -221,6 +221,15 @@ function historyPage() {
   if (!account.state().username) return accountPrompt("Historia oglądania");
   const seen = new Set();
   const entries = Object.values(records())
+    // Removed catalog entries must not reappear as mislabeled local files.
+    .filter(
+      (r) =>
+        !r.episode ||
+        r.episode.startsWith("local:") ||
+        series.some((show) =>
+          show.episodes.some((ep) => episodeKey(show.key, ep) === r.episode),
+        ),
+    )
     .filter((r) => r.seconds > 0 || r.position > 0 || r.completed)
     .sort((a, b) => b.updated - a.updated)
     .filter((r) => {
@@ -548,7 +557,9 @@ function render() {
     if (active) n.setAttribute("aria-current", "page");
     else n.removeAttribute("aria-current");
   });
-  document.querySelector("#favorite-count").textContent = favorites.length;
+  document.querySelector("#favorite-count").textContent = favorites.filter(
+    (key) => getSeries(key),
+  ).length;
   const accountLink = document.querySelector(".header-avatar");
   const username = account.state().username;
   accountLink.textContent = username ? username.charAt(0).toUpperCase() : "R";

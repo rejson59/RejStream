@@ -144,7 +144,9 @@ Integrację kont oparto na publicznym kodzie `rejson59/rejson59.github.io`: `js/
 
 `episode-titles.js` zawiera własne polskie przekłady/adaptacje wszystkich tytułów tych dwóch seriali z aktywnego katalogu. Oryginały pozostają widoczne i wyszukiwalne. To nie jest lista zweryfikowanych oficjalnych tytułów polskiego dystrybutora ani cytat tytułów poszczególnych fandubów. Przy nazwach własnych, grach słownych i celowo nonsensownym `hjsakldfhl` zastosowano adaptację opisową, nie deklarację dosłownego przekładu. UI oznacza redakcyjne pochodzenie tych tytułów. Dotychczasowych polskich tytułów Murder Drones nie podmieniano.
 
-## Oficjalne kolekcje LEGO (25.10.2026)
+## Archiwum: wycofane kolekcje LEGO (25.10.2026)
+
+Oba poniższe wpisy zostały usunięte z aktywnego katalogu na życzenie użytkownika: nie spełniały kryterium aktualnych, popularnych filmów pełnometrażowych. Dalszy opis dokumentuje poprzedni przegląd, nie obecną ofertę.
 
 - **LEGO Marvel Spider-Man: Wkręcony w Venoma** — https://www.youtube.com/watch?v=U6BeQvMJ2jo, Marvel HQ Polska https://www.youtube.com/@MarvelHQPolska, publikacja PL 2022-10-14, ok. 21:15. Wcześniejszy odczyt metadanych/transkryptu potwierdził polskie audio; obecny odczyt zwrócił tytuł i czas 21:14, ale także błąd narzędzia 401. Nie jest to kinowy Spider-Man ani pełny sezon. Nie deklarujemy testu transmisji/dekodera w Polsce.
 - **LEGO Ninjago: Mistrzowie Spinjitzu — pełne odcinki z sezonu 1 — po polsku!** — https://www.youtube.com/watch?v=-FleiD65Eqg, oficjalny LEGO https://www.youtube.com/@LEGO, publikacja 2019-03-08, czas 1:03:25. Jedna kompilacja, bez dopisywania numerów składowych odcinków i bez oznaczenia kompletnego sezonu. Odczyt strony w poprzednim przeglądzie wskazał ograniczenie kraju; dostępności w Polsce nie potwierdzono. UI pokazuje ostrzeżenie na stronie tytułu i nad playerem, zachowuje link do oficjalnego YouTube. Nie obchodzimy blokady.
