@@ -372,7 +372,7 @@ export const series = [
       },
     ],
     languageNote:
-      "Pełne fanduby: sezon 1, dziewięć odcinków sezonu 2, pilot 2019 i shorts 1, 3 oraz 4. Dla pozostałych shorts nie potwierdzono polskiego audio. S2E2 ma polskiego lektora, nie dubbing. Nie znaleziono pełnego, dostępnego fandubu S2E6, S2E12 ani Mission: Zero. Sezon 3: języki sprawdź w Prime Video. Fanduby są nieoficjalne; autorzy i odnośniki widoczni przy odcinku.",
+      "Pełne fanduby: sezon 1, dziewięć odcinków sezonu 2, pilot 2019 i shorts 1–4. Dla shorts 5–14 nie potwierdzono polskiego audio. S2E2 ma polskiego lektora, nie dubbing. Nie znaleziono pełnego, dostępnego fandubu S2E6, S2E12 ani Mission: Zero. Sezon 3: języki sprawdź w Prime Video. Fanduby są nieoficjalne; autorzy i odnośniki widoczni przy odcinku.",
     channel: "https://www.youtube.com/@SpindleHorse",
   },
   {
@@ -477,6 +477,9 @@ export const series = [
   },
 ];
 series.push(metaRunner, metalFamily, lackadaisy, gameoverse);
+// User-selected recommendation order; stable episode IDs/history are untouched.
+export const recommendedOrder = ["circus", "helluva", "metal-family", "gameoverse", "drones", "lackadaisy", "meta-runner"];
+series.sort((a, b) => recommendedOrder.indexOf(a.key) - recommendedOrder.indexOf(b.key));
 localizeEpisodeTitles(series);
 addPolishAudio(series);
 

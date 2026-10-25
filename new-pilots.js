@@ -13,7 +13,7 @@ export const lackadaisy = {
   description: "St. Louis, prohibicja i podziemny lokal, którego kocia ekipa walczy o przetrwanie wśród przemytników. Zacznij od pełnego pilota, potem poznaj krótkie historie bohaterów. To pilot i dodatki — nie kompletny sezon serialu.",
   availabilityNote: "Dostępne: pilot i 5 wybranych krótkich animacji. Pełny sezon 1 jest w produkcji; nie dodajemy zapowiedzi jako odcinków.",
   catalogNote: "Stan na 25.10.2026: pilot (27:35) oraz wybrane Ingenue, Breakthrough, Naptime Rag, Stratagem i Infestation. To nie pełny sezon ani komplet wszystkich filmów kanału. Pomijamy teledyski, pętle, zwiastuny, fragmenty i materiały produkcyjne.",
-  languageNote: "Oryginalne audio angielskie. Nie potwierdzono dostępnego pełnego polskiego dubbingu do tych materiałów. Napisy PL są preferencją, nie gwarancją — sprawdź ustawienia źródła.",
+  languageNote: "Oryginalne audio angielskie. Pilot: pełny polski fandub VOX record. Stratagem: polski fandub Pawlikowe Fanduby. Oba wybierane domyślnie. Dla pozostałych krótkich animacji brak potwierdzonego dostępnego polskiego dubbingu. Napisy PL są preferencją, nie gwarancją — sprawdź ustawienia źródła.",
   channel: "https://www.youtube.com/@LackadaisyComic",
   episodes: [
     episode(1, 1, "vffu6FG4YP4", "27:35", "Pilot", "Pilot", "Pełny odcinek pilotażowy z oficjalnego kanału Lackadaisy. Wprowadzenie do świata kocich przemytników; nie odcinek pełnego sezonu 1."),

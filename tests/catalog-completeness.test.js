@@ -35,7 +35,7 @@ describe("published catalog audit 2026-10-25", () => {
     // Existing account keys and verified fandubs must not move when filling gaps.
     expect(shorts[2].polishAudio[0].video).toBe("G5_cxsKSN2Y");
     expect(shorts[3].polishAudio[0].video).toBe("7bkMzT8h5jE");
-    for (const ep of shorts.filter((e) => ![1, 3, 4].includes(e.number))) {
+    for (const ep of shorts.filter((e) => ![1, 2, 3, 4].includes(e.number))) {
       expect(ep.polishAudio).toEqual([]);
       expect(ep.polishTrack).toBe(false);
     }

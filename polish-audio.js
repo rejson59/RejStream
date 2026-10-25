@@ -1,5 +1,9 @@
 // Research log and limitations: SOURCES.md. IDs refer to creators' uploads, never rehosts.
 const creators = {
+  vox: ["VOX record", "VOXrecord"],
+  pawlik: ["Pawlikowe Fanduby", "PawlikoweFanduby"],
+  serhiej: ["Serhiej", "serhiejpl3321"],
+  hells: ["HellsBroadcastStudio", "HellsBroadcastStudio"],
   brudolina: ["BruDolina Studios", "BruDolinaStudios"],
   unima: ["Dubbing Unima (Archiwum)", "Springbon_"],
   zacisze: ["Głośne Zacisze", "Glosne_Zacisze"],
@@ -39,6 +43,7 @@ export const helluvaPolishAudio = {
   "2:10": [source("HOQNnOJA-Dk", "unima")],
   "2:11": [source("swmSHRqLnEI", "unima")],
   "shorts:1": [source("g9Yyom9CcW8", "brudolina")],
+  "shorts:2": [source("6UpLvD-5TOI", "unima")],
   "shorts:3": [source("G5_cxsKSN2Y", "unima")],
   "shorts:4": [source("7bkMzT8h5jE", "unima")],
 };
@@ -46,6 +51,16 @@ export const metalFamilyPolishAudio = Object.fromEntries(
   ["Tis9tqJb4qA", "8LnhHwLaz60", "8K-soD5rU6Y", "F16yMJXM4vY", "vLFA51fD5fk"]
     .map((id, i) => [`1:${i + 1}`, [source(id, "brudolina")]]),
 );
+Object.assign(metalFamilyPolishAudio, {
+  "1:7": [source("frbUzuwa6fU", "serhiej")],
+  "1:8": [source("ZUWca9_fDJQ", "serhiej")],
+  "1:9": [source("ScYy3QZIRHU", "serhiej")],
+  "2:6": [source("ZgDr_d7gc_k", "hells")],
+});
+export const lackadaisyPolishAudio = {
+  "1:1": [source("TOu1f4fnhDs", "vox")],
+  "shorts:4": [source("hCDXd3a-tyM", "pawlik")],
+};
 export function addPolishAudio(shows) {
   for (const show of shows) {
     for (const ep of show.episodes) {
@@ -54,7 +69,9 @@ export function addPolishAudio(shows) {
           ? helluvaPolishAudio[`${ep.season}:${ep.number}`] || []
           : show.key === "metal-family"
             ? metalFamilyPolishAudio[`${ep.season}:${ep.number}`] || []
-            : [];
+            : show.key === "lackadaisy"
+              ? lackadaisyPolishAudio[`${ep.season}:${ep.number}`] || []
+              : [];
       // Keep the legacy fandub field accurate for existing catalog consumers.
       ep.pl = ep.polishAudio.find((s) => s.kind === "fandub")?.video;
       ep.polishTrack = ["circus", "drones", "gameoverse"].includes(show.key);

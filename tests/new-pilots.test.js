@@ -11,7 +11,7 @@ it("keeps the Lackadaisy pilot separate from selected shorts, not a complete sea
  expect(show.catalogNote).toContain("nie pełny sezon");
  expect(show.episodes.map((e) => e.id)).not.toContain("BHq4ppmUPsA");
  expect(show.episodes.map((e) => e.id)).not.toContain("b2T3ywJ_y-8");
- expect(show.episodes.every((e) => polishKind(e) === "missing")).toBe(true);
+ expect(show.episodes.filter((e) => polishKind(e) === "fandub")).toHaveLength(2);
  expect(catalogRuntime([show]).total).toBe(2239);
  expect(adjacentEpisodes(show, show.episodes[0]).next).toBeNull();
 });

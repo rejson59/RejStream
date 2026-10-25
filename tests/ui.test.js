@@ -610,9 +610,9 @@ it("adds honest pilot collections for Lackadaisy and Gameoverse with working rou
   document.querySelector('[data-season="shorts"]').click();
   expect(document.querySelectorAll("[data-episode]")).toHaveLength(5);
   await navigate("watch/lackadaisy/1/1");
-  expect(document.querySelector("#episode-player").src).toContain("vffu6FG4YP4");
+  expect(document.querySelector("#episode-player").src).toContain("TOu1f4fnhDs");
   expect(document.querySelector(".queue-heading h2").textContent).toBe("Pilot");
-  expect(document.querySelector('#audio option[value="pl"]')).toBeNull();
+  expect(document.querySelector('#audio option[value="pl"]')).not.toBeNull();
   await navigate("watch/lackadaisy/shorts/1");
   expect(document.querySelector("#episode-player").src).toContain("GqkUy8M-GfQ");
   expect(document.querySelector(".queue-heading h2").textContent).toBe("Krótkie animacje");
@@ -625,4 +625,40 @@ it("adds honest pilot collections for Lackadaisy and Gameoverse with working rou
   expect(document.querySelector(".polish-notice").textContent).toContain("Oficjalny polski dubbing");
   expect(document.querySelector(".queue-heading h2").textContent).toBe("Pilot");
   expect(document.querySelector(".episode-navigation").textContent).toContain("Wróć do serialu");
+});
+
+
+it("uses the requested recommended ranking on home and library, with alphabetical sort still working", async () => {
+  const expected = ["The Amazing Digital Circus", "Helluva Boss", "Metal Family", "Gameoverse", "Murder Drones", "Lackadaisy", "Meta Runner"];
+  const titles = () => [...document.querySelectorAll(".series-card h3")].map((el) => el.textContent);
+  await navigate("home");
+  expect(titles()).toEqual(expected);
+  await navigate("library");
+  const sort = document.querySelector("#catalog-sort");
+  sort.value = "recommended";
+  sort.dispatchEvent(new Event("change"));
+  expect(titles()).toEqual(expected);
+  document.querySelector("#catalog-sort").value = "az";
+  document.querySelector("#catalog-sort").dispatchEvent(new Event("change"));
+  expect(titles()).toEqual([...expected].sort((a,b) => a.localeCompare(b)));
+  document.querySelector("#catalog-sort").value = "recommended";
+  document.querySelector("#catalog-sort").dispatchEvent(new Event("change"));
+  expect(titles()).toEqual(expected);
+});
+it("defaults newly verified fandubs to Polish and retains the original option", async () => {
+  for (const [route, id] of [
+    ["helluva/shorts/2", "6UpLvD-5TOI"],
+    ["metal-family/1/7", "frbUzuwa6fU"],
+    ["metal-family/1/8", "ZUWca9_fDJQ"],
+    ["metal-family/1/9", "ScYy3QZIRHU"],
+    ["metal-family/2/6", "ZgDr_d7gc_k"],
+    ["lackadaisy/1/1", "TOu1f4fnhDs"],
+    ["lackadaisy/shorts/4", "hCDXd3a-tyM"],
+  ]) {
+    await navigate(`watch/${route}`);
+    expect(document.querySelector("#episode-player").src).toContain(id);
+    expect(document.querySelector("#audio").value).toBe("pl");
+    expect(document.querySelector('#audio option[value="original"]')).not.toBeNull();
+    expect(document.querySelector(".polish-notice.fandub")).not.toBeNull();
+  }
 });
