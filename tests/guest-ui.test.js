@@ -14,6 +14,12 @@ it("never records/resumes guests and gates account features without blocking pla
   );
   await import("../src.js");
   await Promise.resolve();
+  expect(document.querySelector(".login-nudge")).not.toBeNull();
+  expect(document.querySelector(".login-nudge").textContent).toContain(
+    "zapisanej sekundy",
+  );
+  document.querySelector(".nudge-close").click();
+  expect(document.querySelector(".login-nudge")).toBeNull();
   const t = createProgress("x");
   t.sample({ time: 30, duration: 100, playing: true });
   expect(records()).toEqual({});
@@ -32,6 +38,14 @@ it("never records/resumes guests and gates account features without blocking pla
   expect(document.querySelector("#episode-player").src).toContain(
     "caR9ouipm8o",
   );
+  expect(document.querySelector(".watch-main > .login-nudge")).not.toBeNull();
+  const frame = document.querySelector("#episode-player");
+  document.querySelector(".nudge-close").click();
+  expect(document.querySelector("#episode-player")).toBe(frame);
+  await navigate("watch/drones/1/7");
+  expect(document.querySelector(".watch-main > .login-nudge")).not.toBeNull();
+  await navigate("watch/drones/1/8");
+  expect(document.querySelector(".login-nudge")).toBeNull();
   expect(document.querySelector("#episode-player").src).not.toContain(
     "start=99",
   );

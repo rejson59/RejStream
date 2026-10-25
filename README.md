@@ -56,9 +56,17 @@ Dostępność: skip link, etykiety, aria-current/pressed, fokus dialogu, Escape,
 
 ## Walidacja i wdrożenie
 
-- 71 testów Vitest/jsdom: dane, napisy/player, logowanie i izolacja sesji, cloud sync/retry, brak historii gościa, przejścia UI.
+- 73 testy Vitest/jsdom: dane, napisy/player, logowanie i izolacja sesji, cloud sync/retry, brak historii gościa, przejścia UI.
 - Chromium: 32 kombinacje tras/szerokości (360, 390, 768, 1440), logowanie, historia/wznowienie, ulubione po reloadzie, brak lokalnego zapisu i wylogowanie. **Zamockowana sieć RPC/YouTube**, bez błędów JS i poziomego overflow.
 - W działającym Supabase: RLS włączone, brak bezpośrednich praw anon do tabeli; transakcyjny test dwóch tymczasowych użytkowników potwierdził odmowę gościa, własny odczyt i brak odczytu/usuwania danych drugiego konta. Cały test wycofano (`ROLLBACK`), bez zmian prawdziwych kont.
 - Produkcyjny build oraz npm audit. Rzeczywistego logowania przez przeglądarkę do Supabase, streamingu/dekodowania YouTube i wyboru języków nie da się sprawdzić w sandboxie z ograniczoną siecią.
 
 Workflow `.github/workflows/pages.yml`: testy/build w PR, po scaleniu do `main` publikacja GitHub Pages. Frontend jest statyczny; funkcje konta wymagają Supabase. Filmów nie rehostujemy. Więcej o autorach i prawach: [SOURCES.md](SOURCES.md).
+
+## Polskie tytuły i zachęta do konta
+
+Wszystkie wpisy Digital Circus i Helluva Boss (także piloty, shorts i zewnętrzne wpisy S3) mają polski tytuł redakcyjny oraz oryginał: `Polski / English`. Nie przypisujemy tych tłumaczeń dystrybutorom ani autorom fandubów; informacja jest na liście i ekranie odcinka. Dla nietłumaczalnych nazw i celowego bełkotu jest to opisowa adaptacja redakcyjna. Murder Drones zachowuje wcześniej potwierdzone tytuły. Wyszukiwanie działa po obu wersjach. Historia konta wyświetla aktualny tytuł z katalogu, bez konieczności nadpisywania danych w Supabase.
+
+Gość widzi niewielki baner z korzyściami (historia na koncie, zapisana sekunda, ulubione) przy wejściu i nad odtwarzaczem odcinka, również dla materiału zewnętrznego. Baner nie zasłania playera, nie odlicza czasu i nie blokuje odtwarzania. Zamknięcie usuwa tylko baner, nie iframe. Zamknięcie wejściowej zachęty obowiązuje do przeładowania strony, a odcinkowej — dla danego odcinka w tej sesji aplikacji; stan jest tylko w RAM, bez localStorage/cookies. Po zalogowaniu z banera wracamy do poprzedniej strony. Zalogowani nie widzą zachęty.
+
+Dodatkowa walidacja: 24 kombinacje tras/szerokości Chromium (360, 390, 768, 1440), zamknięcie bez restartu iframe, powrót po logowaniu i brak banera po zalogowaniu. Sieć RPC/YouTube była symulowana; nie stanowi to testu rzeczywistej transmisji.

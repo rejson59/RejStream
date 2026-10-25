@@ -3758,3 +3758,106 @@ footer button svg {
   background: #38252e;
   border-radius: 8px;
 }
+
+.login-nudge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 34px;
+  padding: 20px 48px 20px 20px;
+  border: 1px solid #a28cff50;
+  border-radius: 14px;
+  background: linear-gradient(120deg, #342340, #1c1825 75%);
+}
+.nudge-icon {
+  display: grid;
+  place-items: center;
+  color: #d3b9ff;
+  flex-shrink: 0;
+}
+.nudge-copy {
+  flex: 1;
+  min-width: 0;
+}
+.nudge-copy strong {
+  display: block;
+  font-size: 16px;
+  color: #f2eafa;
+}
+.nudge-copy p {
+  margin: 6px 0;
+  color: #d2c3de;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.nudge-copy small {
+  color: #ac9bb8;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.nudge-login {
+  flex-shrink: 0;
+  font-size: 11px;
+}
+.nudge-close {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #cdbbdb;
+}
+.nudge-close:hover {
+  background: #ffffff12;
+}
+.nudge-close svg {
+  width: 17px;
+  height: 17px;
+}
+.watch-main > .login-nudge {
+  margin: 0 0 18px;
+}
+.title-translation-note {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+@media (max-width: 1050px) {
+  .login-nudge {
+    flex-wrap: wrap;
+  }
+  .nudge-login {
+    margin-left: 40px;
+  }
+}
+@media (max-width: 600px) {
+  .login-nudge {
+    margin: 16px 20px;
+    padding: 18px 36px 18px 16px;
+    gap: 12px;
+  }
+  .nudge-icon {
+    display: none;
+  }
+  .nudge-copy {
+    flex-basis: 100%;
+  }
+  .nudge-login {
+    margin-left: 0;
+    white-space: normal;
+    max-width: 100%;
+  }
+  .watch-main > .login-nudge {
+    margin: 0 20px 16px;
+  }
+  .title-translation-note {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+}
