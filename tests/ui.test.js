@@ -21,7 +21,7 @@ beforeAll(async () => {
   await import("../src.js");
 });
 it("starts with a series catalog and no removed movie", () => {
-  expect(document.querySelectorAll(".series-card")).toHaveLength(3);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(5);
   expect(document.body.textContent).not.toContain("Big Buck Bunny");
   expect(document.querySelector(".bottom-nav")).not.toBeNull();
 });
@@ -428,4 +428,43 @@ it("does not advertise login to signed-in viewers", async () => {
   expect(
     document.querySelector(".title-translation-note").textContent,
   ).toContain("nie oficjalny");
+});
+
+it("opens the LEGO Spider-Man short with Polish-upload instructions rather than an invented audio track", async () => {
+  await navigate("series/lego-spider");
+  expect(document.querySelectorAll("[data-episode]")).toHaveLength(1);
+  expect(document.querySelector(".inline-trailer")).toBeNull();
+  expect(document.querySelector(".catalog-note").textContent).toContain(
+    "nie pełnometrażowy",
+  );
+  await navigate("watch/lego-spider/1/1");
+  expect(document.querySelector("#episode-player").src).toContain(
+    "U6BeQvMJ2jo",
+  );
+  expect(document.querySelector(".polish-notice").textContent).toContain(
+    "polskim audio od razu",
+  );
+  expect(document.querySelector("#audio-credit").textContent).not.toContain(
+    "wybierz ręcznie",
+  );
+  expect(document.querySelector("#youtube-link").href).toContain("U6BeQvMJ2jo");
+});
+it("shows Ninjago's compilation and regional caveat on both detail and player pages", async () => {
+  await navigate("series/lego-ninjago");
+  expect(document.querySelector(".availability-note").textContent).toContain(
+    "Nie potwierdziliśmy",
+  );
+  expect(document.querySelector(".catalog-note").textContent).not.toContain(
+    "Kompletny serial",
+  );
+  await navigate("watch/lego-ninjago/1/1");
+  expect(
+    document.querySelector(".watch-main .availability-note"),
+  ).not.toBeNull();
+  expect(document.querySelector("#episode-player").src).toContain(
+    "-FleiD65Eqg",
+  );
+  expect(document.querySelector(".back-link").textContent).toContain(
+    "KOMPILACJA",
+  );
 });

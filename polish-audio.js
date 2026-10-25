@@ -56,7 +56,7 @@ export function addPolishAudio(shows) {
   }
 }
 export function polishKind(ep) {
-  if (ep.polishTrack) return "official";
+  if (ep.polishTrack || ep.polishInline) return "official";
   if (ep.polishAudio?.some((s) => s.kind === "fandub")) return "fandub";
   if (ep.polishAudio?.some((s) => s.kind === "lektor")) return "lektor";
   return "missing";
