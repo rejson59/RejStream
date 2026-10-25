@@ -3909,3 +3909,68 @@ a.profile:focus-visible { outline: 2px solid #e1b359; outline-offset: 4px; }
 .watch-order a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; color: inherit; background: #ffffff05; line-height: 1.5; }
 .watch-order a:hover { background: #ffffff10; }
 .watch-order a svg { flex-shrink: 0; width: 16px; }
+
+/* Trailers belong to the title's hero, rather than a separate boxed widget. */
+.inline-trailer {
+  max-width: 720px;
+  margin: 24px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.inline-trailer-heading {
+  padding: 0 0 12px;
+  color: var(--accent, #e1b359);
+  font-size: 10px;
+  letter-spacing: 1.1px;
+}
+.inline-trailer-heading small {
+  padding: 3px 8px;
+  border-radius: 20px;
+  color: #eee8f2;
+  background: #ffffff0d;
+  font-variant-numeric: tabular-nums;
+}
+.inline-trailer-frame {
+  overflow: hidden;
+  border-radius: 14px;
+  box-shadow: 0 22px 65px #0005, 0 0 60px color-mix(in srgb, var(--accent, #e1b359) 10%, transparent);
+}
+.inline-trailer figcaption {
+  padding: 12px 0 0;
+  color: #c2b8cc;
+  font-size: 11px;
+}
+.inline-trailer figcaption a { color: inherit; text-decoration-color: #ffffff40; }
+.inline-trailer figcaption a:hover { color: var(--accent, #e1b359); }
+@media (min-width: 1200px) {
+  .series-hero-copy:has(> .inline-trailer),
+  .spotlight-copy:has(> .inline-trailer) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 1.12fr);
+    column-gap: clamp(28px, 4vw, 72px);
+    align-items: start;
+    max-width: none;
+  }
+  .series-hero-copy:has(> .inline-trailer) > *,
+  .spotlight-copy:has(> .inline-trailer) > * { grid-column: 1; min-width: 0; }
+  .series-hero-copy > .inline-trailer,
+  .spotlight-copy > .inline-trailer {
+    grid-column: 2;
+    grid-row: 2 / span 9;
+    align-self: center;
+    width: 100%;
+    margin: 24px 0;
+  }
+  .series-hero-copy:has(> .inline-trailer) .series-description,
+  .spotlight-copy:has(> .inline-trailer) > p { max-width: 560px; }
+}
+@media (max-width: 600px) {
+  .inline-trailer { margin: 22px 0; }
+  .inline-trailer-frame { border-radius: 10px; }
+  .inline-trailer-heading { font-size: 9px; gap: 8px; }
+  .inline-trailer-heading > span { min-width: 0; line-height: 1.6; }
+  .inline-trailer figcaption { font-size: 10px; gap: 6px 12px; }
+}
