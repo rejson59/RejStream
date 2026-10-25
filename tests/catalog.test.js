@@ -64,13 +64,7 @@ describe("series library", () => {
     expect(getSeries("circus").seasons).toHaveLength(1);
   });
   it("has no removed open movie and explicitly labels a partial Drones collection", () => {
-    expect(series.map((s) => s.key)).toEqual([
-      "circus",
-      "helluva",
-      "drones",
-      "lego-spider",
-      "lego-ninjago",
-    ]);
+    expect(series.map((s) => s.key)).toEqual(["circus", "helluva", "drones"]);
     expect(getSeries("drones").episodes).toHaveLength(8);
     expect(getSeries("drones").episodes.map((e) => e.number)).toEqual([
       1, 2, 3, 4, 5, 6, 7, 8,
@@ -120,17 +114,13 @@ it("gives every Circus and Helluva entry an editorial Polish title without losin
   }
 });
 
-it("adds official LEGO short/compilation collections without inventing complete seasons", () => {
-  const spider = getSeries("lego-spider"),
-    ninjago = getSeries("lego-ninjago");
-  expect(spider.episodes[0].id).toBe("U6BeQvMJ2jo");
-  expect(spider.channel).toBe("https://www.youtube.com/@MarvelHQPolska");
-  expect(spider.episodes[0].polishInline).toBe(true);
-  expect(ninjago.episodes[0].id).toBe("-FleiD65Eqg");
-  expect(ninjago.availabilityNote).toContain("regionalne");
-  for (const show of [spider, ninjago]) {
-    expect(show.episodes).toHaveLength(1);
-    expect(show.complete).not.toBe(true);
-    expect(libraryEpisodes(show, { language: "polish" })).toHaveLength(1);
-  }
+it("excludes the rejected LEGO short and compilation from the active catalog", () => {
+  expect(getSeries("lego-spider")).toBeUndefined();
+  expect(getSeries("lego-ninjago")).toBeUndefined();
+  expect(
+    series.flatMap((show) => show.episodes).map((ep) => ep.id),
+  ).not.toContain("U6BeQvMJ2jo");
+  expect(
+    series.flatMap((show) => show.episodes).map((ep) => ep.id),
+  ).not.toContain("-FleiD65Eqg");
 });

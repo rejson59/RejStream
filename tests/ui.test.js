@@ -21,7 +21,7 @@ beforeAll(async () => {
   await import("../src.js");
 });
 it("starts with a series catalog and no removed movie", () => {
-  expect(document.querySelectorAll(".series-card")).toHaveLength(5);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(3);
   expect(document.body.textContent).not.toContain("Big Buck Bunny");
   expect(document.querySelector(".bottom-nav")).not.toBeNull();
 });
@@ -430,41 +430,48 @@ it("does not advertise login to signed-in viewers", async () => {
   ).toContain("nie oficjalny");
 });
 
-it("opens the LEGO Spider-Man short with Polish-upload instructions rather than an invented audio track", async () => {
-  await navigate("series/lego-spider");
-  expect(document.querySelectorAll("[data-episode]")).toHaveLength(1);
-  expect(document.querySelector(".inline-trailer")).toBeNull();
-  expect(document.querySelector(".catalog-note").textContent).toContain(
-    "nie pełnometrażowy",
-  );
-  await navigate("watch/lego-spider/1/1");
-  expect(document.querySelector("#episode-player").src).toContain(
-    "U6BeQvMJ2jo",
-  );
-  expect(document.querySelector(".polish-notice").textContent).toContain(
-    "polskim audio od razu",
-  );
-  expect(document.querySelector("#audio-credit").textContent).not.toContain(
-    "wybierz ręcznie",
-  );
-  expect(document.querySelector("#youtube-link").href).toContain("U6BeQvMJ2jo");
+it("does not expose the rejected LEGO titles or players through old links", async () => {
+  await navigate("library");
+  expect(document.querySelectorAll(".series-card")).toHaveLength(3);
+  expect(document.querySelector("#content").textContent).not.toContain("LEGO");
+  for (const key of ["lego-spider", "lego-ninjago"]) {
+    await navigate(`series/${key}`);
+    expect(document.querySelector("#content").textContent).toContain(
+      "Ta strona nie istnieje",
+    );
+    await navigate(`watch/${key}/1/1`);
+    expect(document.querySelector("#episode-player")).toBeNull();
+  }
 });
-it("shows Ninjago's compilation and regional caveat on both detail and player pages", async () => {
-  await navigate("series/lego-ninjago");
-  expect(document.querySelector(".availability-note").textContent).toContain(
-    "Nie potwierdziliśmy",
+it("hides obsolete catalog history without deleting account records or local-file history", async () => {
+  const old = localStorage.getItem("rej-playback-v1");
+  const fixture = {
+    removed: {
+      episode: "lego-spider:1:1",
+      label: "Rejected LEGO",
+      position: 10,
+      seconds: 3,
+      duration: 100,
+      updated: 1,
+    },
+    local: {
+      episode: "local:example",
+      label: "My local file",
+      position: 10,
+      seconds: 3,
+      duration: 100,
+      updated: 1,
+    },
+  };
+  localStorage.setItem("rej-playback-v1", JSON.stringify(fixture));
+  await navigate("history");
+  expect(document.querySelector("#content").textContent).not.toContain(
+    "Rejected LEGO",
   );
-  expect(document.querySelector(".catalog-note").textContent).not.toContain(
-    "Kompletny serial",
+  expect(document.querySelector("#content").textContent).toContain(
+    "My local file",
   );
-  await navigate("watch/lego-ninjago/1/1");
-  expect(
-    document.querySelector(".watch-main .availability-note"),
-  ).not.toBeNull();
-  expect(document.querySelector("#episode-player").src).toContain(
-    "-FleiD65Eqg",
-  );
-  expect(document.querySelector(".back-link").textContent).toContain(
-    "KOMPILACJA",
-  );
+  expect(JSON.parse(localStorage.getItem("rej-playback-v1"))).toEqual(fixture);
+  if (old) localStorage.setItem("rej-playback-v1", old);
+  else localStorage.removeItem("rej-playback-v1");
 });

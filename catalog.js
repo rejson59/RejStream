@@ -1,4 +1,3 @@
-import { legoCollections } from "./lego-collections.js";
 import { localizeEpisodeTitles } from "./episode-titles.js";
 import { addPolishAudio, polishKind } from "./polish-audio.js";
 // Sources and verification notes: SOURCES.md. Null IDs deliberately mean external-only.
@@ -495,7 +494,6 @@ export const series = [
     channel: "https://www.youtube.com/@GLITCH",
   },
 ];
-series.push(...legoCollections);
 localizeEpisodeTitles(series);
 addPolishAudio(series);
 
