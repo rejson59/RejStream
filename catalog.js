@@ -1,3 +1,4 @@
+import { helluvaShorts } from "./helluva-shorts.js";
 import { metaRunner } from "./meta-runner.js";
 import { localizeEpisodeTitles } from "./episode-titles.js";
 import { addPolishAudio, polishKind } from "./polish-audio.js";
@@ -189,8 +190,7 @@ export const helluvaEpisodes = [
       "Odcinek katalogowy. Sprawdź dostępność i języki w Prime Video.",
     ),
     time: "Prime Video",
-    external:
-      "https://www.primevideo.com/search/ref=atv_nb_sr?phrase=Helluva%20Boss",
+    external: "https://www.primevideo.com/detail/0GEB35CUYRCDVXUV0UXQY9FHIF",
   })),
   episode(
     "special",
@@ -206,33 +206,10 @@ export const helluvaEpisodes = [
     2,
     "Mission: Zero",
     "Pu12or7uOHE",
-    26,
+    12,
     "Nowy punkt startowy historii I.M.P.",
   ),
-  episode(
-    "shorts",
-    1,
-    "Hell’s Belles",
-    "_38dtqdR5V4",
-    5,
-    "Krótka historia z piekielnego uniwersum.",
-  ),
-  episode(
-    "shorts",
-    3,
-    "Mission: Weeaboo-boo",
-    "3-NrCcr8Bcg",
-    4,
-    "Krótka misja I.M.P.",
-  ),
-  episode(
-    "shorts",
-    4,
-    "Mission: Chupacabras",
-    "pngogrW4iC4",
-    4,
-    "Kolejne nietypowe zlecenie.",
-  ),
+  ...helluvaShorts,
 ];
 export function selectEpisodes({
   season = "all",
@@ -374,6 +351,8 @@ export const series = [
     label: "SEZONY 1–2 + DODATKI",
     description:
       "Zlecenia z piekła rodem. Dosłownie. Blitzø i jego ekipa I.M.P. udowadniają, że prowadzenie firmy jest trudniejsze niż sama robota.",
+    catalogNote:
+      "Sprawdzono 25.10.2026: sezony 1–2 kompletne (8 i 12 odcinków), Helluva Shorts 1–14 kompletne. Sezon 3: wszystkie 5 dotąd opublikowanych odcinków wyłącznie zewnętrznie w Prime Video; sezon trwa. Pilot 2019 i Mission: Zero osobno. Teledysk Shark Boy Summer nie jest numerowanym shortem.",
     episodes: helluvaEpisodes,
     seasons: [
       { key: "1", label: "Sezon 1", note: "8 odcinków" },
@@ -381,17 +360,17 @@ export const series = [
       {
         key: "3",
         label: "Sezon 3",
-        note: "5 wpisów · tylko Prime Video · wybór, nie pełny sezon",
+        note: "5 opublikowanych odcinków · Prime Video · sezon w trakcie emisji",
       },
       { key: "special", label: "Piloty", note: "Pilot 2019 i Mission: Zero" },
       {
         key: "shorts",
         label: "Shorts",
-        note: "3 wybrane krótkie odcinki · lista niepełna",
+        note: "14 opublikowanych odcinków · sprawdzono 25.10.2026",
       },
     ],
     languageNote:
-      "Pełne fanduby: sezon 1, dziewięć odcinków sezonu 2, pilot 2019 i trzy shorts z katalogu. S2E2 ma polskiego lektora, nie dubbing. Nie znaleziono pełnego, dostępnego fandubu S2E6, S2E12 ani Mission: Zero. Sezon 3: języki sprawdź w Prime Video. Fanduby są nieoficjalne; autorzy i odnośniki widoczni przy odcinku.",
+      "Pełne fanduby: sezon 1, dziewięć odcinków sezonu 2, pilot 2019 i shorts 1, 3 oraz 4. Dla pozostałych shorts nie potwierdzono polskiego audio. S2E2 ma polskiego lektora, nie dubbing. Nie znaleziono pełnego, dostępnego fandubu S2E6, S2E12 ani Mission: Zero. Sezon 3: języki sprawdź w Prime Video. Fanduby są nieoficjalne; autorzy i odnośniki widoczni przy odcinku.",
     channel: "https://www.youtube.com/@SpindleHorse",
   },
   {

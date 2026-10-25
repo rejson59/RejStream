@@ -14,7 +14,7 @@ Vite nasłuchuje na `0.0.0.0`, akceptuje host podglądu Arena. `base: './'` i ro
 ## Biblioteka i audio
 
 - **The Amazing Digital Circus:** wszystkie 9 odcinków, jeden sezon; pilot jest odcinkiem 1.
-- **Helluva Boss:** pełne sezony 1 (8) i 2 (12), osobne piloty i trzy wybrane shorts. Pięć wpisów S3 prowadzi do płatnego Prime Video, nie do bezpłatnych osadzeń.
+- **Helluva Boss:** pełne sezony 1 (8) i 2 (12), osobne piloty i wszystkie 14 opublikowanych Helluva Shorts. Pięć wpisów S3 prowadzi do płatnego Prime Video, nie do bezpłatnych osadzeń.
 - **Murder Drones:** cały serial, 8 odcinków z oficjalnego kanału GLITCH, od pilota do Absolute End. Wszystkie mają oficjalny polski dubbing BruDolina Studios w ścieżkach audio YouTube. Źródła, daty i ograniczenia w `SOURCES.md`.
 - Big Buck Bunny nie jest częścią katalogu.
 
@@ -86,3 +86,7 @@ Na życzenie użytkownika usunięto LEGO Marvel Spider-Man: Wkręcony w Venoma o
 ### Meta Runner
 
 Added GLITCH's Meta Runner: season 2 (10 episodes) and final season 3 (8 episodes), plus the official season-one Animated Movie Cut (124 minutes). The season-one edit is explicitly labelled, not advertised as a theatrical film or ten separate episodes. Polish audio/subtitles are unconfirmed. See SOURCES.md for provenance and playback-verification limitations.
+
+### Przegląd kompletności (25.10.2026)
+
+Helluva Shorts: wszystkie 14 opublikowanych numerowanych odcinków, w tym uzupełnione 2 oraz 5–14. Sezony 1–2 Helluva: 8/8 i 12/12; sezon 3: pięć dotąd opublikowanych odcinków, tylko w Prime Video, emisja trwa. Circus: 9/9; Drones: 8/8; Meta Runner S2/S3: 10/10 i 8/8. **Meta Runner S1 nie ma dziesięciu osobnych oryginalnych odcinków — nadal jest tylko skrócony montaż.** Pełna tabela audytu i ograniczenia w SOURCES.md. Testy kompletności utrwalają ten stan, nie sprawdzają dostępności online na bieżąco.

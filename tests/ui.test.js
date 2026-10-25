@@ -477,16 +477,52 @@ it("hides obsolete catalog history without deleting account records or local-fil
 });
 
 it("opens Meta Runner and its actual episode routes without invented Polish audio", async () => {
- await navigate("series/meta-runner");
- expect(document.body.textContent).toContain("Animated Movie Cut");
- expect(document.querySelectorAll("[data-episode]")).toHaveLength(1);
- expect(document.body.textContent).not.toContain("Kompletny serial: 8 odcinków");
- await navigate("watch/meta-runner/2/1");
- expect(document.querySelector(".watch-title-row h1").textContent).toContain("Twardy reset");
- expect(document.querySelectorAll(".queue-item")).toHaveLength(10);
- expect(document.querySelector("#audio option[value=pl]")).toBeNull();
- expect(document.querySelector('a[href="#watch/meta-runner/2/2"]')).not.toBeNull();
- await navigate("watch/meta-runner/3/8");
- expect(document.querySelector(".watch-title-row h1").textContent).toContain("Koniec");
- expect(document.querySelectorAll(".queue-item")).toHaveLength(8);
+  await navigate("series/meta-runner");
+  expect(document.body.textContent).toContain("Animated Movie Cut");
+  expect(document.querySelectorAll("[data-episode]")).toHaveLength(1);
+  expect(document.body.textContent).not.toContain(
+    "Kompletny serial: 8 odcinków",
+  );
+  await navigate("watch/meta-runner/2/1");
+  expect(document.querySelector(".watch-title-row h1").textContent).toContain(
+    "Twardy reset",
+  );
+  expect(document.querySelectorAll(".queue-item")).toHaveLength(10);
+  expect(document.querySelector("#audio option[value=pl]")).toBeNull();
+  expect(
+    document.querySelector('a[href="#watch/meta-runner/2/2"]'),
+  ).not.toBeNull();
+  await navigate("watch/meta-runner/3/8");
+  expect(document.querySelector(".watch-title-row h1").textContent).toContain(
+    "Koniec",
+  );
+  expect(document.querySelectorAll(".queue-item")).toHaveLength(8);
+});
+
+it("plays newly added shorts with stable numbering and previous/next navigation", async () => {
+  await navigate("watch/helluva/shorts/2");
+  expect(document.querySelector(".watch-title-row h1").textContent).toContain(
+    "Antarktyda",
+  );
+  expect(document.querySelectorAll(".queue-item")).toHaveLength(14);
+  expect(
+    document.querySelector(
+      '.episode-navigation a[href="#watch/helluva/shorts/1"]',
+    ),
+  ).not.toBeNull();
+  expect(
+    document.querySelector(
+      '.episode-navigation a[href="#watch/helluva/shorts/3"]',
+    ),
+  ).not.toBeNull();
+  await navigate("watch/helluva/shorts/14");
+  expect(document.querySelector(".watch-title-row h1").textContent).toContain(
+    "Księżniczka",
+  );
+  expect(
+    document.querySelector(
+      '.episode-navigation a[href="#watch/helluva/shorts/15"]',
+    ),
+  ).toBeNull();
+  expect(document.querySelector("#audio option[value=pl]")).toBeNull();
 });
