@@ -3894,3 +3894,10 @@ footer button svg {
 .runtime-trivia summary { cursor: pointer; }
 .runtime-trivia li { margin: 6px 0; }
 @media (max-width: 480px) { .runtime-trivia strong { white-space: normal; } }
+
+/* The desktop profile is an account link, with session-aware messaging. */
+a.profile { color: inherit; text-decoration: none; }
+a.profile:hover .profile-heading { color: var(--accent, #e1b359); }
+a.profile:focus-visible { outline: 2px solid #e1b359; outline-offset: 4px; }
+.profile > div { min-width: 0; overflow-wrap: anywhere; }
+.profile .avatar { flex-shrink: 0; }

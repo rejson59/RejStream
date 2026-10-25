@@ -14,6 +14,9 @@ it("never records/resumes guests and gates account features without blocking pla
   );
   await import("../src.js");
   await Promise.resolve();
+  expect(document.querySelector(".profile").textContent).toContain("Zaloguj się i zachowaj swoje postępy.");
+  expect(document.querySelector(".profile").getAttribute("href")).toBe("#account");
+  expect(document.body.textContent).not.toContain("Bez konta");
   expect(document.querySelector(".login-nudge")).not.toBeNull();
   expect(document.querySelector(".login-nudge").textContent).toContain(
     "zapisanej sekundy",

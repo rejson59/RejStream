@@ -1,10 +1,11 @@
 // @vitest-environment jsdom
 import { it, expect, vi, beforeAll } from "vitest";
+const sessionMock = vi.hoisted(() => ({ username: "Test viewer", onChange: null }));
 vi.mock("../account.js", () => ({
   account: {
-    state: () => ({ username: "Test viewer", error: "" }),
+    state: () => ({ username: sessionMock.username, error: "" }),
     storage: () => localStorage,
-    subscribe: () => () => {},
+    subscribe: (fn) => { sessionMock.onChange = fn; return () => {}; },
     init: async () => {},
     flush: async () => {},
   },
@@ -534,4 +535,26 @@ it("shows the calculated marathon trivia on home with an honest external breakdo
   expect(trivia.textContent).toContain("25 godz. 42 min");
   expect(trivia.textContent).toContain("Prime Video");
   expect(trivia.querySelector("details")).not.toBeNull();
+});
+
+
+it("updates desktop account messaging on login, logout and restored sessions", async () => {
+  await navigate("home");
+  const profile = document.querySelector(".profile");
+  expect(profile.getAttribute("href")).toBe("#account");
+  expect(profile.textContent).toContain("Cześć, Test viewer");
+  expect(profile.textContent).toContain("Twoje historie. Twoje tempo.");
+  expect(profile.querySelector(".avatar").textContent).toBe("T");
+  sessionMock.username = null;
+  sessionMock.onChange();
+  expect(profile.textContent).toContain("Zaloguj się i zachowaj swoje postępy.");
+  expect(profile.textContent).not.toContain("Test viewer");
+  expect(profile.querySelector(".avatar").textContent).toBe("R");
+  sessionMock.username = '<Nowy & widz>';
+  sessionMock.onChange();
+  expect(profile.querySelector(".profile-heading").textContent).toBe("Cześć, <Nowy & widz>");
+  expect(profile.querySelector("nowy")).toBeNull();
+  sessionMock.username = "Test viewer";
+  sessionMock.onChange();
+  expect(document.body.textContent).not.toMatch(/Bez konta|Bez zakładania konta/i);
 });

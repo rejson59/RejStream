@@ -123,7 +123,7 @@ const seasonState = {},
   filterState = {};
 let dialogFocus = null;
 const app = document.querySelector("#app");
-app.innerHTML = `<a class="skip-link" href="#content">Przejdź do treści</a><aside class="sidebar"><a href="#home" class="brand" aria-label="RejStream — strona główna"><img class="brand-symbol" src="./rejstream-mark.svg" width="36" height="36" alt="">rej<span>stream</span><b>•</b></a><div class="nav-label">TWOJE MIEJSCE NA DOBRE HISTORIE</div><nav aria-label="Menu główne">${navButtons()}</nav><div class="sidebar-bottom"><div class="studio-note">${icon("sparkles")} Poza głównym nurtem.<p>Niezależni twórcy.<br>Nieprzeciętne historie.</p></div><button class="quiet" data-go="local">${icon("film")} Własny odtwarzacz</button><button class="quiet" id="help">${icon("circle-help")} Jak to działa?</button><div class="profile"><span class="avatar">R</span><div>Twój mały seans<small>Bez konta. Po swojemu.</small></div></div></div></aside><div class="page"><header class="topbar"><a href="#home" class="mobile-brand" aria-label="RejStream — strona główna"><img src="./rejstream-mark.svg" width="30" height="30" alt=""><span>rejstream</span></a><div id="breadcrumbs"></div><label class="search-box">${icon("search")}<input id="search" type="search" placeholder="Znajdź swoją następną obsesję…" aria-label="Szukaj seriali i odcinków"><kbd>/</kbd></label><button class="mobile-search" aria-label="Otwórz wyszukiwanie">${icon("search")}</button><a href="#account" class="avatar header-avatar" aria-label="Konto społeczności">R</a></header><p id="cloud-status" role="status" hidden></p><main id="content" tabindex="-1"></main><footer><a class="brand small" href="#home"><img class="brand-symbol" src="./rejstream-mark.svg" width="28" height="28" alt="">rej<span>stream</span><b>•</b></a><p>Mało przewijania. Dużo dobrych historii.</p><button id="sources">Źródła i twórcy ${icon("arrow-up-right")}</button><span>© ${new Date().getFullYear()} RejStream</span></footer></div><nav class="bottom-nav" aria-label="Menu mobilne">${navButtons(true)}</nav><div class="dialog-backdrop" id="dialog" hidden></div><div id="toast" role="status"></div>`;
+app.innerHTML = `<a class="skip-link" href="#content">Przejdź do treści</a><aside class="sidebar"><a href="#home" class="brand" aria-label="RejStream — strona główna"><img class="brand-symbol" src="./rejstream-mark.svg" width="36" height="36" alt="">rej<span>stream</span><b>•</b></a><div class="nav-label">TWOJE MIEJSCE NA DOBRE HISTORIE</div><nav aria-label="Menu główne">${navButtons()}</nav><div class="sidebar-bottom"><div class="studio-note">${icon("sparkles")} Poza głównym nurtem.<p>Niezależni twórcy.<br>Nieprzeciętne historie.</p></div><button class="quiet" data-go="local">${icon("film")} Własny odtwarzacz</button><button class="quiet" id="help">${icon("circle-help")} Jak to działa?</button><a class="profile" href="#account"><span class="avatar">R</span><div><span class="profile-heading">Twój kolejny seans</span><small class="profile-message">Zaloguj się i zachowaj swoje postępy.</small></div></a></div></aside><div class="page"><header class="topbar"><a href="#home" class="mobile-brand" aria-label="RejStream — strona główna"><img src="./rejstream-mark.svg" width="30" height="30" alt=""><span>rejstream</span></a><div id="breadcrumbs"></div><label class="search-box">${icon("search")}<input id="search" type="search" placeholder="Znajdź swoją następną obsesję…" aria-label="Szukaj seriali i odcinków"><kbd>/</kbd></label><button class="mobile-search" aria-label="Otwórz wyszukiwanie">${icon("search")}</button><a href="#account" class="avatar header-avatar" aria-label="Konto społeczności">R</a></header><p id="cloud-status" role="status" hidden></p><main id="content" tabindex="-1"></main><footer><a class="brand small" href="#home"><img class="brand-symbol" src="./rejstream-mark.svg" width="28" height="28" alt="">rej<span>stream</span><b>•</b></a><p>Mało przewijania. Dużo dobrych historii.</p><button id="sources">Źródła i twórcy ${icon("arrow-up-right")}</button><span>© ${new Date().getFullYear()} RejStream</span></footer></div><nav class="bottom-nav" aria-label="Menu mobilne">${navButtons(true)}</nav><div class="dialog-backdrop" id="dialog" hidden></div><div id="toast" role="status"></div>`;
 let entryNudgeDismissed = false;
 const dismissedEpisodeNudges = new Set();
 let loginReturn = null;
@@ -135,7 +135,7 @@ function loginNudge(context, key = "entry") {
       : dismissedEpisodeNudges.has(key))
   )
     return "";
-  return `<aside class="login-nudge" aria-label="Korzyści z konta społeczności" data-nudge="${esc(key)}"><span class="nudge-icon">${icon("bookmark")}</span><div class="nudge-copy"><strong>${context === "episode" ? "Nie trać miejsca w historii." : "Twój seans zasługuje na ciąg dalszy."}</strong><p>Po zalogowaniu: powrót do zapisanej sekundy, historia na koncie i ulubione pod ręką.</p><small>To samo konto co w społeczności. Możesz też oglądać bez logowania.</small></div><a class="button primary nudge-login" href="#account">Zaloguj i zapisuj postęp ${icon("arrow-right")}</a><button class="nudge-close" type="button" aria-label="Zamknij zachętę do logowania">${icon("x")}</button></aside>`;
+  return `<aside class="login-nudge" aria-label="Korzyści z konta społeczności" data-nudge="${esc(key)}"><span class="nudge-icon">${icon("bookmark")}</span><div class="nudge-copy"><strong>${context === "episode" ? "Nie trać miejsca w historii." : "Twój seans zasługuje na ciąg dalszy."}</strong><p>Po zalogowaniu: powrót do zapisanej sekundy, historia na koncie i ulubione pod ręką.</p><small>Jedno konto do RejStream i społeczności.</small></div><a class="button primary nudge-login" href="#account">Zaloguj i zapisuj postęp ${icon("arrow-right")}</a><button class="nudge-close" type="button" aria-label="Zamknij zachętę do logowania">${icon("x")}</button></aside>`;
 }
 function titleTranslationNote(e) {
   return e.titleTranslation === "editorial"
@@ -472,7 +472,7 @@ function loadEmbed(force = false) {
     : `<span>${e.isTrailer ? "Ten zwiastun jest osobnym materiałem z polskim dubbingiem. Napisy PL są zamawiane, jeżeli autor je udostępnił." : e.polishInline ? "Polskie audio jest w tym uploadzie od razu." : e.polishTrack ? "Polski dubbing wybierz ręcznie w ustawieniach źródłowego odtwarzacza (⚙)." : "Oryginalny materiał. Dostępne języki sprawdzisz w ustawieniach źródła."}</span>`;
 }
 function localPage() {
-  return `<section class="section local-section"><div class="page-heading"><span class="eyebrow">TYLKO TY I TWOJA HISTORIA</span><h1>Twój prywatny seans<span>.</span></h1><p>Otwórz legalnie posiadany plik z urządzenia. Niczego nie wysyłamy na serwer.</p></div><div id="native-mount"></div><div class="local-tips"><span>${icon("film")} Pliki obsługiwane przez przeglądarkę</span><span>${icon("captions")} Własne napisy SRT i VTT</span><span>${icon("shield-check")} Bez uploadu i bez konta</span></div></section>`;
+  return `<section class="section local-section"><div class="page-heading"><span class="eyebrow">TYLKO TY I TWOJA HISTORIA</span><h1>Twój prywatny seans<span>.</span></h1><p>Otwórz legalnie posiadany plik z urządzenia. Niczego nie wysyłamy na serwer.</p></div><div id="native-mount"></div><div class="local-tips"><span>${icon("film")} Pliki obsługiwane przez przeglądarkę</span><span>${icon("captions")} Własne napisy SRT i VTT</span><span>${icon("shield-check")} Pliki pozostają na urządzeniu</span></div></section>`;
 }
 function empty(title, description, action, path) {
   return `<div class="empty-state">${icon("search")}<h3>${title}</h3><p>${description}</p><button class="button secondary" data-go="${path}">${action} ${icon("arrow-right")}</button></div>`;
@@ -573,6 +573,17 @@ function render() {
     ? `Konto: ${username}`
     : "Zaloguj się kontem społeczności";
   accountLink.setAttribute("aria-label", accountLink.title);
+  const profile = document.querySelector(".profile");
+  profile.querySelector(".avatar").textContent = accountLink.textContent;
+  profile.querySelector(".profile-heading").textContent = username
+    ? `Cześć, ${username}`
+    : "Twój kolejny seans";
+  profile.querySelector(".profile-message").textContent = username
+    ? "Twoje historie. Twoje tempo."
+    : "Zaloguj się i zachowaj swoje postępy.";
+  profile.setAttribute("aria-label", username
+    ? `Przejdź do konta: ${username}`
+    : "Zaloguj się i zachowaj swoje postępy");
   createIcons({ icons });
   bindContent();
   inlineDisposers = [...content.querySelectorAll(".inline-trailer iframe")].map(
@@ -647,7 +658,7 @@ function showDialog(type, key) {
       ? `<span class="eyebrow">AUDIO I NAPISY</span><h2>Oglądaj po swojemu.</h2><p>${show?.languageNote || ""}</p><ol><li>Otwórz wybrany odcinek.</li><li>W odtwarzaczu wybierz koło zębate.</li><li>Wybierz <b>Ścieżkę dźwiękową</b> lub <b>Napisy</b>.</li></ol><p>Nie wyświetlamy fikcyjnej listy wersji językowych. Ostateczna lista jest dostępna w samym źródle; osadzenie nie udostępnia nam pełnej listy ścieżek.</p>`
       : type === "sources"
         ? `<span class="eyebrow">STWORZONE PRZEZ LUDZI Z PASJĄ</span><h2>Historie należą do twórców.</h2><p>RejStream jest niezależnym katalogiem. Oficjalne materiały odtwarzamy z YouTube, bez ukrywania oznaczeń i reklam. Dostępność zależy od autora i regionu.</p><div class="creator-list">${series.map((s) => `<a href="${s.channel}" target="_blank" rel="noopener"><span><b>${s.title}</b><small>${s.creator}</small></span>${icon("arrow-up-right")}</a>`).join("")}</div><p>Polskie fanduby są nieoficjalne. Własny player służy Twoim lokalnym plikom; nie wysyła ich do sieci. Biblioteka jest aktualizowana ręcznie, ostatni przegląd: 25.10.2026.</p>`
-        : `<span class="eyebrow">WYGODNIE, BEZ ZAKŁADANIA KONTA</span><h2>Wybierz świat. Włącz historię.</h2><p>Otwórz stronę serialu, wybierz sezon i odcinek. Kolejność zmienisz nad listą. Ikoną ✓ możesz ręcznie oznaczyć obejrzane odcinki; postęp zapisujemy na koncie przez API YouTube, gdy odtwarzacz je udostępnia.</p><p>Historia, pozycje, Moja lista i obejrzane wymagają zalogowania kontem społeczności. Gościom nie zapisujemy historii. Do własnych plików służy sekcja „Mój player”.</p><p>Szukaj tytułów seriali w katalogu, a odcinków na stronie konkretnego serialu. Skrót / otwiera wyszukiwanie, Escape zamyka ten panel.</p>`;
+        : `<span class="eyebrow">TWOJE HISTORIE, ZAPISANE NA KONCIE</span><h2>Wybierz świat. Włącz historię.</h2><p>Otwórz stronę serialu, wybierz sezon i odcinek. Kolejność zmienisz nad listą. Ikoną ✓ możesz ręcznie oznaczyć obejrzane odcinki; postęp zapisujemy na koncie przez API YouTube, gdy odtwarzacz je udostępnia.</p><p>Historia, pozycje, Moja lista i obejrzane wymagają zalogowania kontem społeczności. Gościom nie zapisujemy historii. Do własnych plików służy sekcja „Mój player”.</p><p>Szukaj tytułów seriali w katalogu, a odcinków na stronie konkretnego serialu. Skrót / otwiera wyszukiwanie, Escape zamyka ten panel.</p>`;
   const dialog = document.querySelector("#dialog");
   dialog.innerHTML = `<section class="dialog-box" role="dialog" aria-modal="true" aria-label="${type === "languages" ? "Audio i napisy" : "Informacje o RejStream"}"><button class="dialog-close" aria-label="Zamknij">${icon("x")}</button>${body}</section>`;
   dialog.hidden = false;
@@ -771,7 +782,7 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
-let previousUser = null;
+let previousUser = account.state().username;
 account.subscribe(() => {
   const state = account.state();
   const globalStatus = document.querySelector("#cloud-status");
