@@ -1,3 +1,4 @@
+import { metalFamily } from "./metal-family.js";
 import { helluvaShorts } from "./helluva-shorts.js";
 import { metaRunner } from "./meta-runner.js";
 import { localizeEpisodeTitles } from "./episode-titles.js";
@@ -474,7 +475,7 @@ export const series = [
     channel: "https://www.youtube.com/@GLITCH",
   },
 ];
-series.push(metaRunner);
+series.push(metaRunner, metalFamily);
 localizeEpisodeTitles(series);
 addPolishAudio(series);
 

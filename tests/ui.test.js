@@ -22,7 +22,7 @@ beforeAll(async () => {
   await import("../src.js");
 });
 it("starts with a series catalog and no removed movie", () => {
-  expect(document.querySelectorAll(".series-card")).toHaveLength(4);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(5);
   expect(document.body.textContent).not.toContain("Big Buck Bunny");
   expect(document.querySelector(".bottom-nav")).not.toBeNull();
 });
@@ -433,7 +433,7 @@ it("does not advertise login to signed-in viewers", async () => {
 
 it("does not expose the rejected LEGO titles or players through old links", async () => {
   await navigate("library");
-  expect(document.querySelectorAll(".series-card")).toHaveLength(4);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(5);
   expect(document.querySelector("#content").textContent).not.toContain("LEGO");
   for (const key of ["lego-spider", "lego-ninjago"]) {
     await navigate(`series/${key}`);
@@ -531,8 +531,8 @@ it("plays newly added shorts with stable numbering and previous/next navigation"
 it("shows the calculated marathon trivia on home with an honest external breakdown", async () => {
   await navigate("home");
   const trivia = document.querySelector(".runtime-trivia");
-  expect(trivia.textContent).toContain("4 seriale");
-  expect(trivia.textContent).toContain("25 godz. 42 min");
+  expect(trivia.textContent).toContain("5 seriali");
+  expect(trivia.textContent).toContain("29 godz. 16 min");
   expect(trivia.textContent).toContain("Prime Video");
   expect(trivia.querySelector("details")).not.toBeNull();
 });
@@ -576,4 +576,26 @@ it("recommends an intro before Helluva seasons and bridges season boundaries", a
   expect(document.querySelector('.episode-navigation .primary').textContent).toContain("Prime Video (zewnętrznie)");
   await navigate("series/meta-runner");
   expect(document.querySelector(".watch-order").textContent).toContain("nie 10 oryginalnych odcinków");
+});
+
+
+it("opens Metal Family with ordered seasons, credited Polish audio and honest gaps", async () => {
+  await navigate("series/metal-family");
+  expect(document.querySelectorAll("[data-episode]")).toHaveLength(10);
+  expect(document.querySelector(".watch-order").textContent).toContain("Sezon 2 nadal trwa");
+  expect(document.querySelector(".language-strip").textContent).toContain("oficjalny dubbing angielski");
+  expect(document.querySelector(".inline-trailer")).toBeNull();
+  document.querySelector('[data-season="2"]').click();
+  expect(document.querySelectorAll("[data-episode]")).toHaveLength(7);
+  await navigate("watch/metal-family/1/1");
+  expect(document.querySelector("#episode-player").src).toContain("Tis9tqJb4qA");
+  expect(document.querySelector("#audio").value).toBe("pl");
+  expect(document.querySelector("#audio-credit").textContent).toContain("BruDolina");
+  await navigate("watch/metal-family/1/10");
+  expect(document.querySelector("#episode-player").src).toContain("HO33O2-DYYY");
+  expect(document.querySelector('#audio option[value="pl"]')).toBeNull();
+  expect(document.querySelector('.episode-navigation .primary').getAttribute("href")).toBe("#watch/metal-family/2/1");
+  await navigate("watch/metal-family/2/7");
+  expect(document.querySelector("#episode-player").src).toContain("SSxZ5vorJNA");
+  expect(document.querySelector(".episode-navigation").textContent).toContain("Wróć do serialu");
 });

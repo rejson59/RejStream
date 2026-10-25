@@ -42,13 +42,19 @@ export const helluvaPolishAudio = {
   "shorts:3": [source("G5_cxsKSN2Y", "unima")],
   "shorts:4": [source("7bkMzT8h5jE", "unima")],
 };
+export const metalFamilyPolishAudio = Object.fromEntries(
+  ["Tis9tqJb4qA", "8LnhHwLaz60", "8K-soD5rU6Y", "F16yMJXM4vY", "vLFA51fD5fk"]
+    .map((id, i) => [`1:${i + 1}`, [source(id, "brudolina")]]),
+);
 export function addPolishAudio(shows) {
   for (const show of shows) {
     for (const ep of show.episodes) {
       ep.polishAudio =
         show.key === "helluva"
           ? helluvaPolishAudio[`${ep.season}:${ep.number}`] || []
-          : [];
+          : show.key === "metal-family"
+            ? metalFamilyPolishAudio[`${ep.season}:${ep.number}`] || []
+            : [];
       // Keep the legacy fandub field accurate for existing catalog consumers.
       ep.pl = ep.polishAudio.find((s) => s.kind === "fandub")?.video;
       ep.polishTrack = show.key === "circus" || show.key === "drones";
