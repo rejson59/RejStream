@@ -109,3 +109,56 @@ it("reports failed synchronization, retains queue only in memory and retries", a
   expect(store.state().error).toBe("");
   expect(rows.get("a")[0].key).toBe("drones");
 });
+
+it("retries temporary failures automatically without a new playback sample", async () => {
+  vi.useFakeTimers();
+  const { store, request, rows } = setup();
+  await store.login("a", "1234");
+  store.storage().setItem("rej-favorites", '["drones"]');
+  request.mockRejectedValueOnce(new TypeError("Network error"));
+  await store.flush();
+  expect(store.state().error).toContain("automatycznie");
+  await vi.advanceTimersByTimeAsync(10000);
+  expect(rows.get("a")[0].key).toBe("drones");
+  expect(store.state().error).toBe("");
+  expect(vi.getTimerCount()).toBe(0);
+});
+
+it("does not hammer rejected sessions with automatic requests", async () => {
+  vi.useFakeTimers();
+  const { store, request } = setup();
+  await store.login("a", "1234");
+  store.storage().setItem("rej-favorites", '["drones"]');
+  request.mockRejectedValueOnce(
+    Object.assign(new Error("Sesja wygasła"), { status: 400, code: "P0001" }),
+  );
+  await store.flush();
+  expect(store.state().error).toContain("Zaloguj się ponownie");
+  const count = request.mock.calls.length;
+  store.storage().setItem("rej-favorites", '["circus"]');
+  await vi.advanceTimersByTimeAsync(120000);
+  expect(request).toHaveBeenCalledTimes(count);
+  await store.flush(); // Explicit retry is still available.
+  expect(store.state().error).toBe("");
+});
+
+it("concurrent flushes wait for the same request instead of starting duplicate writes", async () => {
+  const { store, request } = setup();
+  await store.login("a", "1234");
+  store.storage().setItem("rej-favorites", '["drones"]');
+  let finish;
+  request.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const first = store.flush(),
+    second = store.flush();
+  expect(second).toBe(first);
+  finish();
+  await second;
+  expect(
+    request.mock.calls.filter((c) => c[0] === "rejstream_write"),
+  ).toHaveLength(1);
+});
