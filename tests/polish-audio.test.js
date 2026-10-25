@@ -68,7 +68,7 @@ describe("researched Polish sources", () => {
     expect(audioSource(ep(1, 1), "original")).toBeUndefined();
   });
   it("marks GLITCH official Polish tracks without manufacturing separate uploads", () => {
-    for (const show of series.filter((s) => s.key !== "helluva")) {
+    for (const show of series.filter((s) => ["circus", "drones"].includes(s.key))) {
       expect(libraryEpisodes(show, { language: "polish" })).toHaveLength(
         show.episodes.length,
       );

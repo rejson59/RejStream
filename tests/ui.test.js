@@ -21,7 +21,7 @@ beforeAll(async () => {
   await import("../src.js");
 });
 it("starts with a series catalog and no removed movie", () => {
-  expect(document.querySelectorAll(".series-card")).toHaveLength(3);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(4);
   expect(document.body.textContent).not.toContain("Big Buck Bunny");
   expect(document.querySelector(".bottom-nav")).not.toBeNull();
 });
@@ -432,7 +432,7 @@ it("does not advertise login to signed-in viewers", async () => {
 
 it("does not expose the rejected LEGO titles or players through old links", async () => {
   await navigate("library");
-  expect(document.querySelectorAll(".series-card")).toHaveLength(3);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(4);
   expect(document.querySelector("#content").textContent).not.toContain("LEGO");
   for (const key of ["lego-spider", "lego-ninjago"]) {
     await navigate(`series/${key}`);
@@ -474,4 +474,19 @@ it("hides obsolete catalog history without deleting account records or local-fil
   expect(JSON.parse(localStorage.getItem("rej-playback-v1"))).toEqual(fixture);
   if (old) localStorage.setItem("rej-playback-v1", old);
   else localStorage.removeItem("rej-playback-v1");
+});
+
+it("opens Meta Runner and its actual episode routes without invented Polish audio", async () => {
+ await navigate("series/meta-runner");
+ expect(document.body.textContent).toContain("Animated Movie Cut");
+ expect(document.querySelectorAll("[data-episode]")).toHaveLength(1);
+ expect(document.body.textContent).not.toContain("Kompletny serial: 8 odcinków");
+ await navigate("watch/meta-runner/2/1");
+ expect(document.querySelector(".watch-title-row h1").textContent).toContain("Twardy reset");
+ expect(document.querySelectorAll(".queue-item")).toHaveLength(10);
+ expect(document.querySelector("#audio option[value=pl]")).toBeNull();
+ expect(document.querySelector('a[href="#watch/meta-runner/2/2"]')).not.toBeNull();
+ await navigate("watch/meta-runner/3/8");
+ expect(document.querySelector(".watch-title-row h1").textContent).toContain("Koniec");
+ expect(document.querySelectorAll(".queue-item")).toHaveLength(8);
 });

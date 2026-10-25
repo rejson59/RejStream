@@ -154,3 +154,11 @@ Oba poniższe wpisy zostały usunięte z aktywnego katalogu na życzenie użytko
 - Sprawdzono też https://www.youtube.com/watch?v=ESwCmsJXmPg — LEGO Hero Factory „Atak Mózgów”, LEGO, 2013-11-26, 22:44, blokada kraju w odczycie; nie dodano do bieżącego katalogu.
 
 Nowe wpisy korzystają z oryginalnych osadzeń YouTube i podpisanych kanałów, bez pobierania/rehostingu, bez ukrywania reklam i bez gwarancji regionalnej. Nie dodano niepotwierdzonego odtwarzacza kinowych filmów LEGO/Minecraft ani oferty Tubi jako działającego iframe.
+
+## Meta Runner — added 2026-10-25
+
+- Primary upload https://www.youtube.com/watch?v=HmKcvlLxGqo fetched: public GLITCH, 2:04:21, official Animated Movie Cut. Explicitly labelled as an edited season-one version, NOT a theatrical feature or ten separate episodes.
+- Episode links for all 10 season-two and 8 season-three episodes: production team member Aythan Maconachie's portfolio https://aythanjm.com/glitch-productions/meta-runner/ (fetched both chunks). Exact IDs retained in meta-runner.js.
+- Primary opening/finale uploads fetched for seasons 2 and 3: jKDT-tjFXYg (13:02), PBd5Z_o-BXg (19:08), F_i4C-lvs8k (14:30), x8lQLgGLy64 (23:34); all public GLITCH uploads. No reaction videos or Archive reuploads used.
+- Standard existing YouTube iframe integration; no download/rehosting or removal of provider branding. Real Polish-region iframe playback and every middle episode's current embed eligibility have NOT been tested from this sandbox. Provider restrictions still apply; existing retry/source links remain available.
+- Original English audio. No confirmed Polish audio/subtitles claimed. Polish episode titles are editorial translations, not official localized titles. Episode runtimes except season-one cut are deliberately a range, not fabricated exact metadata.

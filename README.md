@@ -82,3 +82,7 @@ Aktualna walidacja: 81 testów, w tym transport HTTP z pustą odpowiedzią 200/2
 ## Wycofane wpisy LEGO
 
 Na życzenie użytkownika usunięto LEGO Marvel Spider-Man: Wkręcony w Venoma oraz kompilację LEGO Ninjago. Nie odpowiadały wymaganiu popularnych, aktualnych filmów pełnometrażowych. Nie są dostępne w katalogu ani pod starymi adresami playera. Historia usuniętych wpisów nie jest pokazywana jako lokalny film; zapisów konta w Supabase nie kasujemy. Pozostała biblioteka i funkcje konta pozostają bez zmian. Nie dodano zastępczych materiałów bez potwierdzonego źródła pełnego filmu.
+
+### Meta Runner
+
+Added GLITCH's Meta Runner: season 2 (10 episodes) and final season 3 (8 episodes), plus the official season-one Animated Movie Cut (124 minutes). The season-one edit is explicitly labelled, not advertised as a theatrical film or ten separate episodes. Polish audio/subtitles are unconfirmed. See SOURCES.md for provenance and playback-verification limitations.

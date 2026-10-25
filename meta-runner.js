@@ -1,0 +1,58 @@
+// Official YouTube uploads; provenance and verification limits in SOURCES.md.
+const seasons = {
+  2: [
+    ["jKDT-tjFXYg", "Hard Reset", "Twardy reset"],
+    ["BcIkhY9wxIQ", "Firewall", "Zapora"],
+    ["CcLMnDZnZe4", "Unreal Engines", "Nierealne silniki"],
+    ["uL0gpJ3qV54", "Transfer Student", "Nowa uczennica"],
+    ["hTAoYaJemjg", "Heart to Heart", "Od serca"],
+    ["aSsnKMIxH5c", "Hack and Slash", "Hakuj i walcz"],
+    ["JGBRPIf9ZLQ", "Friendly Fire", "Ogień sojuszniczy"],
+    ["tL3ADgleryQ", "Soft Lock", "Zakleszczenie"],
+    ["K8DIws9IV1o", "Nightmare Mode", "Tryb koszmaru"],
+    ["PBd5Z_o-BXg", "Fatal Error", "Błąd krytyczny"],
+  ],
+  3: [
+    ["F_i4C-lvs8k", "Power Down", "Wyłączenie"],
+    ["bwwpG72W4xk", "Testing Room", "Sala testowa"],
+    ["2-1G8JUWoG8", "Skybreakers", "Podniebni łowcy"],
+    ["z0ZcpkTf9P8", "Dead On Arrival", "Martwy na miejscu"],
+    ["Q7a-yvQQ_PU", "Death Warp", "Śmiertelny skok"],
+    ["SuFX8zb5iUE", "Global Testfire", "Globalny test"],
+    ["6Z9Nkz-57Es", "Overload", "Przeciążenie"],
+    ["x8lQLgGLy64", "The End", "Koniec"],
+  ],
+};
+export const metaRunner = {
+  key: "meta-runner",
+  title: "Meta Runner",
+  short: "Meta Runner",
+  subtitle: "Wejdź do gry. Odkryj swoją przeszłość.",
+  creator: "GLITCH · Kevin i Luke Lerdwichagul",
+  year: "2019–2022",
+  age: "Dla nastolatków",
+  genre: "Science fiction · przygoda · gry",
+  color: "#53c9ef",
+  art: "HmKcvlLxGqo",
+  hero: "HmKcvlLxGqo",
+  cardBadge: "SEZONY 2–3 · 18 ODCINKÓW",
+  label: "SERIAL GLITCH · SEZONY 2–3 KOMPLETNE",
+  description: "Tari budzi się w świecie opanowanym przez e-sport i odkrywa, że potrafi wchodzić do gier. Serial studia GLITCH, twórców Murder Drones. Sezony 2–3 jako osobne odcinki; sezon 1 w oficjalnej, skróconej wersji montażowej Animated Movie Cut (124 min). To nie film kinowy.",
+  catalogNote: "Sezon 1: oficjalny Animated Movie Cut, nie 10 osobnych odcinków i nie film kinowy. Sezon 2: 10 odcinków. Sezon 3: 8 odcinków. Nie potwierdzono polskiego dubbingu ani napisów PL.",
+  languageNote: "Oryginalne audio angielskie. Polski dubbing i napisy PL nie są potwierdzone. Preferencja napisów PL nie tworzy brakujących tłumaczeń; dostępne języki sprawdź w ustawieniach YouTube.",
+  channel: "https://www.youtube.com/@GLITCH",
+  episodes: [
+    { season: 1, number: 1, id: "HmKcvlLxGqo", title: "Sezon 1 — oficjalna wersja montażowa / Animated Movie Cut", time: "124 min", desc: "Oficjalny montaż fabuły sezonu 1 od GLITCH. Skrócona wersja sezonu, nie osobny film kinowy ani pilot." },
+    ...Object.entries(seasons).flatMap(([season, rows]) => rows.map(([id, originalTitle, polishTitle], i) => ({
+      season: Number(season), number: i + 1, id,
+      title: `${polishTitle} / ${originalTitle}`, originalTitle, polishTitle,
+      titleTranslation: "editorial", time: "ok. 12–24 min",
+      desc: `Dalszy ciąg historii Tari i MD-5. Sezon ${season}, odcinek ${i + 1} — pełny odcinek z kanału GLITCH.`,
+    }))),
+  ],
+  seasons: [
+    { key: "1", label: "Sezon 1 · wersja montażowa", note: "Animated Movie Cut · 124 min · skrócony montaż sezonu" },
+    { key: "2", label: "Sezon 2", note: "10 pełnych odcinków" },
+    { key: "3", label: "Sezon 3 · finał", note: "8 pełnych odcinków" },
+  ],
+};
