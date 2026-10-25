@@ -90,3 +90,17 @@ Added GLITCH's Meta Runner: season 2 (10 episodes) and final season 3 (8 episode
 ### Przegląd kompletności (25.10.2026)
 
 Helluva Shorts: wszystkie 14 opublikowanych numerowanych odcinków, w tym uzupełnione 2 oraz 5–14. Sezony 1–2 Helluva: 8/8 i 12/12; sezon 3: pięć dotąd opublikowanych odcinków, tylko w Prime Video, emisja trwa. Circus: 9/9; Drones: 8/8; Meta Runner S2/S3: 10/10 i 8/8. **Meta Runner S1 nie ma dziesięciu osobnych oryginalnych odcinków — nadal jest tylko skrócony montaż.** Pełna tabela audytu i ograniczenia w SOURCES.md. Testy kompletności utrwalają ten stan, nie sprawdzają dostępności online na bieżąco.
+
+### Kolejność pierwszego seansu
+
+Na stronie każdego serialu znajduje się propozycja redakcji z odnośnikami.
+Helluva: Mission: Zero → S1 → S2 → S3 (Prime Video, zewnętrznie).
+Pilot 2019 pozostaje opcjonalnym dodatkiem poza aktualnym kanonem; Shorts
+polecamy po S2, nie wciskamy ich w główny ciąg. To rekomendacja na pierwszy
+seans, nie oficjalna chronologia. Przyciski startu prowadzą do Mission: Zero.
+Nawigacja poprzedni/następny przechodzi między sezonami i wstępem, ale
+kolejka boczna pozostaje listą bieżącego sezonu. Nie ma automatycznego
+przekierowania do Prime ani automatycznego uruchamiania kolejnego odcinka.
+Circus i Drones zaczynają się od pilota będącego odcinkiem 1. Meta Runner:
+S1 Movie Cut (nie 10 oryginałów) → pełne S2 → pełne S3.
+Identyfikatory odcinków i zapisane pozycje nie zmieniają się.

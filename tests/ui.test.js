@@ -558,3 +558,22 @@ it("updates desktop account messaging on login, logout and restored sessions", a
   sessionMock.onChange();
   expect(document.body.textContent).not.toMatch(/Bez konta|Bez zakładania konta/i);
 });
+
+it("recommends an intro before Helluva seasons and bridges season boundaries", async () => {
+  await navigate("series/helluva");
+  expect(document.querySelector('.series-hero [data-go]').dataset.go).toBe("watch/helluva/special/2");
+  const guide = document.querySelector(".watch-order");
+  expect(guide.textContent).toContain("poza aktualnym kanonem");
+  expect(guide.textContent).toContain("najlepiej po sezonie 2");
+  expect(guide.querySelector("a").getAttribute("href")).toBe("#watch/helluva/special/2");
+  await navigate("watch/helluva/special/2");
+  expect(document.querySelector('.episode-navigation .primary').getAttribute("href")).toBe("#watch/helluva/1/1");
+  await navigate("watch/helluva/1/1");
+  expect(document.querySelector('.episode-navigation .secondary').getAttribute("href")).toBe("#watch/helluva/special/2");
+  await navigate("watch/helluva/1/8");
+  expect(document.querySelector('.episode-navigation .primary').getAttribute("href")).toBe("#watch/helluva/2/1");
+  await navigate("watch/helluva/2/12");
+  expect(document.querySelector('.episode-navigation .primary').textContent).toContain("Prime Video (zewnętrznie)");
+  await navigate("series/meta-runner");
+  expect(document.querySelector(".watch-order").textContent).toContain("nie 10 oryginalnych odcinków");
+});
