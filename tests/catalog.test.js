@@ -64,7 +64,7 @@ describe("series library", () => {
     expect(getSeries("circus").seasons).toHaveLength(1);
   });
   it("has no removed open movie and explicitly labels a partial Drones collection", () => {
-    expect(series.map((s) => s.key)).toEqual(["circus", "helluva", "drones"]);
+    expect(series.map((s) => s.key)).toEqual(["circus", "helluva", "drones", "meta-runner"]);
     expect(getSeries("drones").episodes).toHaveLength(8);
     expect(getSeries("drones").episodes.map((e) => e.number)).toEqual([
       1, 2, 3, 4, 5, 6, 7, 8,
@@ -124,3 +124,17 @@ it("excludes the rejected LEGO short and compilation from the active catalog", (
     series.flatMap((show) => show.episodes).map((ep) => ep.id),
   ).not.toContain("-FleiD65Eqg");
 });
+
+ it("adds Meta Runner with explicit season-one format and complete later seasons", () => {
+ const show = getSeries("meta-runner");
+ expect(show.episodes).toHaveLength(19);
+ expect(libraryEpisodes(show, {season: "2"})).toHaveLength(10);
+ expect(libraryEpisodes(show, {season: "3"})).toHaveLength(8);
+ expect(libraryEpisodes(show)[0].id).toBe("HmKcvlLxGqo");
+ expect(show.catalogNote).toContain("nie film kinowy");
+ for (const ep of show.episodes) {
+ expect(ep.id).toMatch(/^[a-zA-Z0-9_-]{11}$/);
+ expect(ep.polishTrack).toBe(false);
+ expect(ep.polishAudio).toEqual([]);
+ }
+ });
