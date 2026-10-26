@@ -277,3 +277,28 @@ Gameoverse, Drones, Lackadaisy, Meta Runner. Sortowanie alfabetyczne niezależne
 Wszystkie nowe wersje PL oznaczone jako nieoficjalne fanduby, z autorami i linkami;
 publiczne metadane nie stanowią gwarancji odtwarzania iframe w Polsce ani zgody
 na rehosting. Nie pobieramy ani nie rehostujemy filmów.
+
+## Grafiki całych tytułów — 26.10.2026
+
+`cover-art.js` oddziela grafiki promocyjne seriali od ID miniatur odcinków.
+Karty oraz tła nagłówków nie używają już ujęć z finałów i pojedynczych odcinków.
+Listy odcinków, kolejka i historia nadal pokazują właściwe miniatury odcinków.
+
+- Circus, Drones, Meta Runner, Gameoverse, Lackadaisy: ilustracje postaci z
+  oficjalnego katalogu https://www.glitchprod.com/our-shows . Dokładne źródłowe
+  adresy grafik Wix w `cover-art.js`. To oficjalna grafika promocyjna tytułu,
+  nie obietnica osobnego plakatu dla każdego serialu. Wyświetlane bez obcinania,
+  na tle dopasowanym do tytułu; hostowane na CDN twórców.
+- Helluva Boss: plakat promujący serial w Prime Video, zachowana lokalna kopia
+  `public/covers/helluva.jpg`. Źródło obrazu wyszukane na
+  https://tvtropes.org/pmwiki/pmwiki.php/WebAnimation/HelluvaBoss (plik
+  helluva_boss_prime_poster.jpg). Bez fanowskich modyfikacji z DeviantArt.
+- Metal Family: grafika oficjalnej zapowiedzi serii `UHOIUzk6XF8`, nie miniatura
+  S1E1 ani finału. Autor: Metal Family English;
+  https://www.youtube.com/watch?v=UHOIUzk6XF8 . Nie znaleziono pewnego osobnego
+  plakatu na oficjalnej stronie; użyto materiału promującego cały tytuł zamiast
+  przypadkowego fanartu/produktu sprzedawcy. Nie przedstawiamy jej jako plakatu.
+
+Odrzucono wyniki wyszukiwarki będące fanartami, zdjęciem wydrukowanego plakatu,
+przeróbką AI pilota Lackadaisy i portretem twórczyni zamiast serialu. Grafiki
+należą do autorów; ogólne źródło dodano także do panelu „Źródła i twórcy”.
