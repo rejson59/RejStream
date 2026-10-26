@@ -662,3 +662,20 @@ it("defaults newly verified fandubs to Polish and retains the original option", 
     expect(document.querySelector(".polish-notice.fandub")).not.toBeNull();
   }
 });
+
+it("uses dedicated series artwork rather than episode stills on cards and title pages", async () => {
+  await navigate("home");
+  const cards = [...document.querySelectorAll(".series-cover")];
+  expect(cards).toHaveLength(7);
+  for (const card of cards) {
+    expect(card.querySelector("img").alt).toContain("grafika promocyjna");
+    expect(card.querySelector(".cover-title").textContent).toBeTruthy();
+  }
+  const metal = document.querySelector('a.series-cover[href="#series/metal-family"] img');
+  expect(metal.src).toContain("UHOIUzk6XF8");
+  expect(metal.src).not.toContain("CAgWbpB83qU");
+  await navigate("series/meta-runner");
+  expect(document.querySelector(".series-hero-art").src).toContain("static.wixstatic.com");
+  await navigate("watch/meta-runner/1/1");
+  expect(document.querySelector(".queue-item img").src).toContain("HmKcvlLxGqo");
+});
