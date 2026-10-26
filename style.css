@@ -345,7 +345,8 @@ main {
   height: 100%;
   width: 100%;
   z-index: -3;
-  object-position: 70% center;
+  object-fit: cover;
+  object-position: center;
   opacity: 0.82;
 }
 .spotlight-shade {
@@ -872,7 +873,8 @@ main {
   inset: 0;
   height: 100%;
   z-index: -3;
-  object-position: 65% center;
+  object-fit: cover;
+  object-position: center;
   opacity: 0.7;
 }
 .series-hero-shade {
@@ -3977,22 +3979,20 @@ a.profile:focus-visible { outline: 2px solid #e1b359; outline-offset: 4px; }
 
 /* Series key art is not an episode thumbnail. Keep the entire artwork visible. */
 .series-image.series-cover {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 16 / 9;
   background: radial-gradient(ellipse at 50% 30%, color-mix(in srgb, var(--accent) 25%, #211b2a), #100e17 85%);
 }
-.series-cover img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
-.series-cover.cover-character img { padding: 12px 8px 48px; }
-.series-cover.cover-promo img { padding: 0 0 30px; }
+.series-cover img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.series-cover.cover-character img { padding: 0; }
+.series-cover.cover-promo img { padding: 0; }
 .cover-title {
   position: absolute; bottom: 20px; left: 16px; right: 16px;
   color: #fff; font-size: clamp(20px, 2vw, 30px); font-weight: 800;
   line-height: 1.05; text-shadow: 0 2px 12px #000; letter-spacing: -.5px;
 }
-.cover-poster .cover-title { display: none; }
 .series-cover .image-gradient { inset: 55% 0 0; background: linear-gradient(transparent, #0e0b17dd); }
-.series-hero-art, .spotlight-art { object-fit: contain; object-position: right center; }
+.series-hero-art, .spotlight-art { object-fit: cover; object-position: center; }
 @media (max-width: 600px) {
-  .series-image.series-cover { aspect-ratio: 1 / 1; }
-  .series-cover.cover-character img { padding-bottom: 42px; }
+  .series-image.series-cover { aspect-ratio: 16 / 9; }
   .cover-title { font-size: 26px; }
 }
