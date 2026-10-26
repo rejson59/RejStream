@@ -302,3 +302,18 @@ Listy odcinków, kolejka i historia nadal pokazują właściwe miniatury odcink�
 Odrzucono wyniki wyszukiwarki będące fanartami, zdjęciem wydrukowanego plakatu,
 przeróbką AI pilota Lackadaisy i portretem twórczyni zamiast serialu. Grafiki
 należą do autorów; ogólne źródło dodano także do panelu „Źródła i twórcy”.
+
+### Aktualizacja 26.10.2026 10:00 — plakaty zamiast postaci
+
+Zastąpiono grafiki postaci (GLITCH Store Wix CDN) oficjalnymi plakatami i key art.
+Wszystkie 7 tytułów ma teraz plakaty/promocyjne grafiki zamiast pojedynczych postaci:
+- Circus: oficjalny kluczowy plakat Amazon Prime z Pomni, `public/covers/circus.jpg`.
+- Helluva Boss: oficjalny plakat Prime Video poziomy, `public/covers/helluva-poster.jpg`.
+- Murder Drones: oficjalny plakat Prime Video, `public/covers/drones.jpg`.
+- Lackadaisy: oficjalny plakat promocyjny, `public/covers/lackadaisy.jpg`.
+- Gameoverse: oficjalny plakat pilotowy z GLITCH Store, `public/covers/gameoverse.png`.
+- Meta Runner: oficjalna okładka The Final Season, `public/covers/meta-runner.jpg`.
+- Metal Family: oficjalny plakat promocyjny, `public/covers/metal-family.jpg`.
+
+Poprzednie wersje (grafiki postaci z GLITCH Store, lokalna kopia helluva.jpg,
+Metal Family z miniatury YouTube UHOIUzk6XF8) zastąpione.

@@ -672,10 +672,10 @@ it("uses dedicated series artwork rather than episode stills on cards and title 
     expect(card.querySelector(".cover-title").textContent).toBeTruthy();
   }
   const metal = document.querySelector('a.series-cover[href="#series/metal-family"] img');
-  expect(metal.src).toContain("UHOIUzk6XF8");
-  expect(metal.src).not.toContain("CAgWbpB83qU");
+  expect(metal.src).toContain("/covers/metal-family.jpg");
+  expect(metal.src).not.toContain("UHOIUzk6XF8");
   await navigate("series/meta-runner");
-  expect(document.querySelector(".series-hero-art").src).toContain("static.wixstatic.com");
+  expect(document.querySelector(".series-hero-art").src).toContain("/covers/meta-runner.jpg");
   await navigate("watch/meta-runner/1/1");
   expect(document.querySelector(".queue-item img").src).toContain("HmKcvlLxGqo");
 });
