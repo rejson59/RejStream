@@ -62,7 +62,8 @@ export function createAccountStore(
       "rej-favorites": "favorite",
       "rej-watched": "watched",
     })[key];
-  const state = () => ({ username: session?.username || null, error });
+  const profiles = {};
+  const state = () => ({ username: session?.username || null, error, profiles: Object.freeze({...profiles}) });
   function flush() {
     // Callers (including logout) must wait for an already-running save.
     if (activeSave) return activeSave;
@@ -251,6 +252,26 @@ export function createAccountStore(
       await restore(null);
     },
     restore,
+    async loadProfile(username) {
+      if (!username) return null;
+      const key = username.toLowerCase();
+      const cached = profiles[key];
+      if (cached) return cached;
+      try {
+        const result = await request("rejchat_get_profiles", {
+          p_usernames: [username],
+        });
+        if (Array.isArray(result) && result.length > 0) {
+          const profile = result[0];
+          profiles[key] = profile;
+          notify();
+          return profile;
+        }
+      } catch (e) {
+        console.warn("Nie udało się pobrać profilu:", e.message);
+      }
+      return null;
+    },
   };
 }
 export const account = createAccountStore();

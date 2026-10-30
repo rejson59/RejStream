@@ -578,22 +578,55 @@ function render() {
   ).length;
   const accountLink = document.querySelector(".header-avatar");
   const username = account.state().username;
+  const profiles = account.state().profiles;
   accountLink.textContent = username ? username.charAt(0).toUpperCase() : "R";
   accountLink.title = username
     ? `Konto: ${username}`
     : "Zaloguj się kontem społeczności";
   accountLink.setAttribute("aria-label", accountLink.title);
+  
+  // Załaduj profil RejChat jeśli zalogowany
+  if (username && !profiles[username.toLowerCase()]) {
+    account.loadProfile(username);
+  }
+  
   const profile = document.querySelector(".profile");
-  profile.querySelector(".avatar").textContent = accountLink.textContent;
-  profile.querySelector(".profile-heading").textContent = username
+  const avatarEl = profile.querySelector(".avatar");
+  const headingEl = profile.querySelector(".profile-heading");
+  const messageEl = profile.querySelector(".profile-message");
+  
+  avatarEl.textContent = username ? username.charAt(0).toUpperCase() : "R";
+  
+  // Wyświetl awatar i kolor nicka z profilu RejChat
+  const userProfile = profiles[username?.toLowerCase()];
+  if (userProfile?.avatar) {
+    avatarEl.innerHTML = `<img src="${userProfile.avatar}" alt="${username}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  }
+  if (userProfile?.nick_color) {
+    avatarEl.style.background = userProfile.nick_color;
+    accountLink.style.background = userProfile.nick_color;
+  }
+  
+  headingEl.textContent = username
     ? `Cześć, ${username}`
     : "Twój kolejny seans";
-  profile.querySelector(".profile-message").textContent = username
+  messageEl.textContent = username
     ? "Twoje historie. Twoje tempo."
     : "Zaloguj się i zachowaj swoje postępy.";
   profile.setAttribute("aria-label", username
     ? `Przejdź do konta: ${username}`
     : "Zaloguj się i zachowaj swoje postępy");
+  
+  // Dodaj link do profilu RejChat
+  if (username) {
+    profile.setAttribute("href", `https://rejchat.example.com/profil?u=${encodeURIComponent(username)}`);
+    profile.setAttribute("target", "_blank");
+    profile.setAttribute("rel", "noopener");
+  } else {
+    profile.setAttribute("href", "#account");
+    profile.removeAttribute("target");
+    profile.removeAttribute("rel");
+  }
   createIcons({ icons });
   bindContent();
   inlineDisposers = [...content.querySelectorAll(".inline-trailer iframe")].map(
