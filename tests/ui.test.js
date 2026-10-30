@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 import { it, expect, vi, beforeAll } from "vitest";
-const sessionMock = vi.hoisted(() => ({ username: "Test viewer", onChange: null }));
+const sessionMock = vi.hoisted(() => ({ username: "Test viewer", profiles: {}, onChange: null }));
 vi.mock("../account.js", () => ({
   account: {
-    state: () => ({ username: sessionMock.username, error: "", profiles: {} }),
+    state: () => ({ username: sessionMock.username, error: "", profiles: sessionMock.profiles }),
     storage: () => localStorage,
     subscribe: (fn) => { sessionMock.onChange = fn; return () => {}; },
     init: async () => {},
@@ -542,7 +542,7 @@ it("shows the calculated marathon trivia on home with an honest external breakdo
 it("updates desktop account messaging on login, logout and restored sessions", async () => {
   await navigate("home");
   const profile = document.querySelector(".profile");
-  expect(profile.getAttribute("href")).toContain("rejchat.example.com/profil?u=");
+  expect(profile.getAttribute("href")).toContain("rejson59.github.io/profil?u=");
   expect(profile.textContent).toContain("Cześć, Test viewer");
   expect(profile.textContent).toContain("Twoje historie. Twoje tempo.");
   expect(profile.querySelector(".avatar").textContent).toBe("T");
@@ -559,6 +559,20 @@ it("updates desktop account messaging on login, logout and restored sessions", a
   sessionMock.username = "Test viewer";
   sessionMock.onChange();
   expect(document.body.textContent).not.toMatch(/Bez konta|Bez zakładania konta/i);
+});
+
+it("updates shared profile appearance without restarting the player", async () => {
+  await navigate("watch/circus/1/1");
+  const player = document.querySelector("#episode-player");
+  sessionMock.profiles["test viewer"] = { avatar: "cat", color: "rose" };
+  sessionMock.onChange();
+  expect(document.querySelector("#episode-player")).toBe(player);
+  expect(document.querySelector(".profile .avatar img").src).toBe("https://rejson59.github.io/assets/avatars/cat.svg");
+  expect(document.querySelector(".profile").href).toContain("rejson59.github.io/profil?u=Test%20viewer");
+  sessionMock.profiles["test viewer"] = { avatar: '<img src=x onerror=alert(1)>', color: 'red' };
+  sessionMock.onChange();
+  expect(document.querySelector(".profile .avatar img")).toBeNull();
+  delete sessionMock.profiles["test viewer"];
 });
 
 it("recommends an intro before Helluva seasons and bridges season boundaries", async () => {

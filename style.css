@@ -3740,6 +3740,15 @@ footer button svg {
   display: grid;
   gap: 8px;
 }
+.profile-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.account-form label[hidden] {
+  display: none;
+}
 .account-form input {
   width: 100%;
   min-width: 0;

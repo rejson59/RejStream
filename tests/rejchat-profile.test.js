@@ -12,9 +12,9 @@ describe("rejchat_get_profiles RPC", () => {
     const fetcher = vi.fn(async (url, options) => {
       if (url.endsWith("rejchat_get_profiles")) {
         const body = JSON.parse(options.body);
-        expect(body.p_usernames).toEqual(["testuser"]);
+        expect(body.p_names).toEqual(["testuser"]);
         return new Response(
-          JSON.stringify([{ username: "testuser", avatar: "https://example.com/avatar.jpg", nick_color: "#ff0000" }]),
+          JSON.stringify([{ username: "testuser", avatar: "cat", color: "rose" }]),
           { status: 200 }
         );
       }
@@ -23,7 +23,7 @@ describe("rejchat_get_profiles RPC", () => {
     vi.stubGlobal("fetch", fetcher);
     const store = createAccountStore(rpc, null);
     const profile = await store.loadProfile("testuser");
-    expect(profile).toEqual({ username: "testuser", avatar: "https://example.com/avatar.jpg", nick_color: "#ff0000" });
+    expect(profile).toEqual({ username: "testuser", avatar: "cat", color: "rose" });
   });
 
   it("returns null when profile not found", async () => {
@@ -39,7 +39,7 @@ describe("rejchat_get_profiles RPC", () => {
   it("caches profile after first load", async () => {
     const fetcher = vi.fn(async () => {
       return new Response(
-        JSON.stringify([{ username: "testuser", avatar: "https://example.com/avatar.jpg", nick_color: "#ff0000" }]),
+        JSON.stringify([{ username: "testuser", avatar: "cat", color: "rose" }]),
         { status: 200 }
       );
     });
@@ -80,7 +80,7 @@ describe("rejchat_get_profiles RPC", () => {
   it("updates state with loaded profile", async () => {
     const fetcher = vi.fn(async () => {
       return new Response(
-        JSON.stringify([{ username: "testuser", avatar: "https://example.com/avatar.jpg", nick_color: "#ff0000" }]),
+        JSON.stringify([{ username: "testuser", avatar: "cat", color: "rose" }]),
         { status: 200 }
       );
     });
@@ -89,8 +89,15 @@ describe("rejchat_get_profiles RPC", () => {
     await store.loadProfile("testuser");
     expect(store.state().profiles["testuser"]).toEqual({
       username: "testuser",
-      avatar: "https://example.com/avatar.jpg",
-      nick_color: "#ff0000"
+      avatar: "cat",
+      color: "rose"
     });
   });
+  it("normalizes unexpected avatar and color instead of using arbitrary markup or URLs", async () => {
+    const request = vi.fn(async () => [{ username: "testuser", avatar: "https://evil.invalid/x", color: "red" }]);
+    const store = createAccountStore(request, null);
+    await expect(store.loadProfile("testuser")).resolves.toEqual({ username: "testuser", avatar: "comet", color: "mint" });
+    expect(request).toHaveBeenCalledWith("rejchat_get_profiles", { p_names: ["testuser"] });
+  });
+
 });

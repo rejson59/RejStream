@@ -162,3 +162,40 @@ it("concurrent flushes wait for the same request instead of starting duplicate w
     request.mock.calls.filter((c) => c[0] === "rejstream_write"),
   ).toHaveLength(1);
 });
+
+it("passes both legacy PINs and password secrets through the same login RPC", async () => {
+  const { store, request } = setup();
+  await store.login("a", "1234");
+  await store.login("b", "Trudne hasło 2026!");
+  expect(request).toHaveBeenCalledWith("community_login", { p_username: "a", p_pin: "1234" });
+  expect(request).toHaveBeenCalledWith("community_login", { p_username: "b", p_pin: "Trudne hasło 2026!" });
+  expect(localStorage.getItem("rejson_community_session_v1")).not.toContain("Trudne hasło");
+});
+
+it("registers through the shared account RPC and hydrates the library", async () => {
+  const request = vi.fn(async (name, params) => {
+    if (name === "community_register") return { token: "new-token", username: params.p_username };
+    if (name === "community_whoami") return { username: "Nowy" };
+    if (name === "rejstream_read") return [];
+  });
+  const store = createAccountStore(request, localStorage);
+  const listener = vi.fn();
+  window.addEventListener("rj:session-change", listener);
+  await store.register("Nowy", "moje bezpieczne hasło");
+  expect(request).toHaveBeenCalledWith("community_register", { p_username: "Nowy", p_pin: "moje bezpieczne hasło" });
+  expect(store.state().username).toBe("Nowy");
+  expect(localStorage.getItem("rejson_community_session_v1")).not.toContain("moje bezpieczne hasło");
+  expect(listener).toHaveBeenCalledTimes(1);
+  await store.logout();
+  expect(listener).toHaveBeenCalledTimes(2);
+  window.removeEventListener("rj:session-change", listener);
+});
+
+it("reports a created account separately when library hydration fails", async () => {
+  const request = vi.fn(async (name) => {
+    if (name === "community_register") return { token: "new-token", username: "Nowy" };
+    throw Error("offline");
+  });
+  const store = createAccountStore(request, localStorage);
+  await expect(store.register("Nowy", "moje bezpieczne hasło")).rejects.toThrow("Konto utworzono");
+});

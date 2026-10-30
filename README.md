@@ -28,11 +28,11 @@ Zwiastuny są osadzone pod opisem i dopasowane do sezonu. Brak zweryfikowanego z
 
 ## Konta społeczności i prywatność
 
-RejStream używa **istniejących kont społeczności** z `rejson59.github.io/spolecznosc.html` w projekcie Supabase `rejson-widgets`. To własny system **nazwa + 4-cyfrowy PIN**, nie Supabase Auth ani nowe konta. Zakładka `#account` loguje przez istniejące `community_login`, sprawdza `community_whoami` i pobiera bibliotekę konta. Rejestracja prowadzi do społeczności.
+RejStream używa **istniejących kont społeczności** z `rejson59.github.io/spolecznosc.html` w projekcie Supabase `rejson-widgets`. To ten sam własny system kont, nie Supabase Auth: stare konta mogą używać czterocyfrowego PIN-u, nowe i zaktualizowane — hasła. Zakładka `#account` loguje przez istniejące `community_login` lub rejestruje przez `community_register`, sprawdza `community_whoami` i pobiera bibliotekę konta. Rejestracja w RejStream wymaga hasła minimum 10 znaków i maksymalnie 72 bajty; RPC zachowuje nazwę parametru `p_pin` dla kompatybilności.
 
 - Gość może oglądać odcinki i lokalne pliki; **nie zapisujemy ani nie wznawiamy jego historii**.
 - Historia `#history`, zapisane sekundy (z ułamkami), ulubione i ręczne „obejrzane” wymagają konta; dane przechowywane są w Supabase, nie w localStorage/IndexedDB.
-- W przeglądarce pozostają token sesji społeczności (`rejson_community_session_v1`, wspólny na tym samym originie) i preferencje interfejsu. PIN nie jest zapisywany.
+- W przeglądarce pozostają token sesji społeczności (`rejson_community_session_v1`, wspólny na tym samym originie) i preferencje interfejsu. Hasło ani PIN nie są zapisywane.
 - Stare lokalne `rej-playback-v1`, `rej-recent`, `rej-favorites`, `rej-watched`, `rej-saved` są usuwane. **Nie przenosimy anonimowej historii na konto bez zgody.**
 - Dane są w pamięci aplikacji podczas sesji; synchronizacja zmienionych wpisów odbywa się co około 5 s. Błąd jest widoczny globalnie, a kolejkę można ponowić z ekranu konta. Nie ma trwałego lokalnego fallbacku offline; zamknięcie karty przed udanym zapisem może utracić ostatnie sekundy.
 - Wylogowanie i zmiana konta usuwają dane z pamięci; stary tracker nie może zapisać pozycji do nowego konta. Zmiany wspólnej sesji w innych kartach są obsługiwane przez `storage`.
@@ -40,7 +40,7 @@ RejStream używa **istniejących kont społeczności** z `rejson59.github.io/spo
 
 `supabase/rejstream.sql` zawiera wdrożoną migrację: tabela `rejstream_library` z RLS i odebranym bezpośrednim dostępem dla `anon`/`authenticated`. RPC odczytu/zapisu ustalają użytkownika **wyłącznie z tokena przez istniejące `community_session_user`**, nigdy z identyfikatora przesłanego przez klienta. Kod przeglądarki zawiera tylko istniejący publiczny klucz anon. Nie dodajemy klucza service-role i nie zmieniamy kont, PIN-ów ani tabel społeczności.
 
-Odziedziczony PIN czterocyfrowy zapewnia mniejszą ochronę niż pełne hasło/MFA; integracja nie zmienia globalnego mechanizmu społeczności. Token sesji jest poufny. Nie należy umieszczać go w linkach ani logach.
+Odziedziczony PIN czterocyfrowy zapewnia mniejszą ochronę niż hasło; istniejące konto może go zmienić na hasło w ustawieniach konta na stronie głównej. Integracja nie dodaje MFA ani odzyskiwania zapomnianego hasła. Token sesji jest poufny. Nie należy umieszczać go w linkach ani logach.
 
 ## Player i interfejs
 
