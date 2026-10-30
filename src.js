@@ -129,6 +129,7 @@ app.innerHTML = `<a class="skip-link" href="#content">Przejdź do treści</a><as
 let entryNudgeDismissed = false;
 const dismissedEpisodeNudges = new Set();
 let loginReturn = null;
+let accountMode = "login";
 function loginNudge(context, key = "entry") {
   if (
     account.state().username ||
@@ -155,7 +156,7 @@ function accountPrompt(title) {
 }
 function accountPage() {
   const { username, error } = account.state();
-  return `<section class="section account-section"><div class="page-heading"><span class="eyebrow">JEDNO KONTO · SPOŁECZNOŚĆ REJSON</span><h1>${username ? `Cześć, ${esc(username)}` : "Zaloguj się"}<span>.</span></h1><p>To samo konto co na rejson59.github.io/spolecznosc. Historia, wznawianie, ulubione i obejrzane są przypisane do konta. Nie przechowujemy ich lokalnie.</p></div>${username ? `<p>Sesja konta jest wspólna ze społecznością na tej samej domenie.</p><div class="hero-actions"><button id="account-sync" class="button secondary">Ponów synchronizację</button><button id="account-logout" class="button secondary">Wyloguj się</button></div>` : `<form id="account-form" class="account-form"><label>Nazwa użytkownika<input name="username" autocomplete="username" required maxlength="64"></label><label>PIN społeczności<input name="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" autocomplete="current-password" required></label><button class="button primary" type="submit">Zaloguj się</button></form><p>Nie masz konta? <a href="https://rejson59.github.io/spolecznosc.html" target="_blank" rel="noopener">Utwórz je w społeczności ↗</a></p>`}<p id="account-error" role="status">${esc(error)}</p><p>Na urządzeniu pozostaje tylko token logowania i ustawienia interfejsu. Plików wideo nie wysyłamy; dla lokalnego filmu zapisujemy nazwę i pozycję na koncie.</p></section>`;
+  return `<section class="section account-section"><div class="page-heading"><span class="eyebrow">JEDNO KONTO · SPOŁECZNOŚĆ REJSON</span><h1>${username ? `Cześć, ${esc(username)}` : accountMode === "register" ? "Utwórz konto" : "Zaloguj się"}<span>.</span></h1><p>To samo konto co na rejson59.github.io/spolecznosc. Historia, wznawianie, ulubione i obejrzane są przypisane do konta. Nie przechowujemy ich lokalnie.</p></div>${username ? `<p>Sesja konta jest wspólna ze społecznością na tej samej domenie.</p><div class="hero-actions"><button id="account-sync" class="button secondary">Ponów synchronizację</button><button id="account-logout" class="button secondary">Wyloguj się</button></div>` : `<div class="hero-actions" role="group" aria-label="Wybierz sposób korzystania z konta"><button type="button" class="button secondary" data-account-mode="login" aria-pressed="${accountMode === "login"}">Zaloguj się</button><button type="button" class="button secondary" data-account-mode="register" aria-pressed="${accountMode === "register"}">Utwórz konto</button></div><form id="account-form" class="account-form"><label>Nazwa użytkownika<input name="username" autocomplete="username" required minlength="3" maxlength="24"></label><label><span id="account-secret-label">${accountMode === "login" ? "Hasło lub dotychczasowy PIN" : "Hasło"}</span><input name="secret" type="password" autocomplete="${accountMode === "login" ? "current-password" : "new-password"}" required></label><label id="account-confirm-label" ${accountMode === "login" ? "hidden" : ""}>Powtórz hasło<input name="confirm" type="password" autocomplete="new-password" ${accountMode === "register" ? "required" : ""}></label><p id="account-auth-hint">${accountMode === "login" ? "Możesz użyć hasła albo swojego dotychczasowego PIN-u." : "Hasło musi mieć co najmniej 10 znaków i maksymalnie 72 bajty. Nie ma automatycznego odzyskiwania zapomnianego hasła."}</p><button class="button primary" type="submit">${accountMode === "login" ? "Zaloguj się" : "Utwórz konto"}</button></form>`}<p id="account-error" role="status">${esc(error)}</p><p>Na urządzeniu pozostaje tylko token logowania i ustawienia interfejsu. Plików wideo nie wysyłamy; dla lokalnego filmu zapisujemy nazwę i pozycję na koncie.</p></section>`;
 }
 function navButtons(mobile = false) {
   return [
@@ -576,57 +577,7 @@ function render() {
   document.querySelector("#favorite-count").textContent = favorites.filter(
     (key) => getSeries(key),
   ).length;
-  const accountLink = document.querySelector(".header-avatar");
-  const username = account.state().username;
-  const profiles = account.state().profiles;
-  accountLink.textContent = username ? username.charAt(0).toUpperCase() : "R";
-  accountLink.title = username
-    ? `Konto: ${username}`
-    : "Zaloguj się kontem społeczności";
-  accountLink.setAttribute("aria-label", accountLink.title);
-  
-  // Załaduj profil RejChat jeśli zalogowany
-  if (username && !profiles[username.toLowerCase()]) {
-    account.loadProfile(username);
-  }
-  
-  const profile = document.querySelector(".profile");
-  const avatarEl = profile.querySelector(".avatar");
-  const headingEl = profile.querySelector(".profile-heading");
-  const messageEl = profile.querySelector(".profile-message");
-  
-  avatarEl.textContent = username ? username.charAt(0).toUpperCase() : "R";
-  
-  // Wyświetl awatar i kolor nicka z profilu RejChat
-  const userProfile = profiles[username?.toLowerCase()];
-  if (userProfile?.avatar) {
-    avatarEl.innerHTML = `<img src="${userProfile.avatar}" alt="${username}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-  }
-  if (userProfile?.nick_color) {
-    avatarEl.style.background = userProfile.nick_color;
-    accountLink.style.background = userProfile.nick_color;
-  }
-  
-  headingEl.textContent = username
-    ? `Cześć, ${username}`
-    : "Twój kolejny seans";
-  messageEl.textContent = username
-    ? "Twoje historie. Twoje tempo."
-    : "Zaloguj się i zachowaj swoje postępy.";
-  profile.setAttribute("aria-label", username
-    ? `Przejdź do konta: ${username}`
-    : "Zaloguj się i zachowaj swoje postępy");
-  
-  // Dodaj link do profilu RejChat
-  if (username) {
-    profile.setAttribute("href", `https://rejchat.example.com/profil?u=${encodeURIComponent(username)}`);
-    profile.setAttribute("target", "_blank");
-    profile.setAttribute("rel", "noopener");
-  } else {
-    profile.setAttribute("href", "#account");
-    profile.removeAttribute("target");
-    profile.removeAttribute("rel");
-  }
+  updateAccountAppearance();
   createIcons({ icons });
   bindContent();
   inlineDisposers = [...content.querySelectorAll(".inline-trailer iframe")].map(
@@ -634,18 +585,40 @@ function render() {
   );
   if (activeEpisode?.id) loadEmbed();
   else document.querySelector(".player-health")?.remove();
+  content.querySelectorAll("[data-account-mode]").forEach((button) => {
+    button.addEventListener("click", () => {
+      accountMode = button.dataset.accountMode;
+      render();
+      content.querySelector('[name="username"]')?.focus();
+    });
+  });
   document
     .querySelector("#account-form")
     ?.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const form = event.currentTarget,
-        button = form.querySelector("button");
-      const username = form.elements.username.value,
-        pin = form.elements.pin.value;
-      form.elements.pin.value = "";
+      const form = event.currentTarget, button = form.querySelector('button[type="submit"]');
+      const username = form.elements.username.value.trim(), secret = form.elements.secret.value;
+      if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{2,23}$/.test(username)) {
+        showToast("Nazwa: 3–24 znaki, litery, cyfry, _ . lub -.");
+        return;
+      }
+      if (new TextEncoder().encode(secret).length > 72 || !secret ||
+          (accountMode === "register" && Array.from(secret).length < 10)) {
+        showToast("Hasło: co najmniej 10 znaków przy rejestracji i maksymalnie 72 bajty.");
+        return;
+      }
+      if (accountMode === "register" && secret !== form.elements.confirm.value) {
+        showToast("Hasła nie są takie same.");
+        return;
+      }
+      const mode = accountMode;
+      form.elements.secret.value = "";
+      form.elements.confirm.value = "";
       button.disabled = true;
+      const modeButtons = [...content.querySelectorAll("[data-account-mode]")];
+      modeButtons.forEach((item) => { item.disabled = true; });
       try {
-        await account.login(username, pin);
+        await (mode === "register" ? account.register(username, secret) : account.login(username, secret));
         const destination = loginReturn || "account";
         loginReturn = null;
         go(destination);
@@ -653,6 +626,7 @@ function render() {
         showToast(error.message);
       } finally {
         button.disabled = false;
+        modeButtons.forEach((item) => { item.disabled = false; });
       }
     });
   document
@@ -825,6 +799,43 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
+function updateAccountAppearance() {
+  const accountLink = document.querySelector(".header-avatar");
+  const profile = document.querySelector(".profile");
+  if (!accountLink || !profile) return;
+  const { username, profiles } = account.state();
+  const userProfile = profiles[username?.toLowerCase()];
+  if (username && !userProfile) account.loadProfile(username);
+  accountLink.textContent = username ? username.charAt(0).toUpperCase() : "R";
+  accountLink.title = username ? `Konto: ${username}` : "Zaloguj się kontem społeczności";
+  accountLink.setAttribute("aria-label", accountLink.title);
+  const avatar = profile.querySelector(".avatar");
+  avatar.textContent = username ? username.charAt(0).toUpperCase() : "R";
+  const avatars = ["comet", "planet", "cat", "fox", "leaf", "cloud", "heart", "spark"];
+  if (userProfile && avatars.includes(userProfile.avatar)) {
+    const img = document.createElement("img");
+    img.src = `https://rejson59.github.io/assets/avatars/${userProfile.avatar}.svg`;
+    img.alt = "";
+    img.className = "profile-avatar-image";
+    avatar.replaceChildren(img);
+  }
+  const colors = { mint: "#83dfc9", blue: "#a0cdff", violet: "#d5bcff", rose: "#ffaecd", amber: "#f7d18b", slate: "#d1ddeb" };
+  const color = Object.hasOwn(colors, userProfile?.color) ? colors[userProfile.color] : "";
+  avatar.style.background = color;
+  accountLink.style.background = color;
+  profile.querySelector(".profile-heading").textContent = username ? `Cześć, ${username}` : "Twój kolejny seans";
+  profile.querySelector(".profile-message").textContent = username ? "Twoje historie. Twoje tempo." : "Zaloguj się i zachowaj swoje postępy.";
+  profile.setAttribute("aria-label", username ? `Przejdź do profilu: ${username}` : "Zaloguj się i zachowaj swoje postępy");
+  if (username) {
+    profile.setAttribute("href", `https://rejson59.github.io/profil?u=${encodeURIComponent(username)}`);
+    profile.setAttribute("target", "_blank");
+    profile.setAttribute("rel", "noopener");
+  } else {
+    profile.setAttribute("href", "#account");
+    profile.removeAttribute("target");
+    profile.removeAttribute("rel");
+  }
+}
 let previousUser = account.state().username;
 account.subscribe(() => {
   const state = account.state();
@@ -835,7 +846,10 @@ account.subscribe(() => {
   }
   const status = document.querySelector("#account-error");
   if (status) status.textContent = state.error;
-  if (state.username === previousUser) return;
+  if (state.username === previousUser) {
+    updateAccountAppearance();
+    return;
+  }
   previousUser = state.username;
   favorites = read("rej-favorites", []);
   watched = read("rej-watched", []);

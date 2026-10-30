@@ -207,6 +207,21 @@ export function createAccountStore(
     }
     if (version === generation) notify();
   }
+  async function authenticate(method, username, secret) {
+    // RPC retains the p_pin name for compatibility; it also accepts passwords.
+    const result = await request(method, { p_username: username, p_pin: secret });
+    await restore(result);
+    if (!session) {
+      throw new Error(method === "community_register"
+        ? "Konto utworzono, ale nie udało się wczytać danych. Spróbuj się zalogować."
+        : error || "Nie udało się wczytać konta.");
+    }
+    try {
+      browserStorage?.setItem(SESSION, JSON.stringify(session));
+      if (browserStorage && typeof window !== "undefined")
+        window.dispatchEvent(new Event("rj:session-change"));
+    } catch {}
+  }
   return {
     state,
     storage,
@@ -233,21 +248,18 @@ export function createAccountStore(
       } catch {}
       await restore(stored);
     },
-    async login(username, pin) {
-      const result = await request("community_login", {
-        p_username: username,
-        p_pin: pin,
-      });
-      await restore(result);
-      if (!session) throw new Error(error || "Nie udało się wczytać konta.");
-      try {
-        browserStorage?.setItem(SESSION, JSON.stringify(session));
-      } catch {}
+    async login(username, secret) {
+      return authenticate("community_login", username, secret);
+    },
+    async register(username, password) {
+      return authenticate("community_register", username, password);
     },
     async logout() {
       await flush();
       try {
         browserStorage?.removeItem(SESSION);
+        if (browserStorage && typeof window !== "undefined")
+          window.dispatchEvent(new Event("rj:session-change"));
       } catch {}
       await restore(null);
     },
@@ -259,10 +271,18 @@ export function createAccountStore(
       if (cached) return cached;
       try {
         const result = await request("rejchat_get_profiles", {
-          p_usernames: [username],
+          p_names: [username],
         });
         if (Array.isArray(result) && result.length > 0) {
-          const profile = result[0];
+          const row = result.find((item) => typeof item?.username === "string" && item.username.toLowerCase() === key);
+          if (!row) return null;
+          const avatars = ["comet", "planet", "cat", "fox", "leaf", "cloud", "heart", "spark"];
+          const colors = ["mint", "blue", "violet", "rose", "amber", "slate"];
+          const profile = {
+            username: row.username,
+            avatar: avatars.includes(row.avatar) ? row.avatar : "comet",
+            color: colors.includes(row.color) ? row.color : "mint",
+          };
           profiles[key] = profile;
           notify();
           return profile;
