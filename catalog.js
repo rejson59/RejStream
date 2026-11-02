@@ -475,10 +475,45 @@ export const series = [
       "Wszystkie 8 odcinków ma oficjalny polski dubbing na kanale GLITCH, z udziałem BruDolina Studios. W odtwarzaczu wybierz Ustawienia → Ścieżka dźwiękowa → Polski. RejStream nie może automatycznie przełączać ścieżek YouTube. Jeżeli opcji nie widać w osadzeniu, otwórz materiał w YouTube.",
     channel: "https://www.youtube.com/@GLITCH",
   },
+  {
+    key: "calling-all-villains",
+    title: "Calling All Villains",
+    short: "Calling All Villains",
+    subtitle: "Nowa era złoczyńców.",
+    creator: "ZAMination · GLITCH PRODUCTIONS",
+    year: "2026–",
+    age: "13+",
+    genre: "Science fiction · komedia akcji",
+    color: "#9b59b6",
+    art: "3AFJtcP2cp0",
+    hero: "3AFJtcP2cp0",
+    label: "PILOT DOSTĘPNY",
+    description:
+      "Świeżutkie i genialne — niczym z kina! Mr. Puzzles po zakończeniu SMG4 wyrusza na nową przygodę z castem złoczyńców, odkrywając kim naprawdę jest. Space opera z muzycznymi scenami i chaotycznym humorem w stylu Gwiezdnych Wojen.",
+    episodes: [
+      {
+        season: 1,
+        number: 1,
+        title: "PILOT",
+        id: "3AFJtcP2cp0",
+        date: "2026-10-31",
+        time: "30 min",
+        desc: "Genialny pilot — świeżutkie i niesamowite! Poznaj Mr. Puzzles i nowych złoczyńców w pierwszym odcinku spin-offa SMG4.",
+      },
+    ],
+    seasons: [
+      { key: "1", label: "Sezon 1", note: "Pilot opublikowany · serial w trakcie emisji" },
+    ],
+    catalogNote:
+      "Sprawdzono 02.11.2026: pilot opublikowany 31 października 2026 (Halloween). Serial w trakcie emisji na kanale ZAMination. Genialne i świeżutkie — must-watch!",
+    languageNote:
+      "Oryginalny angielski. Sprawdź dostępność polskich napisów w ustawieniach YouTube.",
+    channel: "https://www.youtube.com/@ZAMination",
+  },
 ];
 series.push(metaRunner, metalFamily, lackadaisy, gameoverse);
 // User-selected recommendation order; stable episode IDs/history are untouched.
-export const recommendedOrder = ["circus", "helluva", "metal-family", "gameoverse", "drones", "lackadaisy", "meta-runner"];
+export const recommendedOrder = ["calling-all-villains", "circus", "helluva", "metal-family", "gameoverse", "drones", "lackadaisy", "meta-runner"];
 series.sort((a, b) => recommendedOrder.indexOf(a.key) - recommendedOrder.indexOf(b.key));
 localizeEpisodeTitles(series);
 addPolishAudio(series);

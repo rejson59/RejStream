@@ -23,7 +23,7 @@ beforeAll(async () => {
   await import("../src.js");
 });
 it("starts with a series catalog and no removed movie", () => {
-  expect(document.querySelectorAll(".series-card")).toHaveLength(7);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(8);
   expect(document.body.textContent).not.toContain("Big Buck Bunny");
   expect(document.querySelector(".bottom-nav")).not.toBeNull();
 });
@@ -434,7 +434,7 @@ it("does not advertise login to signed-in viewers", async () => {
 
 it("does not expose the rejected LEGO titles or players through old links", async () => {
   await navigate("library");
-  expect(document.querySelectorAll(".series-card")).toHaveLength(7);
+  expect(document.querySelectorAll(".series-card")).toHaveLength(8);
   expect(document.querySelector("#content").textContent).not.toContain("LEGO");
   for (const key of ["lego-spider", "lego-ninjago"]) {
     await navigate(`series/${key}`);
@@ -532,8 +532,8 @@ it("plays newly added shorts with stable numbering and previous/next navigation"
 it("shows the calculated marathon trivia on home with an honest external breakdown", async () => {
   await navigate("home");
   const trivia = document.querySelector(".runtime-trivia");
-  expect(trivia.textContent).toContain("7 tytułów");
-  expect(trivia.textContent).toContain("30 godz. 25 min");
+  expect(trivia.textContent).toContain("8 tytułów");
+  expect(trivia.textContent).toContain("30 godz. 55 min");
   expect(trivia.textContent).toContain("Prime Video");
   expect(trivia.querySelector("details")).not.toBeNull();
 });
@@ -645,7 +645,7 @@ it("adds honest pilot collections for Lackadaisy and Gameoverse with working rou
 
 
 it("uses the requested recommended ranking on home and library, with alphabetical sort still working", async () => {
-  const expected = ["The Amazing Digital Circus", "Helluva Boss", "Metal Family", "Gameoverse", "Murder Drones", "Lackadaisy", "Meta Runner"];
+  const expected = ["Calling All Villains", "The Amazing Digital Circus", "Helluva Boss", "Metal Family", "Gameoverse", "Murder Drones", "Lackadaisy", "Meta Runner"];
   const titles = () => [...document.querySelectorAll(".series-card h3")].map((el) => el.textContent);
   await navigate("home");
   expect(titles()).toEqual(expected);
@@ -682,7 +682,7 @@ it("defaults newly verified fandubs to Polish and retains the original option", 
 it("uses dedicated series artwork rather than episode stills on cards and title pages", async () => {
   await navigate("home");
   const cards = [...document.querySelectorAll(".series-cover")];
-  expect(cards).toHaveLength(7);
+  expect(cards).toHaveLength(8);
   for (const card of cards) {
     expect(card.querySelector("img").alt).toContain("grafika promocyjna");
     expect(card.querySelector(".cover-title").textContent).toBeTruthy();
