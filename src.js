@@ -48,6 +48,8 @@ import {
   escapeHTML as esc,
 } from "./catalog.js";
 import { mountNativePlayer } from "./native-player.js";
+import { TTSDubbing } from "./tts-dubbing.js";
+import { ttsDemos, hasTTSDemo, getTTSCues } from "./tts-demos.js";
 import "@fontsource/dm-sans/latin-400.css";
 import "@fontsource/dm-sans/latin-ext-400.css";
 import "@fontsource/dm-sans/latin-500.css";
@@ -130,6 +132,7 @@ let entryNudgeDismissed = false;
 const dismissedEpisodeNudges = new Set();
 let loginReturn = null;
 let accountMode = "login";
+let ttsDubbing = null;
 function loginNudge(context, key = "entry") {
   if (
     account.state().username ||
@@ -386,7 +389,7 @@ function watchPage(show, e) {
     .filter((x) => String(x.season) === String(e.season))
     .sort((a, b) => a.number - b.number);
   const { previous, next } = adjacentEpisodes(show, e);
-  return `<section class="watch-section"><a class="back-link" href="#series/${show.key}">${icon("arrow-left")} ${show.title} <span>/ ${episodeLabel(e)}</span></a><div class="watch-layout"><div class="watch-main">${loginNudge("episode", episodeKey(show.key, e))}${show.availabilityNote ? `<p class="availability-note" role="note">${esc(show.availabilityNote)}</p>` : ""}<div class="player-frame" id="video-wrap">${e.id ? "" : `<div class="external-player"><span>${icon("arrow-up-right")}</span><h2>Ten odcinek jest w innym serwisie</h2><p>Sprawdź dostępność, wymagany abonament oraz języki w Prime Video.</p><a href="${e.external}" target="_blank" rel="noopener" class="button primary">Przejdź do Prime Video ${icon("arrow-up-right")}</a></div>`}</div><div class="player-health"><span id="player-health-text" role="status">Łączenie z YouTube…</span><button id="player-retry" class="button secondary" hidden>Wczytaj ponownie</button></div><div class="watch-title-row"><div><span class="eyebrow">${episodeLabel(e)} · ${e.time}</span><h1>${esc(e.title)}</h1></div><button class="button secondary" data-watched="${episodeKey(show.key, e)}" aria-pressed="${watched.includes(episodeKey(show.key, e))}">${icon(watched.includes(episodeKey(show.key, e)) ? "check-circle-2" : "check")} ${watched.includes(episodeKey(show.key, e)) ? "Obejrzane" : "Oznacz jako obejrzane"}</button></div><p class="watch-description">${esc(e.desc)}</p>${titleTranslationNote(e)}${show.key === "helluva" && e.season === "special" ? watchOrderMarkup(show) : ""}${e.id ? `<p id="watch-progress" class="watch-progress" role="note">${progressMarkup(latestProgress(episodeKey(show.key, e)))}</p>` : ""}${e.id ? `<div class="playback-options"><label>Wersja materiału<select id="audio"><option value="original">Oryginalny materiał · audio w ustawieniach</option>${(e.polishAudio || []).map((a, i) => `<option value="${i === 0 ? "pl" : "pl:" + a.video}" ${i === 0 && read("rej-prefer-polish-v2", true) === true ? "selected" : ""}>Polski · ${a.kind === "lektor" ? "lektor (nie dubbing)" : "nieoficjalny fandub"} · ${esc(a.creator)}${a.externalOnly ? " · w YouTube" : ""}</option>`).join("")}</select></label><label>Preferowane napisy<select id="subs"><option value="">Ustawienia źródła</option><option value="pl" selected>Polskie — domyślnie, jeśli dostępne</option><option value="en">English — jeśli dostępne</option></select></label></div>${polishNotice(show, e)}<p id="caption-status" class="caption-status" role="note">Preferowane napisy: polskie. Sprawdzanie możliwości odtwarzacza…</p><div id="audio-credit" class="audio-credit" aria-live="polite"></div><details class="language-details"><summary>${icon("languages")} Audio, dubbing i napisy ${icon("chevron-down")}</summary><p>${show.languageNote}</p><p>Wybierz koło zębate w odtwarzaczu → Ścieżka dźwiękowa lub Napisy. Preferencja napisów nie gwarantuje, że źródło je udostępnia. Polski fandub, jeśli jest wymieniony wyżej, otwiera osobny materiał.</p></details><div class="source-row"><span id="playback-source">${icon("shield-check")} Źródło: ${show.creator.split(" · ")[0]} / YouTube</span><a id="youtube-link" target="_blank" rel="noopener">Otwórz w YouTube ${icon("arrow-up-right")}</a></div>` : ""}<div class="episode-navigation">${previous ? `<a class="button secondary" href="#${watchPath(show, previous)}">${icon("arrow-left")} Poprzedni</a>` : "<span></span>"}${next ? `<a class="button primary" href="#${watchPath(show, next)}">${next.season !== e.season ? next.id ? "Dalej: " + esc(episodeLabel(next)) : "Dalej: Prime Video (zewnętrznie)" : "Następny odcinek"} ${icon("arrow-right")}</a>` : `<a class="button secondary" href="#series/${show.key}">Wróć do serialu ${icon("arrow-right")}</a>`}</div></div><aside class="watch-queue"><div class="queue-heading"><h2>${esc(show.seasons.find((s) => s.key === String(e.season))?.label || "Odcinki")}</h2><span>${list.length} wpisów</span></div><div class="queue-list">${list.map((x) => `<a href="#watch/${show.key}/${x.season}/${x.number}" class="queue-item ${x === e ? "current" : ""}" ${x === e ? 'aria-current="true"' : ""}><span class="queue-number">${String(x.number).padStart(2, "0")}</span><img src="${thumb(x.id || show.art)}" alt="" loading="lazy"><span><b>${esc(x.title)}</b><small>${x === e ? "Teraz otwarte" : watched.includes(episodeKey(show.key, x)) ? "Obejrzane" : x.time}</small></span>${x === e ? icon("play") : ""}</a>`).join("")}</div></aside></div></section>`;
+  return `<section class="watch-section"><a class="back-link" href="#series/${show.key}">${icon("arrow-left")} ${show.title} <span>/ ${episodeLabel(e)}</span></a><div class="watch-layout"><div class="watch-main">${loginNudge("episode", episodeKey(show.key, e))}${show.availabilityNote ? `<p class="availability-note" role="note">${esc(show.availabilityNote)}</p>` : ""}<div class="player-frame" id="video-wrap">${e.id ? "" : `<div class="external-player"><span>${icon("arrow-up-right")}</span><h2>Ten odcinek jest w innym serwisie</h2><p>Sprawdź dostępność, wymagany abonament oraz języki w Prime Video.</p><a href="${e.external}" target="_blank" rel="noopener" class="button primary">Przejdź do Prime Video ${icon("arrow-up-right")}</a></div>`}</div><div class="player-health"><span id="player-health-text" role="status">Łączenie z YouTube…</span><button id="player-retry" class="button secondary" hidden>Wczytaj ponownie</button></div><div class="watch-title-row"><div><span class="eyebrow">${episodeLabel(e)} · ${e.time}</span><h1>${esc(e.title)}</h1></div><button class="button secondary" data-watched="${episodeKey(show.key, e)}" aria-pressed="${watched.includes(episodeKey(show.key, e))}">${icon(watched.includes(episodeKey(show.key, e)) ? "check-circle-2" : "check")} ${watched.includes(episodeKey(show.key, e)) ? "Obejrzane" : "Oznacz jako obejrzane"}</button></div><p class="watch-description">${esc(e.desc)}</p>${titleTranslationNote(e)}${show.key === "helluva" && e.season === "special" ? watchOrderMarkup(show) : ""}${e.id ? `<p id="watch-progress" class="watch-progress" role="note">${progressMarkup(latestProgress(episodeKey(show.key, e)))}</p>` : ""}${e.id ? `<div class="playback-options"><label>Wersja materiału<select id="audio"><option value="original">Oryginalny materiał · audio w ustawieniach</option>${(e.polishAudio || []).map((a, i) => `<option value="${i === 0 ? "pl" : "pl:" + a.video}" ${i === 0 && read("rej-prefer-polish-v2", true) === true ? "selected" : ""}>Polski · ${a.kind === "lektor" ? "lektor (nie dubbing)" : "nieoficjalny fandub"} · ${esc(a.creator)}${a.externalOnly ? " · w YouTube" : ""}</option>`).join("")}</select></label><label>Preferowane napisy<select id="subs"><option value="">Ustawienia źródła</option><option value="pl" selected>Polskie — domyślnie, jeśli dostępne</option><option value="en">English — jeśli dostępne</option></select></label></div>${hasTTSDemo(show.key, e.season, e.number) && TTSDubbing.isAvailable() ? `<div class="tts-panel" style="background:${show.color}15;border:1px solid ${show.color}40;border-radius:12px;padding:16px;margin:16px 0"><div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span style="font-size:24px">🔊</span><div><strong style="display:block;font-size:14px">Silnik dubbingowy RejStream</strong><span style="font-size:12px;opacity:0.8">Proof of concept — przeglądarkowy TTS</span></div><button id="tts-toggle" class="button secondary" aria-pressed="false" style="margin-left:auto;padding:8px 16px;font-size:13px">Włącz lektora PL</button></div><p id="tts-status" style="font-size:12px;opacity:0.7;margin:0">Lektor czyta polskie napisy zsynchronizowane z wideo. Wycisz YouTube ręcznie aby słuchać tylko lektora.</p><div id="tts-cue" style="display:none;margin-top:12px;padding:12px;background:${show.color}20;border-radius:8px;font-style:italic;font-size:14px;text-align:center"></div></div>` : ""}${polishNotice(show, e)}<p id="caption-status" class="caption-status" role="note">Preferowane napisy: polskie. Sprawdzanie możliwości odtwarzacza…</p><div id="audio-credit" class="audio-credit" aria-live="polite"></div><details class="language-details"><summary>${icon("languages")} Audio, dubbing i napisy ${icon("chevron-down")}</summary><p>${show.languageNote}</p><p>Wybierz koło zębate w odtwarzaczu → Ścieżka dźwiękowa lub Napisy. Preferencja napisów nie gwarantuje, że źródło je udostępnia. Polski fandub, jeśli jest wymieniony wyżej, otwiera osobny materiał.</p></details><div class="source-row"><span id="playback-source">${icon("shield-check")} Źródło: ${show.creator.split(" · ")[0]} / YouTube</span><a id="youtube-link" target="_blank" rel="noopener">Otwórz w YouTube ${icon("arrow-up-right")}</a></div>` : ""}<div class="episode-navigation">${previous ? `<a class="button secondary" href="#${watchPath(show, previous)}">${icon("arrow-left")} Poprzedni</a>` : "<span></span>"}${next ? `<a class="button primary" href="#${watchPath(show, next)}">${next.season !== e.season ? next.id ? "Dalej: " + esc(episodeLabel(next)) : "Dalej: Prime Video (zewnętrznie)" : "Następny odcinek"} ${icon("arrow-right")}</a>` : `<a class="button secondary" href="#series/${show.key}">Wróć do serialu ${icon("arrow-right")}</a>`}</div></div><aside class="watch-queue"><div class="queue-heading"><h2>${esc(show.seasons.find((s) => s.key === String(e.season))?.label || "Odcinki")}</h2><span>${list.length} wpisów</span></div><div class="queue-list">${list.map((x) => `<a href="#watch/${show.key}/${x.season}/${x.number}" class="queue-item ${x === e ? "current" : ""}" ${x === e ? 'aria-current="true"' : ""}><span class="queue-number">${String(x.number).padStart(2, "0")}</span><img src="${thumb(x.id || show.art)}" alt="" loading="lazy"><span><b>${esc(x.title)}</b><small>${x === e ? "Teraz otwarte" : watched.includes(episodeKey(show.key, x)) ? "Obejrzane" : x.time}</small></span>${x === e ? icon("play") : ""}</a>`).join("")}</div></aside></div></section>`;
 }
 function loadEmbed(force = false) {
   if (!activeEpisode?.id) return;
@@ -662,6 +665,70 @@ function bindContent() {
   });
   content.querySelector("#subs")?.addEventListener("change", (event) => {
     dispose?.setSubtitles?.(event.target.value);
+  });
+  content.querySelector("#tts-toggle")?.addEventListener("click", (event) => {
+    if (!ttsDubbing) {
+      ttsDubbing = new TTSDubbing();
+    }
+    
+    const btn = event.target;
+    const isPressed = btn.getAttribute("aria-pressed") === "true";
+    const cue = document.querySelector("#tts-cue");
+    const status = document.querySelector("#tts-status");
+    
+    if (!isPressed) {
+      // Włącz TTS
+      const cues = getTTSCues(activeShow.key, activeEpisode.season, activeEpisode.number);
+      if (cues) {
+        ttsDubbing.loadCues(cues);
+        
+        // Znajdź iframe i jego element video (jeśli dostępny)
+        const iframe = document.querySelector("#episode-player");
+        if (iframe) {
+          // Nie możemy bezpośrednio kontrolować iframe YouTube, ale możemy spróbować
+          // Użytkownik powinien ręcznie wyciszyć YouTube
+          ttsDubbing.enable(iframe.contentWindow?.document?.querySelector("video") || { currentTime: 0, muted: false });
+        } else {
+          ttsDubbing.enable({ currentTime: 0, muted: false });
+        }
+        
+        btn.setAttribute("aria-pressed", "true");
+        btn.textContent = "Wyłącz lektora PL";
+        btn.classList.remove("secondary");
+        btn.classList.add("primary");
+        status.textContent = "✓ Lektor aktywny. Wycisz YouTube ręcznie aby słuchać tylko lektora.";
+        
+        if (cue) {
+          cue.style.display = "block";
+          // Aktualizuj wyświetlanie aktualnego napisu
+          const updateCue = () => {
+            if (!ttsDubbing?.enabled) return;
+            const currentTime = ttsDubbing.video?.currentTime || 0;
+            const currentCue = cues.find(c => currentTime >= c.start && currentTime < c.end);
+            if (currentCue) {
+              cue.textContent = currentCue.text;
+              cue.style.display = "block";
+            } else {
+              cue.textContent = "";
+              cue.style.display = "none";
+            }
+            requestAnimationFrame(updateCue);
+          };
+          updateCue();
+        }
+      }
+    } else {
+      // Wyłącz TTS
+      ttsDubbing.disable();
+      btn.setAttribute("aria-pressed", "false");
+      btn.textContent = "Włącz lektora PL";
+      btn.classList.remove("primary");
+      btn.classList.add("secondary");
+      status.textContent = "Lektor czyta polskie napisy zsynchronizowane z wideo. Wycisz YouTube ręcznie aby słuchać tylko lektora.";
+      if (cue) {
+        cue.style.display = "none";
+      }
+    }
   });
   content
     .querySelector("#player-retry")
