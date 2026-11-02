@@ -682,28 +682,45 @@ function bindContent() {
       if (cues) {
         ttsDubbing.loadCues(cues);
         
-        // Znajdź iframe i jego element video (jeśli dostępny)
-        const iframe = document.querySelector("#episode-player");
-        if (iframe) {
-          // Nie możemy bezpośrednio kontrolować iframe YouTube, ale możemy spróbować
-          // Użytkownik powinien ręcznie wyciszyć YouTube
-          ttsDubbing.enable(iframe.contentWindow?.document?.querySelector("video") || { currentTime: 0, muted: false });
-        } else {
-          ttsDubbing.enable({ currentTime: 0, muted: false });
-        }
+        // Użyj wewnętrznego timera zamiast YouTube iframe (cross-origin blokuje dostęp)
+        const virtualVideo = {
+          currentTime: 0,
+          muted: true,
+          _startTime: null,
+          _paused: false,
+          _interval: null,
+          play() {
+            this._startTime = Date.now() - (this.currentTime * 1000);
+            this._paused = false;
+            this._interval = setInterval(() => {
+              if (!this._paused) {
+                this.currentTime = (Date.now() - this._startTime) / 1000;
+              }
+            }, 100);
+          },
+          pause() {
+            this._paused = true;
+            if (this._interval) {
+              clearInterval(this._interval);
+            }
+          }
+        };
+        
+        ttsDubbing.enable(virtualVideo);
+        virtualVideo.play();
         
         btn.setAttribute("aria-pressed", "true");
         btn.textContent = "Wyłącz lektora PL";
         btn.classList.remove("secondary");
         btn.classList.add("primary");
-        status.textContent = "✓ Lektor aktywny. Wycisz YouTube ręcznie aby słuchać tylko lektora.";
+        status.textContent = "✓ Lektor aktywny. Synchronizacja z wideo przez wewnętrzny timer.";
         
         if (cue) {
           cue.style.display = "block";
           // Aktualizuj wyświetlanie aktualnego napisu
           const updateCue = () => {
             if (!ttsDubbing?.enabled) return;
-            const currentTime = ttsDubbing.video?.currentTime || 0;
+            const currentTime = virtualVideo.currentTime;
             const currentCue = cues.find(c => currentTime >= c.start && currentTime < c.end);
             if (currentCue) {
               cue.textContent = currentCue.text;
@@ -719,6 +736,9 @@ function bindContent() {
       }
     } else {
       // Wyłącz TTS
+      if (ttsDubbing?.video?.pause) {
+        ttsDubbing.video.pause();
+      }
       ttsDubbing.disable();
       btn.setAttribute("aria-pressed", "false");
       btn.textContent = "Włącz lektora PL";
