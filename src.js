@@ -159,7 +159,8 @@ function accountPrompt(title) {
 }
 function accountPage() {
   const { username, error } = account.state();
-  return `<section class="section account-section"><div class="page-heading"><span class="eyebrow">JEDNO KONTO · SPOŁECZNOŚĆ REJSON</span><h1>${username ? `Cześć, ${esc(username)}` : accountMode === "register" ? "Utwórz konto" : "Zaloguj się"}<span>.</span></h1><p>To samo konto co na rejson59.github.io/spolecznosc. Historia, wznawianie, ulubione i obejrzane są przypisane do konta. Nie przechowujemy ich lokalnie.</p></div>${username ? `<p>Sesja konta jest wspólna ze społecznością na tej samej domenie.</p><div class="hero-actions"><button id="account-sync" class="button secondary">Ponów synchronizację</button><button id="account-logout" class="button secondary">Wyloguj się</button></div>` : `<div class="hero-actions" role="group" aria-label="Wybierz sposób korzystania z konta"><button type="button" class="button secondary" data-account-mode="login" aria-pressed="${accountMode === "login"}">Zaloguj się</button><button type="button" class="button secondary" data-account-mode="register" aria-pressed="${accountMode === "register"}">Utwórz konto</button></div><form id="account-form" class="account-form"><label>Nazwa użytkownika<input name="username" autocomplete="username" required minlength="3" maxlength="24"></label><label><span id="account-secret-label">${accountMode === "login" ? "Hasło lub dotychczasowy PIN" : "Hasło"}</span><input name="secret" type="password" autocomplete="${accountMode === "login" ? "current-password" : "new-password"}" required></label><label id="account-confirm-label" ${accountMode === "login" ? "hidden" : ""}>Powtórz hasło<input name="confirm" type="password" autocomplete="new-password" ${accountMode === "register" ? "required" : ""}></label><p id="account-auth-hint">${accountMode === "login" ? "Możesz użyć hasła albo swojego dotychczasowego PIN-u." : "Hasło musi mieć co najmniej 10 znaków i maksymalnie 72 bajty. Nie ma automatycznego odzyskiwania zapomnianego hasła."}</p><button class="button primary" type="submit">${accountMode === "login" ? "Zaloguj się" : "Utwórz konto"}</button></form>`}<p id="account-error" role="status">${esc(error)}</p><p>Na urządzeniu pozostaje tylko token logowania i ustawienia interfejsu. Plików wideo nie wysyłamy; dla lokalnego filmu zapisujemy nazwę i pozycję na koncie.</p></section>`;
+  const hasSharedAccount = account.isSharedAccountAvailable();
+  return `<section class="section account-section"><div class="page-heading"><span class="eyebrow">JEDNO KONTO · SPOŁECZNOŚĆ REJSON</span><h1>${username ? `Cześć, ${esc(username)}` : accountMode === "register" ? "Utwórz konto" : "Zaloguj się"}<span>.</span></h1><p>To samo konto co na rejson59.github.io. Historia, wznawianie, ulubione i obejrzane są przypisane do konta. Nie przechowujemy ich lokalnie.</p></div>${username ? `<p>Sesja konta jest wspólna z rejson59.github.io i innymi projektami na tej samej domenie.</p><div class="hero-actions"><button id="account-sync" class="button secondary">Ponów synchronizację</button><button id="account-logout" class="button secondary">Wyloguj się</button></div>` : hasSharedAccount ? `<div class="shared-account-section" style="background:var(--accent-color,#9b59b6);background:linear-gradient(135deg,rgba(155,89,182,0.15) 0%,rgba(155,89,182,0.05) 100%);border:1px solid rgba(155,89,182,0.3);border-radius:16px;padding:32px;margin:24px 0;text-align:center"><h2 style="margin:0 0 12px 0;font-size:20px">Zaloguj się przez rejson59.github.io</h2><p style="margin:0 0 24px 0;opacity:0.9;font-size:14px">Użyj tego samego konta co na stronie głównej rejson59.github.io. Bezpieczne logowanie z potwierdzeniem sesji.</p><button id="shared-account-login" class="button primary" style="font-size:16px;padding:12px 32px">Zaloguj się przez rejson59.github.io</button><p style="margin:16px 0 0 0;font-size:12px;opacity:0.7">Jeśli nie masz konta, zostanie ono utworzone automatycznie podczas pierwszego logowania.</p></div><details style="margin-top:24px"><summary style="cursor:pointer;opacity:0.7;font-size:14px;padding:8px 0">Zaloguj się bezpośrednio (PIN lub hasło)</summary><div class="hero-actions" role="group" aria-label="Wybierz sposób korzystania z konta" style="margin-top:16px"><button type="button" class="button secondary" data-account-mode="login" aria-pressed="${accountMode === "login"}">Zaloguj się</button><button type="button" class="button secondary" data-account-mode="register" aria-pressed="${accountMode === "register"}">Utwórz konto</button></div><form id="account-form" class="account-form"><label>Nazwa użytkownika<input name="username" autocomplete="username" required minlength="3" maxlength="24"></label><label><span id="account-secret-label">${accountMode === "login" ? "Hasło lub dotychczasowy PIN" : "Hasło"}</span><input name="secret" type="password" autocomplete="${accountMode === "login" ? "current-password" : "new-password"}" required></label><label id="account-confirm-label" ${accountMode === "login" ? "hidden" : ""}>Powtórz hasło<input name="confirm" type="password" autocomplete="new-password" ${accountMode === "register" ? "required" : ""}></label><p id="account-auth-hint">${accountMode === "login" ? "Możesz użyć hasła albo swojego dotychczasowego PIN-u." : "Hasło musi mieć co najmniej 10 znaków i maksymalnie 72 bajty. Nie ma automatycznego odzyskiwania zapomnianego hasła."}</p><button class="button primary" type="submit">${accountMode === "login" ? "Zaloguj się" : "Utwórz konto"}</button></form></details>` : `<div class="hero-actions" role="group" aria-label="Wybierz sposób korzystania z konta"><button type="button" class="button secondary" data-account-mode="login" aria-pressed="${accountMode === "login"}">Zaloguj się</button><button type="button" class="button secondary" data-account-mode="register" aria-pressed="${accountMode === "register"}">Utwórz konto</button></div><form id="account-form" class="account-form"><label>Nazwa użytkownika<input name="username" autocomplete="username" required minlength="3" maxlength="24"></label><label><span id="account-secret-label">${accountMode === "login" ? "Hasło lub dotychczasowy PIN" : "Hasło"}</span><input name="secret" type="password" autocomplete="${accountMode === "login" ? "current-password" : "new-password"}" required></label><label id="account-confirm-label" ${accountMode === "login" ? "hidden" : ""}>Powtórz hasło<input name="confirm" type="password" autocomplete="new-password" ${accountMode === "register" ? "required" : ""}></label><p id="account-auth-hint">${accountMode === "login" ? "Możesz użyć hasła albo swojego dotychczasowego PIN-u." : "Hasło musi mieć co najmniej 10 znaków i maksymalnie 72 bajty. Nie ma automatycznego odzyskiwania zapomnianego hasła."}</p><button class="button primary" type="submit">${accountMode === "login" ? "Zaloguj się" : "Utwórz konto"}</button></form>`}<p id="account-error" role="status">${esc(error)}</p><p>Na urządzeniu pozostaje tylko token logowania i ustawienia interfejsu. Plików wideo nie wysyłamy; dla lokalnego filmu zapisujemy nazwę i pozycję na koncie.</p></section>`;
 }
 function navButtons(mobile = false) {
   return [
@@ -638,6 +639,45 @@ function render() {
   document
     .querySelector("#account-sync")
     ?.addEventListener("click", () => account.flush());
+  document
+    .querySelector("#shared-account-login")
+    ?.addEventListener("click", async () => {
+      const btn = document.querySelector("#shared-account-login");
+      const originalText = btn.textContent;
+      try {
+        btn.disabled = true;
+        btn.textContent = "Weryfikacja sesji...";
+        // First check if we already have a valid session
+        const username = await account.verifySharedSession();
+        if (username) {
+          const destination = loginReturn || "account";
+          loginReturn = null;
+          go(destination);
+          return;
+        }
+        // No session, open shared login
+        btn.textContent = "Otwieranie logowania...";
+        await account.openSharedLogin();
+        // After returning, check session again
+        btn.textContent = "Weryfikacja sesji...";
+        // Wait a bit for session to be established
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const newUsername = await account.verifySharedSession();
+        if (newUsername) {
+          const destination = loginReturn || "account";
+          loginReturn = null;
+          go(destination);
+        } else {
+          btn.disabled = false;
+          btn.textContent = originalText;
+          showToast("Nie udało się zalogować. Spróbuj ponownie.");
+        }
+      } catch (error) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+        showToast(error.message || "Błąd logowania przez wspólne konto.");
+      }
+    });
   if (page === "local")
     dispose = mountNativePlayer(document.querySelector("#native-mount"), {
       title: "Lokalny plik",
