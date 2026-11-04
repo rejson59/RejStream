@@ -264,6 +264,37 @@ export function createAccountStore(
       await restore(null);
     },
     restore,
+    isSharedAccountAvailable() {
+      return typeof window !== "undefined" && !!window.RejsonAccount;
+    },
+    async openSharedLogin() {
+      if (!this.isSharedAccountAvailable()) {
+        throw new Error("Wspólne konto nie jest dostępne");
+      }
+      // Store return URL in sessionStorage (not token)
+      try {
+        if (typeof window !== "undefined" && window.sessionStorage) {
+          window.sessionStorage.setItem("rj_return_url", window.location.href);
+        }
+      } catch {}
+      window.RejsonAccount.open();
+    },
+    async verifySharedSession() {
+      if (!this.isSharedAccountAvailable()) {
+        return null;
+      }
+      try {
+        const session = await window.RejsonAccount.getSession();
+        if (session && session.token && session.username) {
+          // Restore session with verified token
+          await restore({ token: session.token, username: session.username });
+          return session.username;
+        }
+      } catch (e) {
+        console.warn("Nie udało się zweryfikować sesji:", e.message);
+      }
+      return null;
+    },
     async loadProfile(username) {
       if (!username) return null;
       const key = username.toLowerCase();
@@ -312,4 +343,11 @@ if (typeof window !== "undefined") {
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") account.flush();
   });
+  // Subscribe to shared account session changes
+  if (window.RejsonAccount?.subscribe) {
+    window.RejsonAccount.subscribe(() => {
+      // When shared session changes, verify and update local state
+      account.verifySharedSession();
+    });
+  }
 }

@@ -8,6 +8,9 @@ vi.mock("../account.js", () => ({
     storage: () => null,
     subscribe: () => () => {}, init: async () => {}, flush: async () => {},
     login: mocked.login, register: mocked.register, loadProfile: async () => null,
+    isSharedAccountAvailable: () => false,
+    openSharedLogin: async () => {},
+    verifySharedSession: async () => null,
   },
 }));
 beforeAll(async () => {
