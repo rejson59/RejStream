@@ -488,6 +488,7 @@ export const series = [
     art: "3AFJtcP2cp0",
     hero: "3AFJtcP2cp0",
     label: "PILOT DOSTĘPNY",
+    cardBadge: "1 ODCINEK",
     description:
       "Świeżutkie i genialne — niczym z kina! Mr. Puzzles po zakończeniu SMG4 wyrusza na nową przygodę z castem złoczyńców, odkrywając kim naprawdę jest. Space opera z muzycznymi scenami i chaotycznym humorem w stylu Gwiezdnych Wojen.",
     episodes: [
