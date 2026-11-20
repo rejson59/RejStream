@@ -511,10 +511,46 @@ export const series = [
       "Oryginalny angielski. Sprawdź dostępność polskich napisów w ustawieniach YouTube.",
     channel: "https://www.youtube.com/@ZAMination",
   },
+  {
+    key: "paws-of-purity",
+    title: "Paws of Purity",
+    short: "Paws of Purity",
+    subtitle: "Czy masz to, co trzeba, by być czystym?",
+    creator: "SleepyKats · Noble",
+    year: "2026–",
+    age: "16+",
+    genre: "Animacja 3D · dark fantasy",
+    color: "#e8b4b8",
+    art: "isk2kWKeQBA",
+    hero: "isk2kWKeQBA",
+    label: "PILOT DOSTĘPNY",
+    cardBadge: "1 ODCINEK",
+    description:
+      "Urocza, lecz mroczna animacja 3D od SleepyKats. Świat, w którym czystość ma swoją cenę. Pilot sfinansowany przez Kickstarter — 25 minut emocji, które obiecują jeszcze więcej.",
+    episodes: [
+      {
+        season: 1,
+        number: 1,
+        title: "PILOT",
+        id: "isk2kWKeQBA",
+        date: "2026-11-08",
+        time: "26 min",
+        desc: "Pilot Paws of Purity — urocza, lecz mroczna animacja 3D od SleepyKats. Świat, w którym czystość ma swoją cenę.",
+      },
+    ],
+    seasons: [
+      { key: "1", label: "Sezon 1", note: "Pilot opublikowany · serial w trakcie produkcji" },
+    ],
+    catalogNote:
+      "Pilot opublikowany 8 listopada 2026. Serial sfinansowany przez Kickstarter (cel $8,000 przekroczony w 24h). Planowane ~8 odcinków w sezonie 1.",
+    languageNote:
+      "Oryginalny angielski. Sprawdź dostępność polskich napisów w ustawieniach YouTube.",
+    channel: "https://www.youtube.com/@sleepykatsmedia",
+  },
 ];
 series.push(metaRunner, metalFamily, lackadaisy, gameoverse);
 // User-selected recommendation order; stable episode IDs/history are untouched.
-export const recommendedOrder = ["calling-all-villains", "circus", "helluva", "metal-family", "gameoverse", "drones", "lackadaisy", "meta-runner"];
+export const recommendedOrder = ["paws-of-purity", "calling-all-villains", "circus", "helluva", "metal-family", "gameoverse", "drones", "lackadaisy", "meta-runner"];
 series.sort((a, b) => recommendedOrder.indexOf(a.key) - recommendedOrder.indexOf(b.key));
 localizeEpisodeTitles(series);
 addPolishAudio(series);
